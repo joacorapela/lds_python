@@ -90,22 +90,5 @@ def main(argv):
     df.to_csv(smoothed_data_filename)
     import pdb; pdb.set_trace()
 
-#     # p <- ggplot(df)
-#     # p <- p + geom_point(aes(x=y1, y=y2), col="black")
-#     # p <- p + geom_point(aes(x=filter1, y=filter2), col="red")
-#     # p <- p + geom_point(aes(x=smooth1, y=smooth2), col="green")
-#     # pdf(sprintf("/tmp/kf_sa%.04f_sx%.04f_sy%.04f.pdf", sigma_a, sigma_x, sigma_y))
-#     # print(p)
-#     # dev.off()
-#     # p_plotly <- ggplotly(p)
-#     # p_plotly <- plot_ly(data=df)
-#     # p_plotly <- p_plotly %>% add_trace(x=~y1, y=~y2, name="positions", model="markers", col="black")
-#     # p_plotly <- p_plotly %>% add_trace(x=~filter1, y=~filter2, name="filtered", model="markers", col="red")
-#     # p_plotly <- p_plotly %>% add_trace(x=~smooth1, y=~smooth2, name="smoothed", model="markers", col="green")
-#     # htmlwidgets::saveWidget(as_widget(p_plotly), sprintf("/tmp/kf_sa%.04f_sx%.04f_sy%.04f.html", sigma_a, sigma_x, sigma_y))
-# 
-#     browser()
-# }
-
 if __name__ == "__main__":
     main(sys.argv)
