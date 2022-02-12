@@ -1,5 +1,7 @@
 *~
-*swp
+*.swp
+*.log
+*.aux
 *__pycache__*
 figures/*
 results/*
