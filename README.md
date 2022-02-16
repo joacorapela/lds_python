@@ -8,7 +8,7 @@ Linear dynamical systems in Python ![lint+unitTests](https://github.com/joacorap
 
 - unit tests, run by Github actions, appeare [here](https://github.com/joacorapela/lds_python/tree/master/test).
 
-- derivations of the Kalman filter matrices used in the tracking script [doSmoothFWGMouseTrajectory.py](code/scripts/doSmoothFWGMouseTrajectory.py) appear [here](doc/trackingNotes/trackingNotes.pdf).
+- derivations of the Kalman filter matrices used in the tracking script [doSmoothFWGMouseTrajectory.py](code/scripts/doSmoothFWGMouseTrajectory.py) appear [here](docs/trackingNotes/trackingNotes.pdf).
 
 More to come ...
 
