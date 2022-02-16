@@ -1,4 +1,4 @@
-Linear dynamical systems in Python ![python-app](https://github.com/joacorapela/lds_python/actions/workflows/python-app/badge.svg)
+Linear dynamical systems in Python ![python-app](https://github.com/joacorapela/lds_python/actions/workflows/python-app.yml/badge.svg)
  ![docs](https://readthedocs.org/projects/pip/badge/)
 ----------------------------------
 
