@@ -4,7 +4,7 @@ Linear dynamical systems in Python ![lint+unitTests](https://github.com/joacorap
 
 - This repository is under construction. At the moment it only contains functionality for inference, we will soon add functionality for learning.
 
-- documentation, includinng a Jupyter notebook demonstrating the use of linear dynamical systems for tracking, appears [here](https://lds-python.readthedocs.io/).
+- documentation, includinng API specification and a Jupyter notebook demonstrating the use of linear dynamical systems for tracking, appears [here](https://lds-python.readthedocs.io/).
 
 - unit tests, run by Github actions, appeare [here](https://github.com/joacorapela/lds_python/tree/master/test).
 
