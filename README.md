@@ -1,4 +1,4 @@
-Linear dynamical systems in Python
+Linear dynamical systems in Python ![docs](https://readthedocs.org/projects/pip/badge/)
 ----------------------------------
 
 - at the moment this repo only contains functionality for Kalman filtering and smoothing,
