@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 sys.path.append("../src")
-import lds_functions
+import inference
 
 def main(argv):
     parser = argparse.ArgumentParser()
@@ -68,17 +68,17 @@ def main(argv):
                   dtype=np.double)*sigma_a**2
     R = np.diag([sigma_x**2, sigma_y**2])
     m0 = np.array([y[0, 0], 0, 0, y[1, 0], 0, 0], dtype=np.double)
+    m0.shape = (len(m0), 1)
     V0 = np.diag(np.ones(len(m0))*V0_diag_value0)
 
-    filterRes = lds_functions.filterLDS_SS_withMissingValues(y=y, B=B, Q=Q,
+    filterRes = inference.filterLDS_SS_withMissingValues(y=y, B=B, Q=Q,
                                                              m0=m0, V0=V0, Z=Z,
                                                              R=R)
-    smoothRes = lds_functions.smoothLDS_SS(B=B,
-                                           xnn=filterRes["xnn"],
-                                           Vnn=filterRes["Vnn"],
-                                           xnn1=filterRes["xnn1"],
-                                           Vnn1=filterRes["Vnn1"],
-                                           m0=m0, V0=V0)
+    smoothRes = inference.smoothLDS_SS(B=B, xnn=filterRes["xnn"],
+                                       Vnn=filterRes["Vnn"],
+                                       xnn1=filterRes["xnn1"],
+                                       Vnn1=filterRes["Vnn1"],
+                                       m0=m0, V0=V0)
     data={"time": data["time"], "pos1": y[0,:], "pos2": y[1,:],
           "fpos1": filterRes["xnn"][0,0,:], "fpos2": filterRes["xnn"][3,0,:],
           "fvel1": filterRes["xnn"][1,0,:], "fvel2": filterRes["xnn"][4,0,:],
