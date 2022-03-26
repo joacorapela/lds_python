@@ -62,20 +62,20 @@ Eq.~\ref{eq:DWPAmodel} rewrites the previous
 equations in matrix form.
 
 \begin{align}
-    x(k+1)&=\begin{bmatrix}
+    x(k)&=\begin{bmatrix}
         1 & T & T^2\\
         0 & 1 & T\\
         0 & 0 & 1
            \end{bmatrix}
-           x(t)+
+           x(k-1)+
            \begin{bmatrix}
                \frac{1}{2}T^2\\
                T\\
                1
            \end{bmatrix}
            v(k)\nonumber\\
-           &=Fx(t)+\Gamma v(k)\nonumber\\
-           &=Fx(t)+w(k)\label{eq:DWPAmodel}
+           &=Fx(k)+\Gamma v(k)\nonumber\\
+           &=Fx(k)+w(k)\label{eq:DWPAmodel}
 \end{align}
 
 \noindent with 
