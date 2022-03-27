@@ -5,5 +5,4 @@
 *__pycache__*
 figures/*
 results/*
-# metaData/*
 docs/notebooks/.ipynb_checkpoints/*
