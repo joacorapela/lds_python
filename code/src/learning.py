@@ -73,37 +73,40 @@ def optim_SS_tracking_DWPA_fullV0(y, B, sigma_a0, Qt, Z, diag_R_0, m0_0, V0_0,
                                       callback=callback, options=options)
     import pdb; pdb.set_trace()
 
-def optim_SS_tracking_DWPA_diagV0(y, B, sigma_a0, Qt, Z, diag_R_0, m0_0, diag_V0_0,
-                                  max_iter=50, disp=True):
 
-    def get_coefs_from_params(sigma_a, diag_R, m0, diag_V0):
-        x = np.insert(np.concatenate([diag_R, m0, diag_V0]), 0, sigma_a)
+def optim_SS_tracking_DWPA_diagV0(y, B, sigma_a0, Qt, Z, sqrt_diag_R_0, m0_0,
+                                  sqrt_diag_V0_0, max_iter=50, disp=True):
+
+    def get_coefs_from_params(sigma_a, sqrt_diag_R, m0, sqrt_diag_V0):
+        x = np.insert(np.concatenate([sqrt_diag_R, m0, sqrt_diag_V0]),
+                      0, sigma_a)
         return x
 
     def get_params_from_coefs(x, sigma_a0=sigma_a0,
-                              diag_R_0=diag_R_0, m0_0=m0_0, diag_V0_0=diag_V0_0):
+                              sqrt_diag_R_0=sqrt_diag_R_0, m0_0=m0_0,
+                              sqrt_diag_V0_0=sqrt_diag_V0_0):
         cur = 0
         sigma_a = x[slice(cur, cur+1)]
         cur += len(sigma_a)
-        diag_R = x[slice(cur, cur+len(diag_R_0))]
-        cur += len(diag_R)
+        sqrt_diag_R = x[slice(cur, cur+len(sqrt_diag_R_0))]
+        cur += len(sqrt_diag_R)
         m0 = x[slice(cur, cur+len(m0_0))]
         cur += len(m0)
-        diag_V0 = x[slice(cur, cur+len(diag_V0_0))]
+        sqrt_diag_V0 = x[slice(cur, cur+len(sqrt_diag_V0_0))]
 
-        return sigma_a, diag_R, m0, diag_V0
+        return sigma_a, sqrt_diag_R, m0, sqrt_diag_V0
 
     def optim_criterion(x):
-        sigma_a, diag_R, m0, diag_V0 = get_params_from_coefs(x)
-        V0 = np.diag(diag_V0)
-        R = np.diag(diag_R)
+        sigma_a, sqrt_diag_R, m0, sqrt_diag_V0 = get_params_from_coefs(x)
+        V0 = np.diag(sqrt_diag_V0**2)
+        R = np.diag(sqrt_diag_R**2)
         kf = inference.filterLDS_SS_withMissingValues(y=y, B=B, Q=sigma_a*Qt,
                                                       m0=m0, V0=V0, Z=Z, R=R)
         answer = 0
         N = kf["Sn"].shape[2]
         for n in range(N):
             innov = kf["innov"][:, :, n]
-            Sn = kf["Sn"][:,:,n] 
+            Sn = kf["Sn"][:, :, n]
 
             Sn_inv = np.linalg.inv(Sn)
             answer += np.linalg.slogdet(Sn)[1]
@@ -114,24 +117,33 @@ def optim_SS_tracking_DWPA_diagV0(y, B, sigma_a0, Qt, Z, diag_R_0, m0_0, diag_V0
         global iteration
         iteration += 1
 
-        sigma_a, diag_R, m0, diag_V0 = get_params_from_coefs(x)
+        sigma_a, sqrt_diag_R, m0, sqrt_diag_V0 = get_params_from_coefs(x)
         optim_value = optim_criterion(x=x)
         print("Iteration: {:d}".format(iteration))
         print("optim criterion: {:f}".format(optim_value.item()))
         print("sigma_a={:f}".format(sigma_a.item()))
-        print("diag_R:")
-        print(diag_R)
+        print("sqrt_diag_R:")
+        print(sqrt_diag_R)
         print("m0:")
         print(m0)
-        print("diag_V0:")
-        print(diag_V0)
+        print("sqrt_diag_V0:")
+        print(sqrt_diag_V0)
 
-    x0 = get_coefs_from_params(sigma_a=sigma_a0, diag_R=diag_R_0,
-                               m0=m0_0, diag_V0=diag_V0_0)
-    options={"disp": disp, "maxiter": max_iter} 
-    opt_res = scipy.optimize.minimize(optim_criterion, x0, method="Nelder-Mead",
-                                      callback=callback, options=options)
-    import pdb; pdb.set_trace()
+    x0 = get_coefs_from_params(sigma_a=sigma_a0, sqrt_diag_R=sqrt_diag_R_0,
+                               m0=m0_0, sqrt_diag_V0=sqrt_diag_V0_0)
+    options = {"disp": disp, "maxiter": max_iter}
+    opt_res = scipy.optimize.minimize(optim_criterion, x0,
+                                      method="Nelder-Mead", callback=callback,
+                                      options=options)
+    sigma_a, sqrt_diag_R, m0, sqrt_diag_V0 = \
+        get_params_from_coefs(opt_res["x"])
+    x = {"sigma_a": sigma_a, "sqrt_diag_R": sqrt_diag_R, "m0": m0,
+         "sqrt_diag_V0": sqrt_diag_V0}
+    answer = {"fun": opt_res["fun"], "message": opt_res["message"], "nfev":
+              opt_res["nfev"], "nit": opt_res["nit"], "status":
+              opt_res["status"], "success": opt_res["success"], "x": x}
+    return answer
+
 
 def em_SS_tracking_DWPA(y, B, sigma_a0, Qt, Z, R_0, m0_0, V0_0,
                         vars_to_estimate={"sigma_a": True, "R": True,
