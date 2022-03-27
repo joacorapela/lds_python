@@ -10,10 +10,10 @@ def main(argv):
     parser = argparse.ArgumentParser()
     parser.add_argument("--smoothed_data_filename",
                         help="smoothed data filename",
-                        default="../../results/postions_smoothed_session003_start0.00_end15548.27_startPosition0_numPosition10000.csv")
+                        default="../../results/00000000_smoothed.csv")
     parser.add_argument("--fig_filename_pattern",
                         help="figure filename pattern",
-                        default="../../figures/postions_smoothed_session003_start0.00_end15548.27_startPosition1_numPosition10000.{:s}")
+                        default="../../figures/00000000_smoothed.{:s}")
     parser.add_argument("--xlabel", help="xlabel", default="x (pixels)")
     parser.add_argument("--ylabel", help="ylabel", default="y (pixels)")
 
