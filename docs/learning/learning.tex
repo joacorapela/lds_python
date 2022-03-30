@@ -1,0 +1,105 @@
+\documentclass[12pt]{article}
+
+\usepackage{graphicx}
+\usepackage[hypertexnames=false,colorlinks=true,breaklinks]{hyperref}
+\usepackage{tikz}
+\usepackage{verbatim}
+\usepackage{natbib}
+\usepackage{apalike}
+\usepackage{amsmath,amssymb}
+
+\newcommand{\estNumber}{41094320}
+
+\title{Learning for tracking mice position, velocity and acceleration}
+\author{Joaqu\'{i}n Rapela\thanks{j.rapela@ucl.ac.uk}}
+
+\begin{document}
+
+\maketitle
+
+\section{Results}
+
+\subsection{Simulated mouse motion}
+
+\begin{figure}
+    \begin{center}
+
+        \href{http://www.gatsby.ucl.ac.uk/~rapela/fwg/reports/learning/figures/46884517_pos_smoothed.html}{\includegraphics[width=3in]{../../figures/46884517_pos_smoothed.png}}
+        \href{http://www.gatsby.ucl.ac.uk/~rapela/fwg/reports/learning/figures/46884517_vel_smoothed.html}{\includegraphics[width=3in]{../../figures/46884517_vel_smoothed.png}}
+        \href{http://www.gatsby.ucl.ac.uk/~rapela/fwg/reports/learning/figures/46884517_acc_smoothed.html}{\includegraphics[width=3in]{../../figures/46884517_acc_smoothed.png}}
+
+        \caption{Filtered positions, velocities and accelerations using true parameters.}
+
+        \label{fig:simulations_trueParams}
+
+    \end{center}
+\end{figure}
+
+\begin{figure}
+    \begin{center}
+
+        \href{http://www.gatsby.ucl.ac.uk/~rapela/fwg/reports/learning/figures/54954774_pos_smoothed.html}{\includegraphics[width=3in]{../../figures/54954774_pos_smoothed.png}}
+        \href{http://www.gatsby.ucl.ac.uk/~rapela/fwg/reports/learning/figures/54954774_vel_smoothed.html}{\includegraphics[width=3in]{../../figures/54954774_vel_smoothed.png}}
+        \href{http://www.gatsby.ucl.ac.uk/~rapela/fwg/reports/learning/figures/54954774_acc_smoothed.html}{\includegraphics[width=3in]{../../figures/54954774_acc_smoothed.png}}
+
+        \caption{Effect of a poor selection of the discrete Wiener process
+        model parameters $\sigma_{ax}$ and $\sigma_{ay}$. Filtered positions,
+        velocities and accelerations using parameters
+        $\sigma_{ax}=\sigma_{ay}=1e2$ (true $\sigma_{ax}=\sigma_{ay}=1e4$)}
+
+        \label{fig:simulations_poorSelectionOfSigma_a}
+
+    \end{center}
+\end{figure}
+
+\begin{figure}
+    \begin{center}
+
+        \href{http://www.gatsby.ucl.ac.uk/~rapela/fwg/reports/learning/figures/66960494_pos_smoothed.html}{\includegraphics[width=3in]{../../figures/66960494_pos_smoothed.png}}
+        \href{http://www.gatsby.ucl.ac.uk/~rapela/fwg/reports/learning/figures/66960494_vel_smoothed.html}{\includegraphics[width=3in]{../../figures/66960494_vel_smoothed.png}}
+        \href{http://www.gatsby.ucl.ac.uk/~rapela/fwg/reports/learning/figures/66960494_acc_smoothed.html}{\includegraphics[width=3in]{../../figures/66960494_acc_smoothed.png}}
+
+        \caption{Effect of learning. Filtered positions, velocities and
+        accelerations using learned parameters, with initial conditions set to
+        the true parameters, with the exception of $\sigma_{ax0}$ and
+        $\sigma_{ay0}$ that were set to $\sigma_{ax0}=\sigma_{ay0}=1e4$, as in
+        Figure~\ref{fig:simulations_poorSelectionOfSigma_a} }
+
+        \label{fig:simulations_effectOfLearning}
+
+    \end{center}
+\end{figure}
+
+\subsection{Real mouse motion}
+
+\begin{figure}
+    \begin{center}
+
+        \href{http://www.gatsby.ucl.ac.uk/~rapela/fwg/reports/learning/figures/positions_smoothed_session003_start0.00_end15548.27_startPosition0_numPosition10000_pos.html}{\includegraphics[width=3in]{../../figures/positions_smoothed_session003_start0.00_end15548.27_startPosition0_numPosition10000_pos.png}}
+        \href{http://www.gatsby.ucl.ac.uk/~rapela/fwg/reports/learning/figures/positions_smoothed_session003_start0.00_end15548.27_startPosition0_numPosition10000_vel.html}{\includegraphics[width=3in]{../../figures/positions_smoothed_session003_start0.00_end15548.27_startPosition0_numPosition10000_vel.png}}
+        \href{http://www.gatsby.ucl.ac.uk/~rapela/fwg/reports/learning/figures/positions_smoothed_session003_start0.00_end15548.27_startPosition0_numPosition10000_acc.html}{\includegraphics[width=3in]{../../figures/positions_smoothed_session003_start0.00_end15548.27_startPosition0_numPosition10000_acc.png}}
+
+        \caption{Filtered positions, velocities and accelerations using
+        manually chosen parameters.}
+
+        \label{fig:real_manualParams}
+
+    \end{center}
+\end{figure}
+
+\begin{figure}
+    \begin{center}
+
+        \href{http://www.gatsby.ucl.ac.uk/~rapela/fwg/reports/learning/figures/positions_smoothed_session003_start0.00_end15548.27_startPosition0_numPosition10000_pos_learnedParams.html}{\includegraphics[width=3in]{../../figures/positions_smoothed_session003_start0.00_end15548.27_startPosition0_numPosition10000_pos_learnedParams.png}}
+        \href{http://www.gatsby.ucl.ac.uk/~rapela/fwg/reports/learning/figures/positions_smoothed_session003_start0.00_end15548.27_startPosition0_numPosition10000_vel_learnedParams.html}{\includegraphics[width=3in]{../../figures/positions_smoothed_session003_start0.00_end15548.27_startPosition0_numPosition10000_vel_learnedParams.png}}
+        \href{http://www.gatsby.ucl.ac.uk/~rapela/fwg/reports/learning/figures/positions_smoothed_session003_start0.00_end15548.27_startPosition0_numPosition10000_acc_learnedParams.html}{\includegraphics[width=3in]{../../figures/positions_smoothed_session003_start0.00_end15548.27_startPosition0_numPosition10000_acc_learnedParams.png}}
+
+        \caption{Filtered positions, velocities and accelerations using
+        learned parameters.}
+
+        \label{fig:real_learnedParams}
+
+    \end{center}
+\end{figure}
+
+\end{document}
