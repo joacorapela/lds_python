@@ -2,6 +2,7 @@
 *.swp
 *.log
 *.aux
+*.out
 *__pycache__*
 figures/*
 results/*
