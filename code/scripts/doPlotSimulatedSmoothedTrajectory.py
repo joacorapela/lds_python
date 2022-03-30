@@ -222,7 +222,6 @@ def main(argv):
     else:
         raise ValueError("variable={:s} is invalid. It should be: pos, vel, acc".format(variable))
 
-
     fig.write_image(fig_filename_pattern.format(smoothed_data_number, variable, "png"))
     fig.write_html(fig_filename_pattern.format(smoothed_data_number, variable, "html"))
     pdb.set_trace()
