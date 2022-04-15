@@ -53,8 +53,8 @@ equations for the DWPA model.
 
 \begin{align}
     \xi(k+1)&=\xi(k)+\dot{\xi}(k)T+\frac{\ddot{\xi}(k)}{2}T^2+\frac{v(k)}{2}T^2\label{eq:posDWPA}\\
-    \dot{\xi}(k+1)&=\dot{\xi}(k)+\ddot{\xi}(k)T+v(t)T\label{eq:velDWPA}\\
-    \ddot{\xi}(k+1)&=\ddot{\xi}(k)+v(t)\label{eq:accDWPA}
+    \dot{\xi}(k+1)&=\dot{\xi}(k)+\ddot{\xi}(k)T+v(k)T\label{eq:velDWPA}\\
+    \ddot{\xi}(k+1)&=\ddot{\xi}(k)+v(k)\label{eq:accDWPA}
 \end{align}
 
 Calling $x(k)=[\xi(k), \dot{\xi}(k), \ddot{\xi}(k)]^\intercal$,
