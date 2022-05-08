@@ -1,8 +1,108 @@
 
+import math
 import numpy as np
+import torch
 
 
-def filterLDS_SS_withMissingValues(y, B, Q, m0, V0, Z, R):
+def filterLDS_SS_withMissingValues_torch(y, B, Q, m0, V0, Z, R):
+    """ Kalman filter implementation of the algorithm described in Shumway and
+    Stoffer 2006.
+
+    :param: y: time series to be smoothed
+    :type: y: numpy array (NxT)
+
+    :param: B: state transition matrix
+    :type: B: numpy matrix (MxM)
+
+    :param: Q: state noise covariance matrix
+    :type: Q: numpy matrix (MxM)
+
+    :param: m0: initial state mean
+    :type: m0: one-dimensional numpy array (M)
+
+    :param: V0: initial state covariance
+    :type: V0: numpy matrix (MxM)
+
+    :param: Z: state to observation matrix
+    :type: Z: numpy matrix (NxM)
+
+    :param: R: observations covariance matrix
+    :type: R: numpy matrix (NxN)
+
+    :return:  {xnn1, Vnn1, xnn, Vnn, innov, K, Sn, logLike}: xnn1 and Vnn1 (predicted means, MxT, and covariances, MxMxT), xnn and Vnn (filtered means, MxT, and covariances, MxMxT), innov (innovations, NxT), K (Kalman gain matrices, MxNxT), Sn (innovations covariance matrices, NxNxT), logLike (data loglikelihood, float).
+    :rtype: dictionary
+
+    """
+
+    # N: number of observations
+    # M: dim state space
+    # P: dim observations
+    M = B.shape[0]
+    N = y.shape[1]
+    P = y.shape[0]
+    xnn1 = torch.empty(size=[M, 1], dtype=torch.double)
+    xnn1_h = torch.empty(size=[M, 1, N], dtype=torch.double)
+    Vnn1 = torch.empty(size=[M, M], dtype=torch.double)
+    Vnn1_h = torch.empty(size=[M, M, N], dtype=torch.double)
+    xnn = torch.empty(size=[M, 1], dtype=torch.double)
+    xnn_h = torch.empty(size=[M, 1, N], dtype=torch.double)
+    Vnn = torch.empty(size=[M, M], dtype=torch.double)
+    Vnn_h = torch.empty(size=[M, M, N], dtype=torch.double)
+    innov = torch.empty(size=[P, 1], dtype=torch.double)
+    innov_h = torch.empty(size=[P, 1, N], dtype=torch.double)
+    Sn = torch.empty(size=[P, P], dtype=torch.double)
+    Sn_h = torch.empty(size=[P, P, N], dtype=torch.double)
+
+    # k==0
+    xnn1 = (B @ m0).squeeze()
+    Vnn1 = B @ V0 @ B.T + Q
+    Stmp = Z @ Vnn1 @ Z.T + R
+    Sn = (Stmp + torch.transpose(Stmp, 0, 1)) / 2
+    Sinv = torch.linalg.inv(Sn)
+    K = Vnn1 @ Z.T @ Sinv
+    innov = y[:, 0] - (Z @  xnn1).squeeze()
+    xnn = xnn1 + K @ innov
+    Vnn = Vnn1 - K @ Z @ Vnn1
+    logLike = -N*P*math.log(2*math.pi) - torch.logdet(Sn) - \
+        innov.T @ Sinv @ innov
+
+    xnn1_h[:, :, 0] = torch.unsqueeze(xnn1, 1)
+    Vnn1_h[:, :, 0] = Vnn1
+    xnn_h[:, :, 0] = torch.unsqueeze(xnn, 1)
+    Vnn_h[:, :, 0] = Vnn
+    innov_h[:, :, 0] = torch.unsqueeze(innov, 1)
+    Sn_h[:, :, 0] = Sn
+
+    # k>1
+    for k in range(1, N):
+        xnn1 = B @ xnn
+        Vnn1 = B @ Vnn @ B.T + Q
+        if(torch.any(torch.isnan(y[:, k]))):
+            xnn = xnn1
+            Vnn = Vnn1
+        else:
+            Stmp = Z @ Vnn1 @ Z.T + R
+            Sn = (Stmp + Stmp.T)/2
+            Sinv = torch.linalg.inv(Sn)
+            K = Vnn1 @ Z.T @ Sinv
+            innov = y[:, k] - (Z @ xnn1).squeeze()
+            xnn = xnn1 + K @ innov
+            Vnn = Vnn1 - K @ Z @ Vnn1
+        logLike = logLike-torch.logdet(Sn) -\
+            innov.T @ Sinv @ innov
+        xnn1_h[:, :, k] = torch.unsqueeze(xnn1, 1)
+        Vnn1_h[:, :, k] = Vnn1
+        xnn_h[:, :, k] = torch.unsqueeze(xnn, 1)
+        Vnn_h[:, :, k] = Vnn
+        innov_h[:, :, k] = torch.unsqueeze(innov, 1)
+        Sn_h[:, :, k] = Sn
+    logLike = 0.5 * logLike
+    answer = {"xnn1": xnn1_h, "Vnn1": Vnn1_h, "xnn": xnn_h, "Vnn": Vnn_h,
+              "innov": innov_h, "KN": K, "Sn": Sn_h, "logLike": logLike}
+    return answer
+
+
+def filterLDS_SS_withMissingValues_np(y, B, Q, m0, V0, Z, R):
     """ Kalman filter implementation of the algorithm described in Shumway and
     Stoffer 2006.
 
@@ -49,7 +149,7 @@ def filterLDS_SS_withMissingValues(y, B, Q, m0, V0, Z, R):
     xnn1[:, 0, 0] = (B @ m0).squeeze()
     Vnn1[:, :, 0] = B @ V0 @ B.T + Q
     Stmp = Z @ Vnn1[:, :, 0] @ Z.T + R
-    Sn[:, :, 0] = (Stmp + np.transpose(Stmp)) / 2
+    Sn[:, :, 0] = (Stmp + np.transpose(Stmp, 0, 1)) / 2
     Sinv = np.linalg.inv(Sn[:, :, 0])
     K = Vnn1[:, :, 0] @ Z.T @ Sinv
     innov[:, 0, 0] = y[:, 0] - (Z @  xnn1[:, :, 0]).squeeze()
