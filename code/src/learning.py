@@ -2,14 +2,16 @@
 import math
 import numpy as np
 import scipy.optimize
+import torch
 
 import utils
 import inference
 
 iteration = 0
 
-def optim_SS_tracking_DWPA_fullV0(y, B, sigma_a0, Qt, Z, diag_R_0, m0_0, V0_0,
-                                  max_iter=50, disp=True):
+
+def scipy_optimize_SS_tracking_DWPA_fullV0(y, B, sigma_a0, Qt, Z, diag_R_0,
+                                           m0_0, V0_0, max_iter=50, disp=True):
     iL_V0 = np.tril_indices(V0_0.shape[0])
 
     def get_coefs_from_params(sigma_a, diag_R, m0, V0, iL_V0=iL_V0):
@@ -69,20 +71,23 @@ def optim_SS_tracking_DWPA_fullV0(y, B, sigma_a0, Qt, Z, diag_R_0, m0_0, V0_0,
 
     x0 = get_coefs_from_params(sigma_a=sigma_a0, diag_R=diag_R_0,
                                m0=m0_0, V0=V0_0)
-    options={"disp": disp, "maxiter": max_iter} 
+    options={"disp": disp, "maxiter": max_iter}
     opt_res = scipy.optimize.minimize(optim_criterion, x0, method="Nelder-Mead",
                                       callback=callback, options=options)
     import pdb; pdb.set_trace()
 
 
-def optim_SS_tracking_DWPA_diagV0(y, B, sigma_ax0, sigma_ay0, Qt, Z, sqrt_diag_R_0, m0_0,
-                                  sqrt_diag_V0_0, max_iter=50, disp=True):
+def scipy_optim_SS_tracking_DWPA_diagV0(y, B, sigma_ax0, sigma_ay0, Qt, Z,
+                                        sqrt_diag_R_0, m0_0, sqrt_diag_V0_0,
+                                        max_iter=50, disp=True):
 
-    def get_coefs_from_params(sigma_ax, sigma_ay, sqrt_diag_R, m0, sqrt_diag_V0):
-        x = np.concatenate([[sigma_ax, sigma_ay], sqrt_diag_R, m0, sqrt_diag_V0])
+    def get_coefs_from_params(sigma_ax, sigma_ay, sqrt_diag_R, m0,
+                              sqrt_diag_V0):
+        x = np.concatenate([[sigma_ax, sigma_ay], sqrt_diag_R, m0,
+                            sqrt_diag_V0])
         return x
 
-    def get_params_from_coefs(x, sigma_ax0=sigma_ax0,sigma_ay0=sigma_ay0,
+    def get_params_from_coefs(x, sigma_ax0=sigma_ax0, sigma_ay0=sigma_ay0,
                               sqrt_diag_R_0=sqrt_diag_R_0, m0_0=m0_0,
                               sqrt_diag_V0_0=sqrt_diag_V0_0):
         cur = 0
@@ -99,11 +104,12 @@ def optim_SS_tracking_DWPA_diagV0(y, B, sigma_ax0, sigma_ay0, Qt, Z, sqrt_diag_R
         return sigma_ax, sigma_ay, sqrt_diag_R, m0, sqrt_diag_V0
 
     def optim_criterion(x):
-        sigma_ax, sigma_ay, sqrt_diag_R, m0, sqrt_diag_V0 = get_params_from_coefs(x)
+        sigma_ax, sigma_ay, sqrt_diag_R, m0, sqrt_diag_V0 = \
+            get_params_from_coefs(x)
         V0 = np.diag(sqrt_diag_V0**2)
         R = np.diag(sqrt_diag_R**2)
         # build Q from Qt, sigma_ax, sigma_ay
-        Q = utils.buildQfromQt(Qt=Qt, sigma_ax=sigma_ax, sigma_ay=sigma_ay)
+        Q = utils.buildQfromQt_np(Qt=Qt, sigma_ax=sigma_ax, sigma_ay=sigma_ay)
 
         kf = inference.filterLDS_SS_withMissingValues(y=y, B=B, Q=Q,
                                                       m0=m0, V0=V0, Z=Z, R=R)
@@ -122,7 +128,8 @@ def optim_SS_tracking_DWPA_diagV0(y, B, sigma_ax0, sigma_ay0, Qt, Z, sqrt_diag_R
         global iteration
         iteration += 1
 
-        sigma_ax, sigma_ay, sqrt_diag_R, m0, sqrt_diag_V0 = get_params_from_coefs(x)
+        sigma_ax, sigma_ay, sqrt_diag_R, m0, sqrt_diag_V0 = \
+            get_params_from_coefs(x)
         optim_value = optim_criterion(x=x)
         print("Iteration: {:d}".format(iteration))
         print("optim criterion: {:f}".format(optim_value.item()))
@@ -135,15 +142,97 @@ def optim_SS_tracking_DWPA_diagV0(y, B, sigma_ax0, sigma_ay0, Qt, Z, sqrt_diag_R
         print("sqrt_diag_V0:")
         print(sqrt_diag_V0)
 
-    x0 = get_coefs_from_params(sigma_ax=sigma_ax0, sigma_ay=sigma_ay0, sqrt_diag_R=sqrt_diag_R_0,
-                               m0=m0_0, sqrt_diag_V0=sqrt_diag_V0_0)
+    x0 = get_coefs_from_params(sigma_ax=sigma_ax0, sigma_ay=sigma_ay0,
+                               sqrt_diag_R=sqrt_diag_R_0, m0=m0_0,
+                               sqrt_diag_V0=sqrt_diag_V0_0)
     options = {"disp": disp, "maxiter": max_iter}
     opt_res = scipy.optimize.minimize(optim_criterion, x0,
                                       method="Nelder-Mead", callback=callback,
                                       options=options)
-    sigma_ax, sigma_ay, sqrt_diag_R, m0, sqrt_diag_V0 = get_params_from_coefs(opt_res["x"])
-    x = {"sigma_ax": sigma_ax, "sigma_ay": sigma_ay, "sqrt_diag_R": sqrt_diag_R, "m0": m0, "sqrt_diag_V0": sqrt_diag_V0}
-    answer = {"fun": opt_res["fun"], "message": opt_res["message"], "nfev": opt_res["nfev"], "nit": opt_res["nit"], "status": opt_res["status"], "success": opt_res["success"], "x": x}
+    sigma_ax, sigma_ay, sqrt_diag_R, m0, sqrt_diag_V0 = \
+        get_params_from_coefs(opt_res["x"])
+    x = {"sigma_ax": sigma_ax, "sigma_ay": sigma_ay,
+         "sqrt_diag_R": sqrt_diag_R, "m0": m0,
+         "sqrt_diag_V0": sqrt_diag_V0}
+    answer = {"fun": opt_res["fun"], "message": opt_res["message"],
+              "nfev": opt_res["nfev"], "nit": opt_res["nit"],
+              "status": opt_res["status"], "success": opt_res["success"],
+              "x": x}
+    return answer
+
+
+def torch_optimize_SS_tracking_DWPA_diagV0(y, B, sigma_ax0, sigma_ay0, Qt, Z,
+                                           sqrt_diag_R_0, m0_0, sqrt_diag_V0_0,
+                                           max_iter=50, lr=1.0,
+                                           tolerance_grad=1e-7,
+                                           tolerance_change=1e-5,
+                                           line_search_fn="strong_wolfe",
+                                           disp=True):
+
+    def log_likelihood():
+        V0 = torch.diag(sqrt_diag_V0**2)
+        R = torch.diag(sqrt_diag_R**2)
+        # build Q from Qt, sigma_ax, sigma_ay
+        Q = utils.buildQfromQt_torch(Qt=Qt, sigma_ax=sigma_ax,
+                                     sigma_ay=sigma_ay)
+
+        kf = inference.filterLDS_SS_withMissingValues_torch(y=y, B=B, Q=Q,
+                                                            m0=m0, V0=V0, Z=Z,
+                                                            R=R)
+        answer = 0
+        N = y.shape[1]
+        for n in range(N):
+            innov = kf["innov"][:, :, n]
+            Sn = kf["Sn"][:, :, n]
+
+            Sn_inv = torch.inverse(Sn)
+            answer = answer + torch.logdet(Sn)
+            answer = answer + innov.T @ Sn_inv @ innov
+        return answer
+
+    optim_params = {"max_iter": max_iter, "lr": lr,
+                    "tolerance_grad": tolerance_grad,
+                    "tolerance_change": tolerance_change,
+                    "line_search_fn": line_search_fn}
+    sigma_ax = torch.Tensor([sigma_ax0])
+    sigma_ay = torch.Tensor([sigma_ay0])
+    sqrt_diag_R = sqrt_diag_R_0
+    m0 = m0_0
+    sqrt_diag_V0 = sqrt_diag_V0_0
+    x = [sigma_ax, sigma_ay, sqrt_diag_R, m0, sqrt_diag_V0]
+    # torch.autograd.set_detect_anomaly(True)
+    optimizer = torch.optim.LBFGS(x, **optim_params)
+    for i in range(len(x)):
+        x[i].requires_grad = True
+
+    def closure():
+        optimizer.zero_grad()
+        curEval = -log_likelihood()
+        print("-logLikeL: ")
+        print(curEval)
+        curEval.backward(retain_graph=True)
+        # x = [sigma_ax, sigma_ay, sqrt_diag_R, m0, sqrt_diag_V0]
+        print("sigma_ax: ")
+        print(sigma_ax)
+        print("sigma_ay: ")
+        print(sigma_ax)
+        print("sqrt_diag_R: ")
+        print(sqrt_diag_R)
+        print("m0: ")
+        print(m0)
+        print("sqrt_diag_V0: ")
+        print(sqrt_diag_V0)
+        return curEval
+
+    optimizer.step(closure)
+    log_likelihood = log_likelihood()
+    stateOneEpoch = optimizer.state[optimizer._params[0]]
+    nfeval = stateOneEpoch["func_evals"]
+    niter = stateOneEpoch["n_iter"]
+    answer = {"log_likelihood": log_likelihood, "nfeval": nfeval,
+              "niter": niter}
+    for i in range(len(x)):
+        x[i].requires_grad = False
     return answer
 
 
