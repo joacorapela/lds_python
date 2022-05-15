@@ -5,7 +5,7 @@ import pandas as pd
 import pickle
 
 sys.path.append("../../src")
-import lds_functions
+import inference
 
 def main(argv):
     parser = argparse.ArgumentParser()
