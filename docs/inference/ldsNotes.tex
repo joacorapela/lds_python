@@ -66,16 +66,16 @@ covariance of the prediction distribution and computing the mean and covariance
 of the filtering distribution.
 
 \begin{alignat*}{2}
-    \mathbf{x}_{1|0}&=\mathbf{m}_0&&\text{init prediction mean}\\
-    P_{1|0}&=V_0&&\text{init prediction covariance}\\
+    \mathbf{x}_{0|0}&=\mathbf{m}_0&&\text{init filtered mean}\\
+    P_{0|0}&=V_0&&\text{init filtered covariance}\\
+    \mathbf{x}_{n+1|n}&=A\mathbf{x}_{n|n}\quad&&\text{prediction mean}\\
+    P_{n+1|n}&=AP_{n|n}A^\intercal+Q\quad&&\text{prediction covariance}\\
     \mathbf{y}_{n|n-1}&=C\mathbf{x}_{n|n-1}\quad&&\text{predicted observation}\\
     \tilde{\mathbf{y}}_n&=\textcolor{red}{\mathbf{y}_n}-\mathbf{y}_{n|n-1}\quad&&\text{residual}\\
     S_n&=CP_{n|n-1}C^\intercal+R\quad&&\text{residual covariance}\\
     \mathbf{x}_{n|n}&=\mathbf{x}_{n|n-1}+K_n\tilde{\mathbf{y}}_n\quad&&\text{filtering mean}\\
-    P_{n|n}&=(I_M-K_nC)P_{n|n-1}&&\text{filtering covariance}\\
     K_n&=P_{n|n-1}C^\intercal S_n^{-1}&&\text{Kalman gain}\\
-    \mathbf{x}_{n+1|n}&=A\mathbf{x}_{n|n}\quad&&\text{prediction mean}\\
-    P_{n+1|n}&=AP_{n|n}A^\intercal+Q\quad&&\text{prediction covariance}
+    P_{n|n}&=(I_M-K_nC)P_{n|n-1}&&\text{filtering covariance}
 \end{alignat*}
 
 Inference of predicted and filtered mean and covariances proceeds in a forward
@@ -84,7 +84,7 @@ the last state, as shown in the next figure.
 
 \begin{figure}[h]
 \begin{center}
-    \includegraphics[width=3in]{figures/kfAlternations.pdf}
+    \includegraphics[width=5in]{figures/kfAlternations.pdf}
     \caption{Order of caculation of the prediction and filtering distributions
     in the Kalman filtering algorithm.}
     \label{fig:kfAlternations.}
