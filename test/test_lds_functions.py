@@ -2,7 +2,7 @@ import sys
 import pickle
 import numpy as np
 
-sys.path.append("code/src")
+sys.path.append("../code/src")
 import inference
 
 def test_filterLDS_SS_withMissingValues():
