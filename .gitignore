@@ -3,6 +3,8 @@
 *.log
 *.aux
 *.out
+*.bbl
+*.blg
 *__pycache__*
 figures/*
 results/*

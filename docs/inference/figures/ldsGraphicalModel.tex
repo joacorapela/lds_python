@@ -1,0 +1,46 @@
+
+\documentclass{standalone}
+
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+
+\begin{document}
+
+\tikzset{figStyle/.style={auto, node distance=5.5cm}}
+\tikzset{latentNodeStyle/.style={circle, draw=red, fill=white, line width=2, minimum size=1cm}}
+\tikzset{obsNodeStyle/.style={circle, draw=red, fill=blue, line width=2, minimum size=1cm}}
+\tikzset{lineStyle/.style={->,color=red,line width=2}}
+
+\begin{tikzpicture}{figStyle}
+
+    \node[latentNodeStyle, label=80:$\mathbf{x}_0$] (x0) at (0,0) {};
+    \node[latentNodeStyle, label=80:$\mathbf{x}_1$] (x1) [right= of x0] {};
+    \node[latentNodeStyle, label=80:$\mathbf{x}_2$] (x2) [right= of x1] {};
+    \node[align=center, minimum size=1cm] (ldots) [right= of x2] {$\ldots$};
+    \node[latentNodeStyle, label=80:$\mathbf{x}_{n-1}$] (xnM1) [right= of ldots] {};
+    \node[latentNodeStyle, label=80:$\mathbf{x}_{n}$] (xn) [right= of xnM1] {};
+    \node[latentNodeStyle, label=80:$\mathbf{x}_{n+1}$] (xnP1) [right= of xn] {};
+    \node[] (lastEmpty) [right= of xnP1] {};
+
+    \node[obsNodeStyle, label=80:$\mathbf{y}_1$] (y1) [below= of x1] {};
+    \node[obsNodeStyle, label=80:$\mathbf{y}_2$] (y2) [below= of x2] {};
+    \node[obsNodeStyle, label=80:$\mathbf{y}_{n-1}$] (ynM1) [below= of xnM1] {};
+    \node[obsNodeStyle, label=80:$\mathbf{y}_n$] (yn) [below= of xn] {};
+    \node[obsNodeStyle, label=80:$\mathbf{y}_{n+1}$] (ynP1) [below= of xnP1] {};
+
+    \draw (x0) [lineStyle] -- (x1);
+    \draw (x1) [lineStyle] -- (x2);
+    \draw (x2) [lineStyle] -- (ldots);
+    \draw (ldots) [lineStyle] -- (xnM1);
+    \draw (xnM1) [lineStyle] -- (xn);
+    \draw (xn) [lineStyle] -- (xnP1);
+    \draw (xnP1) [lineStyle] -- (lastEmpty);
+
+    \draw (x1) [lineStyle] -- (y1);
+    \draw (x2) [lineStyle] -- (y2);
+    \draw (xnM1) [lineStyle] -- (ynM1);
+    \draw (xn) [lineStyle] -- (yn);
+    \draw (xnP1) [lineStyle] -- (ynP1);
+\end{tikzpicture}
+
+\end{document}
