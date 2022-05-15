@@ -2,12 +2,12 @@ import sys
 import pickle
 import numpy as np
 
-sys.path.append("../code/src")
+sys.path.append("code/src")
 import inference
 
 def test_filterLDS_SS_withMissingValues():
     tol = 1e-4
-    data_filename = "data/filterLDS_SS_withMissingValues.csv"
+    data_filename = "test/data/filterLDS_SS_withMissingValues.csv"
     with open(data_filename, "rb") as f:
         load_res = pickle.load(f)
     y = load_res["y"]
