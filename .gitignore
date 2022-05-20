@@ -1,4 +1,7 @@
 *~
+checkSpelling.csh
+*.dic
+*.bak
 *.swp
 *.log
 *.aux
