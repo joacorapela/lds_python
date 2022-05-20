@@ -2,6 +2,7 @@
 
 \usepackage{natbib}
 \usepackage{apalike}
+\usepackage[hypertexnames=false,colorlinks=true,breaklinks]{hyperref}
 \usepackage{amsmath,bm}
 \usepackage{amssymb}
 
@@ -56,27 +57,31 @@ linear dynamical system
         $n$,
 
     \item[--]
-        \begin{align*}
-            A&=\begin{bmatrix}
+        \begin{equation}
+            A=\begin{bmatrix}
                 1 & T & T^2\\
                 0 & 1 & T\\
                 0 & 0 & 1
-            \end{bmatrix}\nonumber\\
-        \end{align*}
+            \end{bmatrix}
+            \label{eq:A}
+        \end{equation}
         and $T$ is the sample period,
 
     \item[--]
-        \begin{align*}
+        \begin{equation}
             Q=\gamma^2\begin{bmatrix}[1.5]
                 \frac{1}{4}T^4&\frac{1}{2}T^3&\frac{1}{2}T^2\\
                 \frac{1}{2}T^3&T^2&T\\
                 \frac{1}{2}T^2&T&1
             \end{bmatrix}
-        \end{align*}
+            \label{eq:Q}
+        \end{equation}
 
     \item[--]
         \begin{align*}
-            C = [1,0,0]
+            C=\begin{bmatrix}[1,5]
+                1 & 0 &0
+            \end{bmatrix}
         \end{align*}
 \end{itemize}
 
@@ -89,7 +94,7 @@ vector $x_n$.
 Consider the Taylor series expansion of the position as a function of time,
 $\xi(t)$, up to second order (Eq.~\ref{eq:posTaylor2}). Approximations of the
 velocity and acceleration are derived from Eq.~\ref{eq:posTaylor2} by
-succesive differentation (with respect to $T$) in Eqs.~\ref{eq:velTaylor2}
+successive differentiation (with respect to $T$) in Eqs.~\ref{eq:velTaylor2}
 and~\ref{eq:accTaylor2}.
 
 \begin{align}
@@ -99,8 +104,8 @@ and~\ref{eq:accTaylor2}.
 \end{align}
 
 According to Eq.~\ref{eq:accTaylor2} the approximation of the acceleration,
-$\ddot{\xi}(t)$ is constant across all times. The DWPA model generalizes this
-by assumming that acceletations are constant only during each sampling period
+$\ddot{\xi}(t)$ is constant across all times. The DWPA model generalises this
+by assuming that accelerations are constant only during each sampling period
 of length $T$, with value equal to the second derivative of the position at the
 start of the sampling period (i.e., $\ddot{\xi}(kT)$) plus a random value
 $v(k)\sim\mathcal{N}(0,\gamma^2)$ (Eq.~\ref{eq:accDiscreteApprox}).
@@ -110,7 +115,7 @@ $v(k)\sim\mathcal{N}(0,\gamma^2)$ (Eq.~\ref{eq:accDiscreteApprox}).
 \end{align}
 
 Replacing $\ddot{\xi}_a(t)$ by $\ddot{\xi}(t)$ in Eqs.~\ref{eq:posTaylor2},
-\ref{eq:velTaylor2} and~\ref{eq:accTaylor2} and discretizingng we obtain in
+\ref{eq:velTaylor2} and~\ref{eq:accTaylor2} and discretizing we obtain in
 Eqs.~\ref{eq:posDWPA}, \ref{eq:velDWPA} and~\ref{eq:accDWPA} the motion
 equations for the DWPA model.
 
@@ -148,7 +153,7 @@ equations in matrix form.
           1 & T & T^2\\
           0 & 1 & T\\
           0 & 0 & 1
-       \end{bmatrix}\nonumber\\
+    \end{bmatrix}\label{eq:A}\\
     \Gamma&=\begin{bmatrix}
                \frac{1}{2}T^2\\
                T\\
@@ -158,35 +163,46 @@ equations in matrix form.
 \end{align}
 
 Because $v(k)\sim\mathcal{N}(0,\gamma^2)$ then $w(k)$ is also Gaussian with
-mean $m$ (Eq.~\ref{eq:noiseMean}) and covariance $Q$ (Eq.~\ref{eq:noiseCov}).
+mean zero and covariance $Q$ (Eq.~\ref{eq:Q}).
 
 \begin{align}
-    m&=E\{w(k)\}=\Gamma E\{v(k)\}=0\label{eq:noiseMean}\\
-    Q&=E\{w(k)w(k)^\intercal\}=\Gamma
-    E\{v(k)^2\}\Gamma^\intercal=\Gamma\gamma^2\Gamma^\intercal=\gamma^2\Gamma\Gamma^\intercal\nonumber\\
+    E\{w(k)\}&=\Gamma E\{v(k)\}=0\nonumber{}\\
+    E\{w(k)w(k)^\intercal\}&=\Gamma E\{v(k)^2\}\Gamma^\intercal=\Gamma\gamma^2\Gamma^\intercal=\gamma^2\Gamma\Gamma^\intercal\nonumber\\
      &=\gamma^2\begin{bmatrix}[1.5]
-                 \frac{1}{2}T^2\\
-                 T\\
-                 1
+         \frac{1}{2}T^2\\
+         T\\
+         1
        \end{bmatrix}
      \raisebox{4.5ex}{
          $\begin{rowvector}\frac{1}{2}T^2, T, 1\end{rowvector}$
-     }=\gamma^2\begin{bmatrix}[1.5]
+     }\nonumber\\
+     &=\gamma^2\begin{bmatrix}[1.5]
                    \frac{1}{4}T^4&\frac{1}{2}T^3&\frac{1}{2}T^2\\
                    \frac{1}{2}T^3&T^2&T\\
                    \frac{1}{2}T^2&T&1
-                \end{bmatrix}\label{eq:noiseCov}
+     \end{bmatrix}=Q\label{eq:Q}
+\end{align}
+
+\noindent with $Q=\gamma^2Q_e$ and
+
+\begin{align}
+    Q_e=\begin{bmatrix}[1.5]
+             \frac{1}{4}T^4&\frac{1}{2}T^3&\frac{1}{2}T^2\\
+             \frac{1}{2}T^3&T^2&T\\
+             \frac{1}{2}T^2&T&1
+        \end{bmatrix}\label{eq:Qe}
 \end{align}
 
 \section{DWPA model in two dimensions}
 \label{sec:dwpaModel2D}
 
 We extend the DWPA model from one to two dimensions considering each of the two
-dimensions independent of each other.
+dimensions independent of each other. This independence yields the following
+linear dynamical system.
 
 \begin{alignat*}{3}
     \tilde{\mathbf{x}}_n &= \tilde{A}\mathbf{x}_{n-1} + \tilde{\mathbf{w}}_n && \quad \text{with} \quad\tilde{\mathbf{w}}_n\sim N(\mathbf{0}, \tilde{Q})\\
-    \tilde{\mathbf{y}}_n &= \tilde{C}\tilde{\mathbf{x}}_{n} + \tilde{\mathbf{v}}_n && \quad \text{with} \quad \tilde{\mathbf{v}}_n\sim N(0, R)
+    \tilde{\mathbf{y}}_n &= \tilde{C}\tilde{\mathbf{x}}_{n} + \tilde{\mathbf{v}}_n && \quad \text{with} \quad \tilde{\mathbf{v}}_n\sim N(0, \tilde{R})
 \end{alignat*}
 
 \noindent where
@@ -202,26 +218,36 @@ dimensions independent of each other.
 
     \item[--]
         \begin{align*}
-            A&=\begin{bmatrix}
-                1 & T & T^2\\
-                0 & 1 & T\\
-                0 & 0 & 1
+            \tilde{A}&=\begin{bmatrix}
+                A & \mathbf{0}\\
+                \mathbf{0} & A\\
             \end{bmatrix}\nonumber\\
         \end{align*}
-        and $T$ is the sample period,
+        and $A$ is given in Eq.~\ref{eq:A}
 
     \item[--]
         \begin{align*}
-            Q=\gamma^2\begin{bmatrix}[1.5]
-                \frac{1}{4}T^4&\frac{1}{2}T^3&\frac{1}{2}T^2\\
-                \frac{1}{2}T^3&T^2&T\\
-                \frac{1}{2}T^2&T&1
+            \tilde{Q}=\begin{bmatrix}[1.5]
+                \gamma^2_1Q_e & \mathbf{0}\\
+                \mathbf{0} & \gamma^2_2Q_e
+            \end{bmatrix}
+        \end{align*}
+        and $Q_e$ is given in Eq.~\ref{eq:Qe}
+
+    \item[--]
+        \begin{align*}
+            \tilde{C}=\begin{bmatrix}[1.5]
+                1 & 0 & 0 & 0 & 0 & 0\\
+                0 & 0 & 0 & 1 & 0 & 0
             \end{bmatrix}
         \end{align*}
 
     \item[--]
         \begin{align*}
-            C = [1,0,0]
+            \tilde{R}=\begin{bmatrix}[1.5]
+                \sigma^2_1 & 0\\
+                0 & \sigma^2_2
+            \end{bmatrix}
         \end{align*}
 \end{itemize}
 
