@@ -1,4 +1,4 @@
-all: ldsNotes.pdf
+all: inference.pdf
 
 %.pdf: %.tex
 	pdflatex $<
