@@ -12,7 +12,7 @@
 
 \newtheorem{claim}{Claim}
 
-\title{Linear Dynamical Systems Notes}
+\title{Inference in Linear Dynamical Systems}
 \author{Joaquin Rapela\thanks{j.rapela@ucl.ac.uk}}
 
 \begin{document}
@@ -306,6 +306,65 @@ Notes:
                                               &=(I-P_{n|n-1}C^\intercal S_n^{-1}C)P_{n|n-1}\\
                                               &=(I-K_nC)P_{n|n-1}
     \end{align*}
+
+\end{proof}
+
+\section{Joint normality of the states and observations in the LDS}
+
+\begin{claim}
+    The state and observation random variables of an LDS $\{\mathbf{x}_0,
+    \mathbf{x}_1, \ldots, \mathbf{x}_N, \mathbf{y}_1, \ldots, \mathbf{y}_N\}$
+    are jointly normal.
+\end{claim}
+
+\begin{proof}
+
+    Note that a set of real random variables $\mathcal{Z}=\{z_1,\ldots,z_N\}$ is
+    jointly normal if and only if their joint probability distribution is a
+    multivariate Normal distribution, if and only if the logarithm of this
+    joint proability distribution is a quadratic function of the random
+    variables in $\mathcal{Z}$ (i.e., $\ln P(z_1,\ldots,z_N)=k+\sum_{i=1}^N
+    k_1(i)z_i+\sum_{i=1}^N\sum_{j=1}^Nk_2(i,j)z_iz_j$, with $k_1(i)$ and
+    $k_2(i,j)$ real numbers).
+
+    Thus, to prove this claim it suffice to show that property $P_n$:\ ``$\log
+    P(\mathbf{x}_0, \mathbf{x}_1, \ldots, \mathbf{x}_n, \mathbf{y}_1, \ldots,
+    \mathbf{y}_n)$  is a quadratic function of the components of
+    $\{\mathbf{x}_0, \mathbf{x}_1, \ldots, \mathbf{x}_n, \mathbf{y}_1, \ldots,
+    \mathbf{y}_n\}$'' holds for any positive integer n. We show this by
+    induction.
+
+    \begin{description}
+        \item[$P_1$]:
+            \begin{align}
+                \ln P(\mathbf{x}_0, \mathbf{x}_1, \mathbf{y}_1)=&\ln P(\mathbf{y}_1|\mathbf{x}_1)\ln P(\mathbf{x}_1|\mathbf{x}_0)\ln P(\mathbf{x}_0)\nonumber\\
+                                                               =&K-\frac{1}{2}(\mathbf{y}_1-C\mathbf{x}_1)^\intercal R^{-1}(\mathbf{y}_1-C\mathbf{x}_1)\nonumber\\
+                                                                &-\frac{1}{2}(\mathbf{x}_1-A\mathbf{x}_0)^\intercal Q^{-1}(\mathbf{x}_1-A\mathbf{x}_0)\nonumber\\
+                                                                &-\frac{1}{2}(\mathbf{x}_0-\mathbf{m}_0)^\intercal Q^{-1}(\mathbf{x}_0-\mathbf{m}_0)\label{eq:p1}
+            \end{align}
+
+            $P_1$ follows from the observation that the components of
+            $\mathbf{x}_0$, $\mathbf{x}_1$ and $\mathbf{y_1}$ are combined
+            quadratically in Eq.~\ref{eq:p1}.
+
+        \item[$P_n\rightarrow P_{n+1}$]:
+            \begin{align}
+                \ln P(\mathbf{x}_0, \mathbf{x}_1, \ldots, \mathbf{x}_n, \mathbf{x}_{n+1},\mathbf{y}_1, \ldots, \mathbf{y}_{n}, \mathbf{y}_{n+1})=&\ln P(\mathbf{y}_{n+1}|\mathbf{x}_{n+1})+\nonumber\\
+                &\ln P(\mathbf{x}_{n+1}|\mathbf{x}_n)+\nonumber\\
+                &\ln P(\mathbf{x}_0,\mathbf{x}_1,\ldots,\mathbf{x}_n,\mathbf{y}_1, \ldots, \mathbf{y}_{n})\nonumber\\
+                =&-\frac{1}{2}(\mathbf{y}_{n+1}-C\mathbf{x}_{n+1})^\intercal R^{-1}(\mathbf{y}_{n+1}-C\mathbf{x}_{n+1})\nonumber\\
+                 &-\frac{1}{2}(\mathbf{x}_{n+1}-A\mathbf{x}_{n})^\intercal R^{-1}(\mathbf{x}_{n+1}-A\mathbf{x}_{n})\nonumber\\
+                 &+\ln P(\mathbf{x}_0,\mathbf{x}_1,\ldots,\mathbf{x}_n,\mathbf{y}_1, \ldots, \mathbf{y}_{n})\label{eq:pn+1}
+            \end{align}
+
+            $P_{n+1}$ follows from the observation that the components of
+            $\mathbf{x}_n$, $\mathbf{x}_{n+1}$ and $\mathbf{y}_{n+1}$ are combined
+            quadratically in the first two lines of Eq.~\ref{eq:pn+1} and, by
+            the inductive hypotheis $P_n$, the elements of
+            $\mathbf{x}_0,\ldots,\mathbf{x}_n\mathbf{y}_1,\ldots\mathbf{y}_n$
+            are combined quadratically in the last line of Eq.~\ref{eq:pn+1}.
+
+    \end{description}
 
 \end{proof}
 
