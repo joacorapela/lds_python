@@ -352,7 +352,7 @@ Notes:
                 \ln P(\mathbf{x}_0, \mathbf{x}_1, \ldots, \mathbf{x}_n, \mathbf{x}_{n+1},\mathbf{y}_1, \ldots, \mathbf{y}_{n}, \mathbf{y}_{n+1})=&\ln P(\mathbf{y}_{n+1}|\mathbf{x}_{n+1})+\nonumber\\
                 &\ln P(\mathbf{x}_{n+1}|\mathbf{x}_n)+\nonumber\\
                 &\ln P(\mathbf{x}_0,\mathbf{x}_1,\ldots,\mathbf{x}_n,\mathbf{y}_1, \ldots, \mathbf{y}_{n})\nonumber\\
-                =&-\frac{1}{2}(\mathbf{y}_{n+1}-C\mathbf{x}_{n+1})^\intercal R^{-1}(\mathbf{y}_{n+1}-C\mathbf{x}_{n+1})\nonumber\\
+                =&K-\frac{1}{2}(\mathbf{y}_{n+1}-C\mathbf{x}_{n+1})^\intercal R^{-1}(\mathbf{y}_{n+1}-C\mathbf{x}_{n+1})\nonumber\\
                  &-\frac{1}{2}(\mathbf{x}_{n+1}-A\mathbf{x}_{n})^\intercal R^{-1}(\mathbf{x}_{n+1}-A\mathbf{x}_{n})\nonumber\\
                  &+\ln P(\mathbf{x}_0,\mathbf{x}_1,\ldots,\mathbf{x}_n,\mathbf{y}_1, \ldots, \mathbf{y}_{n})\label{eq:pn+1}
             \end{align}
@@ -360,7 +360,7 @@ Notes:
             $P_{n+1}$ follows from the observation that the components of
             $\mathbf{x}_n$, $\mathbf{x}_{n+1}$ and $\mathbf{y}_{n+1}$ are combined
             quadratically in the first two lines of Eq.~\ref{eq:pn+1} and, by
-            the inductive hypotheis $P_n$, the elements of
+            the inductive hypothesis $P_n$, the elements of
             $\mathbf{x}_0,\ldots,\mathbf{x}_n\mathbf{y}_1,\ldots\mathbf{y}_n$
             are combined quadratically in the last line of Eq.~\ref{eq:pn+1}.
 
