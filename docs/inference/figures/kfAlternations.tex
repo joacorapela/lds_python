@@ -6,34 +6,31 @@
 
 \begin{document}
 
-\tikzset{figStyle/.style={auto, node distance=5.5cm}}
-\tikzset{latentNodeStyle/.style={circle, draw=red, fill=white, line width=2, minimum size=1cm}}
-\tikzset{obsNodeStyle/.style={circle, draw=red, fill=blue, line width=2, minimum size=1cm}}
+\tikzset{figStyle/.style={auto, node distance=5cm}}
+\tikzset{nodeStyle/.style={align=center, minimum width=3cm}}
 \tikzset{lineStyle/.style={->,color=gray,line width=2}}
 
 \begin{tikzpicture}{figStyle}
 
-    \node[align=center] (init) at (0,0) {$\mathbf{m}_0,V_0$};
-    \node[align=center] (pred1) [right= of init]{$\mathbf{m}_{1|0},P_{1|0}$};
-    \node[align=center] (filt1) [right= of pred1]{$\mathbf{m}_{1|1},P_{1|1}$};
-    \node[align=center] (labelPredDist) [above= of pred1]{Prediction\\Distribution};
-    \node[align=center] (labelFiltDist) [above= of filt1]{Filtering\\Distribution};
-    \node[align=center] (pred2) [below= of pred1]{$\mathbf{m}_{2|1},P_{2|1}$};
-    \node[align=center] (filt2) [right= of pred2]{$\mathbf{m}_{2|2},P_{2|2}$};
-    \node[align=center] (dotsPred) [below= of pred2]{$\vdots$};
-    \node[align=center] (dotsFilt) [below= of filt2]{$\vdots$};
-    \node[align=center] (predn) [below= of dotsPred]{$\mathbf{m}_{n|n-1},P_{n|n-11}$};
-    \node[align=center] (filtn) [right= of predn]{$\mathbf{m}_{n|n},P_{n|n}$};
-    \node[align=center] (prednP1) [below= of predn]{$\mathbf{m}_{n+1|n},P_{n+1|n}$};
-    \node[align=center] (filtnP1) [right= of prednP1]{$\mathbf{m}_{n+1|n+1},P_{n+1|n+1}$};
+    \node[nodeStyle] (init) at (0,0) {$\mathbf{m}_0,V_0$};
+    \node[nodeStyle] (filt0) [right= of init]{$\mathbf{m}_{0|0},P_{0|0}$};
+    \node[nodeStyle] (pred1) [right= of filt0]{$\mathbf{m}_{1|0},P_{1|0}$};
+    \node[nodeStyle] (labelFiltDist) [above= of filt0]{Filtering\\Distribution};
+    \node[nodeStyle] (labelPredDist) [above= of pred1]{Prediction\\Distribution};
+    \node[nodeStyle] (filt1) [below= of filt0]{$\mathbf{m}_{1|1},P_{1|1}$};
+    \node[nodeStyle] (pred2) [right= of filt1]{$\mathbf{m}_{2|1},P_{2|1}$};
+    \node[nodeStyle] (dotsFilt) [below= of filt1]{$\vdots$};
+    \node[nodeStyle] (dotsPred) [below= of pred2]{$\vdots$};
+    \node[nodeStyle] (filtnM1) [below= of dotsFilt]{$\mathbf{m}_{n-1|n-1},P_{n-1|n-1}$};
+    \node[nodeStyle] (predn) [below= of dotsPred]{$\mathbf{m}_{n|n-1},P_{n|n-1}$};
+    \node[nodeStyle] (filtn) [below= of filtnM1]{$\mathbf{m}_{n|n},P_{n|n}$};
 
-    \draw (init) [lineStyle] -- (pred1);
+    \draw (init) [lineStyle] -- (filt0);
+    \draw (filt0) [lineStyle] -- (pred1);
     \draw (pred1) [lineStyle] -- node[above] {$\textcolor{red}{\mathbf{y}_1}$} (filt1);
     \draw (filt1) [lineStyle] -- (pred2);
-    \draw (pred2) [lineStyle] -- node[above] {$\textcolor{red}{\mathbf{y}_2}$} (filt2);
+    \draw (filtnM1) [lineStyle] -- (predn);
     \draw (predn) [lineStyle] -- node[above] {$\textcolor{red}{\mathbf{y}_n}$} (filtn);
-    \draw (filtn) [lineStyle] -- (prednP1);
-    \draw (prednP1) [lineStyle] -- node[above] {$\textcolor{red}{\mathbf{y}_{n+1}}$} (filtnP1);
 \end{tikzpicture}
 
 \end{document}

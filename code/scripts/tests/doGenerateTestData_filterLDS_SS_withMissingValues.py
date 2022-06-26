@@ -5,7 +5,7 @@ import pandas as pd
 import pickle
 
 sys.path.append("../../src")
-import lds_functions
+import inference
 
 def main(argv):
     parser = argparse.ArgumentParser()
@@ -69,15 +69,13 @@ def main(argv):
     m0 = np.array([y[0, 0], 0, 0, y[1, 0], 0, 0], dtype=np.double)
     V0 = np.diag(np.ones(len(m0))*V0_diag_value0)
 
-    filterRes = lds_functions.filterLDS_SS_withMissingValues(y=y, B=B, Q=Q,
-                                                             m0=m0, V0=V0, Z=Z,
-                                                             R=R)
-    smoothRes = lds_functions.smoothLDS_SS(B=B,
-                                           xnn=filterRes["xnn"],
-                                           Vnn=filterRes["Vnn"],
-                                           xnn1=filterRes["xnn1"],
-                                           Vnn1=filterRes["Vnn1"],
-                                           m0=m0, V0=V0)
+    filterRes = inference.filterLDS_SS_withMissingValues(y=y, B=B, Q=Q, m0=m0,
+                                                         V0=V0, Z=Z, R=R)
+    smoothRes = inference.smoothLDS_SS(B=B, xnn=filterRes["xnn"],
+                                       Vnn=filterRes["Vnn"],
+                                       xnn1=filterRes["xnn1"],
+                                       Vnn1=filterRes["Vnn1"],
+                                       m0=m0, V0=V0)
     data={"y": y, "B": B, "Q": Q, "m0": m0, "V0": V0, "Z": Z, "R": R,
           "xnn": filterRes["xnn"], "Vnn": filterRes["Vnn"], 
           "xnn1": filterRes["xnn1"], "Vnn1": filterRes["Vnn1"]}

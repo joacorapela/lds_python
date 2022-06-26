@@ -149,7 +149,7 @@ def filterLDS_SS_withMissingValues_np(y, B, Q, m0, V0, Z, R):
     xnn1[:, 0, 0] = (B @ m0).squeeze()
     Vnn1[:, :, 0] = B @ V0 @ B.T + Q
     Stmp = Z @ Vnn1[:, :, 0] @ Z.T + R
-    Sn[:, :, 0] = (Stmp + np.transpose(Stmp)) / 2
+    Sn[:, :, 0] = (Stmp + Stmp.T) / 2
     Sinv = np.linalg.inv(Sn[:, :, 0])
     K = Vnn1[:, :, 0] @ Z.T @ Sinv
     innov[:, 0, 0] = y[:, 0] - (Z @  xnn1[:, :, 0]).squeeze()
