@@ -91,7 +91,7 @@ def main(argv):
     m0 = np.array([y[0, 0], 0, 0, y[1, 0], 0, 0], dtype=np.double)
     m0.shape = (len(m0), 1)
     V0 = np.diag(np.ones(len(m0))*sqrt_diag_V0_value**2)
-    Q = utils.buildQfromQt(Qt=Qt, sigma_ax=sigma_ax, sigma_ay=sigma_ay)
+    Q = utils.buildQfromQt_np(Qt=Qt, sigma_ax=sigma_ax, sigma_ay=sigma_ay)
 
     filterRes = inference.filterLDS_SS_withMissingValues(y=y, B=B, Q=Q,
                                                              m0=m0, V0=V0, Z=Z,
