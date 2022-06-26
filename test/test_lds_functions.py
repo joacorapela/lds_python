@@ -3,7 +3,7 @@ import pickle
 import numpy as np
 
 sys.path.append("../code/src")
-import lds_functions
+import inference
 
 def test_filterLDS_SS_withMissingValues():
     tol = 1e-4
@@ -22,9 +22,8 @@ def test_filterLDS_SS_withMissingValues():
     xnn1 = load_res["xnn1"]
     Vnn1 = load_res["Vnn1"]
 
-    filterRes = lds_functions.filterLDS_SS_withMissingValues(y=y, B=B, Q=Q,     
-                                                             m0=m0, V0=V0, Z=Z,
-                                                             R=R)
+    filterRes = inference.filterLDS_SS_withMissingValues_np(y=y, B=B, Q=Q, m0=m0,
+                                                            V0=V0, Z=Z, R=R)
     mse_xnn = np.mean((xnn - filterRes["xnn"])**2)
     assert(mse_xnn<=tol)
 

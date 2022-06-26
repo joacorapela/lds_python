@@ -108,6 +108,10 @@ def main(argv):
                           paper_bgcolor='rgba(0,0,0,0)',
                           plot_bgcolor='rgba(0,0,0,0)')
     elif variable == "vel":
+        dt = time[1] - time[0]
+        vel_finite_diff_x = np.diff(simRes["y"][0, :])/dt
+        vel_finite_diff_y = np.diff(simRes["y"][1, :])/dt
+        import pdb; pdb.set_trace()
         trace_true_x = go.Scatter(x=time, y=simRes["x"][1, :],
                                   mode="markers",
                                   marker={"color": color_true,
@@ -122,6 +126,18 @@ def main(argv):
                                   name="true y",
                                   showlegend=True,
                                   )
+        trace_finite_diff_x = go.Scatter(x=time, y=vel_finite_diff_x,
+                                         mode="markers",
+                                         marker={"color": color_measured,
+                                                 "symbol": symbol_x},
+                                         name="finite diff x",
+                                         showlegend=True)
+        trace_finite_diff_y = go.Scatter(x=time, y=vel_finite_diff_y,
+                                         mode="markers",
+                                         marker={"color": color_measured,
+                                                 "symbol": symbol_y},
+                                         name="finite diff y",
+                                         showlegend=True)
         trace_filtered_x = go.Scatter(x=time,
                                       y=smoothed_data["fvel1"],
                                       mode="markers",
@@ -151,11 +167,13 @@ def main(argv):
                                       mode="markers",
                                       marker={"color": color_smoothed,
                                               "symbol": symbol_y},
-                                      name="smoothed x",
+                                      name="smoothed y",
                                       showlegend=True,
                                       )
         fig.add_trace(trace_true_x)
         fig.add_trace(trace_true_y)
+        fig.add_trace(trace_finite_diff_x)
+        fig.add_trace(trace_finite_diff_y)
         fig.add_trace(trace_filtered_x)
         fig.add_trace(trace_filtered_y)
         fig.add_trace(trace_smoothed_x)

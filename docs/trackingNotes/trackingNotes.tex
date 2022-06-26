@@ -1,5 +1,8 @@
-\documentclass{article}
+\documentclass[fleqn]{article}
 
+\usepackage{natbib}
+\usepackage{apalike}
+\usepackage[hypertexnames=false,colorlinks=true,breaklinks]{hyperref}
 \usepackage{amsmath,bm}
 \usepackage{amssymb}
 
@@ -22,11 +25,76 @@
 
 \maketitle
 
-To motivate the discrete Wiener process acceleration (DWPA) model consider the
-Taylor series expansion of the position as a function of time, $\xi(t)$, up to
-second order (Eq.~\ref{eq:posTaylor2}). Approximations of the derivative and
-accelerations are derived from Eq.~\ref{eq:posTaylor2} by succesive
-differentation (with respect to $T$) in Eqs.~\ref{eq:velTaylor2}
+\abstract{
+%
+Starting with the equations of motion of a single particle, here I derive the
+discrete Wiener process acceleration (DWPA) model~\citep[][Section 6.3.3; a
+linear dynamical system for tracking an object moving in one
+dimension]{barShalomEtAl2004}. Then I extend this model for tracking an object
+moving in two dimensions (Section~\ref{sec:dwpaModel2D}).
+%
+}
+
+\section{DWPA model in one dimension}
+\label{sec:dwpaModel1D}
+
+The DWPA model for tracking the motion of an object in one dimension is a
+linear dynamical system
+
+\begin{alignat*}{3}
+    \mathbf{x}_n &= A\mathbf{x}_{n-1} + \mathbf{w}_n && \quad \text{with} \quad\mathbf{w}_n\sim N(\mathbf{0}, Q)\\
+    y_n &= C\mathbf{x}_{n} + v_n                     && \quad \text{with} \quad v_n\sim N(0, \sigma^2)
+\end{alignat*}
+
+\noindent where
+
+\begin{itemize}
+
+    \item[--]
+        $\mathbf{x}_n=\left[\xi[n],\dot{\xi}[n],\ddot{\xi}[n]\right]^\intercal$
+        and $\xi[n],\dot{\xi}[n],\ddot{\xi}[n]$ are random variables representing
+        the position, velocity and acceleration of the object at sample time
+        $n$,
+
+    \item[--]
+        \begin{equation}
+            A=\begin{bmatrix}
+                1 & T & T^2\\
+                0 & 1 & T\\
+                0 & 0 & 1
+            \end{bmatrix}
+            \label{eq:A}
+        \end{equation}
+        and $T$ is the sample period,
+
+    \item[--]
+        \begin{equation}
+            Q=\gamma^2\begin{bmatrix}[1.5]
+                \frac{1}{4}T^4&\frac{1}{2}T^3&\frac{1}{2}T^2\\
+                \frac{1}{2}T^3&T^2&T\\
+                \frac{1}{2}T^2&T&1
+            \end{bmatrix}
+            \label{eq:Q}
+        \end{equation}
+
+    \item[--]
+        \begin{align*}
+            C=\begin{bmatrix}[1,5]
+                1 & 0 &0
+            \end{bmatrix}
+        \end{align*}
+\end{itemize}
+
+We next derive the forms of $A$ and $Q$ from the equations of motion of a
+particle. Matrix $C$ simply extracts the position component from the state
+vector $x_n$.
+
+\subsection*{Derivation of the form of matrices $A$ and $Q$}
+
+Consider the Taylor series expansion of the position as a function of time,
+$\xi(t)$, up to second order (Eq.~\ref{eq:posTaylor2}). Approximations of the
+velocity and acceleration are derived from Eq.~\ref{eq:posTaylor2} by
+successive differentiation (with respect to $T$) in Eqs.~\ref{eq:velTaylor2}
 and~\ref{eq:accTaylor2}.
 
 \begin{align}
@@ -36,18 +104,18 @@ and~\ref{eq:accTaylor2}.
 \end{align}
 
 According to Eq.~\ref{eq:accTaylor2} the approximation of the acceleration,
-$\ddot{\xi}(t)$ is constant across all times. The DWPA model generalizes this
-by assumming that acceletations are constant only during each sampling period
+$\ddot{\xi}(t)$ is constant across all times. The DWPA model generalises this
+by assuming that accelerations are constant only during each sampling period
 of length $T$, with value equal to the second derivative of the position at the
 start of the sampling period (i.e., $\ddot{\xi}(kT)$) plus a random value
-$v(k)\sim\mathcal{N}(0,\sigma^2)$ (Eq.~\ref{eq:accDiscreteApprox}).
+$v(k)\sim\mathcal{N}(0,\gamma^2)$ (Eq.~\ref{eq:accDiscreteApprox}).
 
 \begin{align}
     \ddot{\xi}_a(t)=\ddot{\xi}(kT)+v(k)\quad t\in[kT,(k+1)T)\label{eq:accDiscreteApprox}
 \end{align}
 
 Replacing $\ddot{\xi}_a(t)$ by $\ddot{\xi}(t)$ in Eqs.~\ref{eq:posTaylor2},
-\ref{eq:velTaylor2} and~\ref{eq:accTaylor2} and discretizingng we obtain in
+\ref{eq:velTaylor2} and~\ref{eq:accTaylor2} and discretizing we obtain in
 Eqs.~\ref{eq:posDWPA}, \ref{eq:velDWPA} and~\ref{eq:accDWPA} the motion
 equations for the DWPA model.
 
@@ -74,18 +142,18 @@ equations in matrix form.
                1
            \end{bmatrix}
            v(k)\nonumber\\
-           &=Fx(k-1)+\Gamma v(k)\nonumber\\
-           &=Fx(k-1)+w(k)\label{eq:DWPAmodel}
+           &=Ax(k-1)+\Gamma v(k)\nonumber\\
+           &=Ax(k-1)+w(k)\label{eq:DWPAmodel}
 \end{align}
 
 \noindent with 
 
 \begin{align}
-    F&=\begin{bmatrix}
+    A&=\begin{bmatrix}
           1 & T & T^2\\
           0 & 1 & T\\
           0 & 0 & 1
-       \end{bmatrix}\nonumber\\
+    \end{bmatrix}\label{eq:A}\\
     \Gamma&=\begin{bmatrix}
                \frac{1}{2}T^2\\
                T\\
@@ -94,25 +162,97 @@ equations in matrix form.
     w(k)&=\Gamma v(k)\nonumber
 \end{align}
 
-Because $v(k)\sim\mathcal{N}(0,\sigma^2)$ then $w(k)$ is also Gaussian with
-mean $m$ (Eq.~\ref{eq:noiseMean}) and covariance $Q$ (Eq.~\ref{eq:noiseCov}).
+Because $v(k)\sim\mathcal{N}(0,\gamma^2)$ then $w(k)$ is also Gaussian with
+mean zero and covariance $Q$ (Eq.~\ref{eq:Q}).
 
 \begin{align}
-    m&=E\{w(k)\}=\Gamma E\{v(k)\}=0\label{eq:noiseMean}\\
-    Q&=E\{w(k)w(k)^\intercal\}=\Gamma
-    E\{v(k)^2\}\Gamma^\intercal=\Gamma\sigma^2\Gamma^\intercal=\sigma^2\Gamma\Gamma^\intercal\nonumber\\
-     &=\sigma^2\begin{bmatrix}[1.5]
-                 \frac{1}{2}T^2\\
-                 T\\
-                 1
+    E\{w(k)\}&=\Gamma E\{v(k)\}=0\nonumber{}\\
+    E\{w(k)w(k)^\intercal\}&=\Gamma E\{v(k)^2\}\Gamma^\intercal=\Gamma\gamma^2\Gamma^\intercal=\gamma^2\Gamma\Gamma^\intercal\nonumber\\
+     &=\gamma^2\begin{bmatrix}[1.5]
+         \frac{1}{2}T^2\\
+         T\\
+         1
        \end{bmatrix}
      \raisebox{4.5ex}{
          $\begin{rowvector}\frac{1}{2}T^2, T, 1\end{rowvector}$
-     }=\sigma^2\begin{bmatrix}[1.5]
+     }\nonumber\\
+     &=\gamma^2\begin{bmatrix}[1.5]
                    \frac{1}{4}T^4&\frac{1}{2}T^3&\frac{1}{2}T^2\\
                    \frac{1}{2}T^3&T^2&T\\
                    \frac{1}{2}T^2&T&1
-                \end{bmatrix}\label{eq:noiseCov}
+     \end{bmatrix}=Q\label{eq:Q}
 \end{align}
+
+\noindent with $Q=\gamma^2Q_e$ and
+
+\begin{align}
+    Q_e=\begin{bmatrix}[1.5]
+             \frac{1}{4}T^4&\frac{1}{2}T^3&\frac{1}{2}T^2\\
+             \frac{1}{2}T^3&T^2&T\\
+             \frac{1}{2}T^2&T&1
+        \end{bmatrix}\label{eq:Qe}
+\end{align}
+
+\section{DWPA model in two dimensions}
+\label{sec:dwpaModel2D}
+
+We extend the DWPA model from one to two dimensions considering each of the two
+dimensions independent of each other. This independence yields the following
+linear dynamical system.
+
+\begin{alignat*}{3}
+    \tilde{\mathbf{x}}_n &= \tilde{A}\mathbf{x}_{n-1} + \tilde{\mathbf{w}}_n && \quad \text{with} \quad\tilde{\mathbf{w}}_n\sim N(\mathbf{0}, \tilde{Q})\\
+    \tilde{\mathbf{y}}_n &= \tilde{C}\tilde{\mathbf{x}}_{n} + \tilde{\mathbf{v}}_n && \quad \text{with} \quad \tilde{\mathbf{v}}_n\sim N(0, \tilde{R})
+\end{alignat*}
+
+\noindent where
+
+\begin{itemize}
+
+    \item[--]
+        $\mathbf{x}_n=\left[\xi_1[n],\dot{\xi_1}[n],\ddot{\xi_1}[n],\xi_2[n],\dot{\xi_2}[n],\ddot{\xi_2}[n]\right]^\intercal$
+        and $\xi_i[n],\dot{\xi_i}[n],\ddot{\xi_i}[n]$ are random variables representing
+        the position, velocity and acceleration of the object along dimension
+        $i$ at sample time
+        $n$,
+
+    \item[--]
+        \begin{align*}
+            \tilde{A}&=\begin{bmatrix}
+                A & \mathbf{0}\\
+                \mathbf{0} & A\\
+            \end{bmatrix}\nonumber\\
+        \end{align*}
+        and $A$ is given in Eq.~\ref{eq:A}
+
+    \item[--]
+        \begin{align*}
+            \tilde{Q}=\begin{bmatrix}[1.5]
+                \gamma^2_1Q_e & \mathbf{0}\\
+                \mathbf{0} & \gamma^2_2Q_e
+            \end{bmatrix}
+        \end{align*}
+        and $Q_e$ is given in Eq.~\ref{eq:Qe}
+
+    \item[--]
+        \begin{align*}
+            \tilde{C}=\begin{bmatrix}[1.5]
+                1 & 0 & 0 & 0 & 0 & 0\\
+                0 & 0 & 0 & 1 & 0 & 0
+            \end{bmatrix}
+        \end{align*}
+
+    \item[--]
+        \begin{align*}
+            \tilde{R}=\begin{bmatrix}[1.5]
+                \sigma^2_1 & 0\\
+                0 & \sigma^2_2
+            \end{bmatrix}
+        \end{align*}
+\end{itemize}
+
+
+\bibliographystyle{apalike}
+\bibliography{tracking}
 
 \end{document}
