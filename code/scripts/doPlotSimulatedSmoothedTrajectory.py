@@ -111,7 +111,6 @@ def main(argv):
         dt = time[1] - time[0]
         vel_finite_diff_x = np.diff(simRes["y"][0, :])/dt
         vel_finite_diff_y = np.diff(simRes["y"][1, :])/dt
-        import pdb; pdb.set_trace()
         trace_true_x = go.Scatter(x=time, y=simRes["x"][1, :],
                                   mode="markers",
                                   marker={"color": color_true,
@@ -182,6 +181,11 @@ def main(argv):
                           paper_bgcolor='rgba(0,0,0,0)',
                           plot_bgcolor='rgba(0,0,0,0)')
     elif variable == "acc":
+        dt = time[1] - time[0]
+        vel_finite_diff_x = np.diff(simRes["y"][0, :])/dt
+        vel_finite_diff_y = np.diff(simRes["y"][1, :])/dt
+        acc_finite_diff_x = np.diff(vel_finite_diff_x)/dt
+        acc_finite_diff_y = np.diff(vel_finite_diff_y)/dt
         trace_true_x = go.Scatter(x=time, y=simRes["x"][2, :],
                                   mode="markers",
                                   marker={"color": color_true,
@@ -196,6 +200,18 @@ def main(argv):
                                   name="true y",
                                   showlegend=True,
                                   )
+        trace_finite_diff_x = go.Scatter(x=time, y=acc_finite_diff_x,
+                                         mode="markers",
+                                         marker={"color": color_measured,
+                                                 "symbol": symbol_x},
+                                         name="finite diff x",
+                                         showlegend=True)
+        trace_finite_diff_y = go.Scatter(x=time, y=acc_finite_diff_y,
+                                         mode="markers",
+                                         marker={"color": color_measured,
+                                                 "symbol": symbol_y},
+                                         name="finite diff y",
+                                         showlegend=True)
         trace_filtered_x = go.Scatter(x=time,
                                       y=smoothed_data["facc1"],
                                       mode="markers",
@@ -230,6 +246,8 @@ def main(argv):
                                       )
         fig.add_trace(trace_true_x)
         fig.add_trace(trace_true_y)
+        fig.add_trace(trace_finite_diff_x)
+        fig.add_trace(trace_finite_diff_y)
         fig.add_trace(trace_filtered_x)
         fig.add_trace(trace_filtered_y)
         fig.add_trace(trace_smoothed_x)
@@ -242,7 +260,7 @@ def main(argv):
 
     fig.write_image(fig_filename_pattern.format(smoothed_data_number, variable, "png"))
     fig.write_html(fig_filename_pattern.format(smoothed_data_number, variable, "html"))
-    pdb.set_trace()
+    import pdb; pdb.set_trace()
 
 
 if __name__ == "__main__":
