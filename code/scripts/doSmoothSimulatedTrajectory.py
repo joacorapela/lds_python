@@ -65,8 +65,8 @@ def main(argv):
         V0 = simRes["V0"]
         R = simRes["R"]
 
-    Q = utils.buildQfromQt(Qt=simRes["Qt"], sigma_ax=sigma_ax, sigma_ay=sigma_ay)
-    filterRes = inference.filterLDS_SS_withMissingValues(
+    Q = utils.buildQfromQt_np(Qt=simRes["Qt"], sigma_ax=sigma_ax, sigma_ay=sigma_ay)
+    filterRes = inference.filterLDS_SS_withMissingValues_np(
         y=simRes["y"], B=simRes["B"], Q=Q, m0=m0, V0=V0, Z=simRes["Z"], R=R)
     smoothRes = inference.smoothLDS_SS(B=simRes["B"],
                                        xnn=filterRes["xnn"],
