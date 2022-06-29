@@ -1,4 +1,4 @@
-all: trackingNotes.pdf
+all: tracking.pdf
 
 %.pdf: %.tex
 	pdflatex $<
