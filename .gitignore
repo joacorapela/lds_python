@@ -8,6 +8,8 @@ checkSpelling.csh
 *.out
 *.bbl
 *.blg
+*.fff
+*.lof
 *__pycache__*
 figures/*
 results/*
