@@ -57,12 +57,16 @@ def main(argv):
                                 marker={"color": color_true},
                                 customdata=time,
                                 hovertemplate="<b>x:</b>%{x:.3f}<br><b>y</b>:%{y:.3f}<br><b>time</b>:%{customdata} sec",
-                                name="true",
+                                name="state position",
                                 showlegend=True,
                                 )
+        mse = np.linalg.norm(simRes["y"]-simRes["x"][(0,3),:], ord="fro")
+        title = f"MSE={mse}"
         fig.add_trace(trace_mes)
         fig.add_trace(trace_true)
-        fig.update_layout(xaxis_title="x (pixels)", yaxis_title="y (pixels)",
+        fig.update_layout(title=title,
+                          xaxis_title="x (pixels)",
+                          yaxis_title="y (pixels)",
                           paper_bgcolor='rgba(0,0,0,0)',
                           plot_bgcolor='rgba(0,0,0,0)')
     elif variable == "vel":
