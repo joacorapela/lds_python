@@ -397,7 +397,7 @@ simulations:
 
 \noindent We simulated $N=10,000$ samples with a step size $dt=0.001$.
 
-\subsection{Low noise ($\sigma=\num{1e-10}$)}
+\subsection{Lower noise ($\sigma=\num{1e-10}$)}
 
 We simulated measurements from the two-dimensional DWPA model with a standard
 deviation for the noise of the observations set to $\sigma=\num{1e-10}$.
@@ -503,7 +503,7 @@ acceleration were not.
 
 \end{figure}
 
-\subsection{High noise ($\sigma=\num{1e-1}$)}
+\subsection{Higher noise ($\sigma=\num{1e-1}$)}
 
 We simulated measurements from the two-dimensional DWPA model with a standard
 deviation for the noise of the observations set to $\sigma=\num{1e-1}$.
@@ -556,12 +556,13 @@ accurate, but those from the finite difference method were not.
 
 \subsection{Conclusions}
 
-We added little amount of noise to simulated states to generate
-measurements.
+It is remarkable that the finite difference method for the estimation of
+velocities and accelerations breaks down when adding very little noise to the
+true measurements. As we increased the amount of noise, this break down
+happened earlier for accelerations than for velocities.
 %
-We observed that the finite difference method was very sensitive to this noise.
-%
-The Kalman filter and smoother were robust to this noise.
+The Kalman filter and smoother were robut to the amount of noise considered
+here, both for the estimation of velocities and accelerations.
 
 \bibliographystyle{apalike}
 \bibliography{machineLearning}
