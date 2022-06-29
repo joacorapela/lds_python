@@ -1,10 +1,12 @@
-\documentclass[fleqn]{article}
+\documentclass[fleqn,12pt]{article}
 
 \usepackage{natbib}
 \usepackage{apalike}
 \usepackage[hypertexnames=false,colorlinks=true,breaklinks]{hyperref}
 \usepackage{amsmath,bm}
 \usepackage{amssymb}
+% \usepackage{margin=0.5in}{geometry}
+\usepackage[margin=0.5in]{geometry}
 
 \makeatletter
 \newenvironment{rowvector}
@@ -18,7 +20,7 @@
   \array{*\c@MaxMatrixCols c}}
 \makeatother
 
-\title{Discrete Wiener process acceleration model for tacking}
+\title{Discrete Wiener process acceleration model for tracking}
 \author{Joaquin Rapela\thanks{j.rapela@ucl.ac.uk}}
 
 \begin{document}
@@ -42,7 +44,7 @@ The DWPA model for tracking the motion of an object in one dimension is a
 linear dynamical system
 
 \begin{alignat*}{3}
-    \mathbf{x}_n &= A\mathbf{x}_{n-1} + \mathbf{w}_n && \quad \text{with} \quad\mathbf{w}_n\sim N(\mathbf{0}, Q)\\
+    \mathbf{x}_n &= A\mathbf{x}_{n-1} + \mathbf{w}_n && \quad \text{with} \quad\mathbf{w}_n\sim N(\mathbf{0}, Q) \quad \text{and} \quad\mathbf{x}_0\sim N(\mathbf{m}_0, V_0)\\
     y_n &= C\mathbf{x}_{n} + v_n                     && \quad \text{with} \quad v_n\sim N(0, \sigma^2)
 \end{alignat*}
 
@@ -153,7 +155,7 @@ equations in matrix form.
           1 & T & T^2\\
           0 & 1 & T\\
           0 & 0 & 1
-    \end{bmatrix}\label{eq:A}\\
+    \end{bmatrix}\\
     \Gamma&=\begin{bmatrix}
                \frac{1}{2}T^2\\
                T\\
@@ -180,7 +182,7 @@ mean zero and covariance $Q$ (Eq.~\ref{eq:Q}).
                    \frac{1}{4}T^4&\frac{1}{2}T^3&\frac{1}{2}T^2\\
                    \frac{1}{2}T^3&T^2&T\\
                    \frac{1}{2}T^2&T&1
-     \end{bmatrix}=Q\label{eq:Q}
+     \end{bmatrix}=Q
 \end{align}
 
 \noindent with $Q=\gamma^2Q_e$ and
@@ -200,10 +202,10 @@ We extend the DWPA model from one to two dimensions considering each of the two
 dimensions independent of each other. This independence yields the following
 linear dynamical system.
 
-\begin{alignat*}{3}
-    \tilde{\mathbf{x}}_n &= \tilde{A}\mathbf{x}_{n-1} + \tilde{\mathbf{w}}_n && \quad \text{with} \quad\tilde{\mathbf{w}}_n\sim N(\mathbf{0}, \tilde{Q})\\
-    \tilde{\mathbf{y}}_n &= \tilde{C}\tilde{\mathbf{x}}_{n} + \tilde{\mathbf{v}}_n && \quad \text{with} \quad \tilde{\mathbf{v}}_n\sim N(0, \tilde{R})
-\end{alignat*}
+\begin{alignat}{3}
+    \tilde{\mathbf{x}}_n &= \tilde{A}\mathbf{x}_{n-1} + \tilde{\mathbf{w}}_n && \quad \text{with} \quad\tilde{\mathbf{w}}_n\sim N(\mathbf{0}, \tilde{Q})\quad \text{and} \quad\tilde{\mathbf{x}}_0\sim N(\tilde{\mathbf{m}}_0, \tilde{V}_0)\label{eq:2D_DWPA_state}\\
+    \tilde{\mathbf{y}}_n &= \tilde{C}\tilde{\mathbf{x}}_{n} + \tilde{\mathbf{v}}_n && \quad \text{with} \quad \tilde{\mathbf{v}}_n\sim N(0, \tilde{R})\label{eq:2D_DWPA_measurement}
+\end{alignat}
 
 \noindent where
 
@@ -226,12 +228,13 @@ linear dynamical system.
         and $A$ is given in Eq.~\ref{eq:A}
 
     \item[--]
-        \begin{align*}
+        \begin{align}
             \tilde{Q}=\begin{bmatrix}[1.5]
                 \gamma^2_1Q_e & \mathbf{0}\\
                 \mathbf{0} & \gamma^2_2Q_e
             \end{bmatrix}
-        \end{align*}
+            \label{eq:Qtilde}
+        \end{align}
         and $Q_e$ is given in Eq.~\ref{eq:Qe}
 
     \item[--]
@@ -243,14 +246,36 @@ linear dynamical system.
         \end{align*}
 
     \item[--]
-        \begin{align*}
+        \begin{align}
             \tilde{R}=\begin{bmatrix}[1.5]
                 \sigma^2_1 & 0\\
                 0 & \sigma^2_2
             \end{bmatrix}
-        \end{align*}
+            \label{eq:Rtilde}
+        \end{align}
 \end{itemize}
 
+\section{Evaluation}
+
+We compare the accuracy of the DWPA model with that of the method of finite
+differences, to estimate velocities and accelerations of a simulated object
+following the dynamics of
+Eq.~\ref{eq:2D_DWPA_state} and Eq.~\ref{eq:2D_DWPA_measurement}. We used the
+following parameters in the simulations:
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|l|c|c|}\hline
+        \multicolumn{1}{|c|}{\emph{Name}} & \multicolumn{1}{|c|}{\emph{Eq.}} & \multicolumn{1}{|c|}{\emph{Value}} \\\hline\hline
+        $\mathbf{x}_0$                        & Eq.~\ref{eq:2D_DWPA_state} & $[0, 0]$\\\hline
+        $V_0$                                 & Eq.~\ref{eq:2D_DWPA_state} & diag([0.001, 0.001])\\\hline
+        $\gamma=\gamma_1=\gamma_2$            & Eq.~\ref{eq:Qtilde} & 1.0\\\hline
+        $\sigma=\sigma_1=\sigma_2$            & Eq.~\ref{eq:Rtilde} & varied\\\hline
+    \end{tabular}
+    \caption{Simulation parameters}
+\end{table}
+
+\noindent We simulated $N=10,000$ samples with a step size $dt=0.001$.
 
 \bibliographystyle{apalike}
 \bibliography{tracking}
