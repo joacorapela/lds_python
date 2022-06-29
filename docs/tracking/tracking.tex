@@ -6,7 +6,7 @@
 \usepackage{amsmath,bm}
 \usepackage{amssymb}
 % \usepackage{margin=0.5in}{geometry}
-\usepackage[margin=0.5in]{geometry}
+\usepackage[margin=1.0in]{geometry}
 
 \makeatletter
 \newenvironment{rowvector}
@@ -30,10 +30,10 @@
 \abstract{
 %
 Starting with the equations of motion of a single particle, here I derive the
-discrete Wiener process acceleration (DWPA) model~\citep[][Section 6.3.3; a
-linear dynamical system for tracking an object moving in one
-dimension]{barShalomEtAl2004}. Then I extend this model for tracking an object
-moving in two dimensions (Section~\ref{sec:dwpaModel2D}).
+discrete Wiener process acceleration (DWPA) model~\citep[][Section 6.3.3
+]{barShalomEtAl04}, a linear dynamical system for tracking an object moving in
+one dimension. Then I extend this model for tracking an object moving in two
+dimensions (Section~\ref{sec:dwpaModel2D}).
 %
 }
 
@@ -254,28 +254,6 @@ linear dynamical system.
             \label{eq:Rtilde}
         \end{align}
 \end{itemize}
-
-\section{Evaluation}
-
-We compare the accuracy of the DWPA model with that of the method of finite
-differences, to estimate velocities and accelerations of a simulated object
-following the dynamics of
-Eq.~\ref{eq:2D_DWPA_state} and Eq.~\ref{eq:2D_DWPA_measurement}. We used the
-following parameters in the simulations:
-
-\begin{table}[h!]
-    \centering
-    \begin{tabular}{|l|c|c|}\hline
-        \multicolumn{1}{|c|}{\emph{Name}} & \multicolumn{1}{|c|}{\emph{Eq.}} & \multicolumn{1}{|c|}{\emph{Value}} \\\hline\hline
-        $\mathbf{x}_0$                        & Eq.~\ref{eq:2D_DWPA_state} & $[0, 0]$\\\hline
-        $V_0$                                 & Eq.~\ref{eq:2D_DWPA_state} & diag([0.001, 0.001])\\\hline
-        $\gamma=\gamma_1=\gamma_2$            & Eq.~\ref{eq:Qtilde} & 1.0\\\hline
-        $\sigma=\sigma_1=\sigma_2$            & Eq.~\ref{eq:Rtilde} & varied\\\hline
-    \end{tabular}
-    \caption{Simulation parameters}
-\end{table}
-
-\noindent We simulated $N=10,000$ samples with a step size $dt=0.001$.
 
 \bibliographystyle{apalike}
 \bibliography{tracking}
