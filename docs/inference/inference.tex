@@ -90,7 +90,7 @@ the last state, as shown in the next figure.
 \begin{figure}[h]
 \begin{center}
     \includegraphics[width=5in]{figures/kfAlternations.pdf}
-    \caption{Order of caculation of the prediction and filtering distributions
+    \caption{Order of calculation of the prediction and filtering distributions
     in the Kalman filtering algorithm.}
     \label{fig:kfAlternations.}
 \end{center}
@@ -161,7 +161,7 @@ Notes:
 \begin{enumerate}
     \item Eq.~\ref{eq:c2l2} used the state equation of the LDS model in
         Section~\ref{sec:ldsModel},
-    \item Eq.~\ref{eq:c2l3} is true because $\mathbf{w}_n$ is indepedent from
+    \item Eq.~\ref{eq:c2l3} is true because $\mathbf{w}_n$ is independent from
         $\mathbf{x}_{n-1}$,
     \item Eq.~\ref{eq:c2l4} holds by the property
         $\text{Cov}\{A\mathbf{x}\}=A\ \text{Cov}\{\mathbf{x}\}' A^\intercal$ and
@@ -283,7 +283,7 @@ Notes:
 
             the second line follows from the first one because $\mathbf{v}_n$
             is independent of $\mathbf{x}_n$, and the third line follows from
-            the second one because $\mathbf{v}_n$ is indepednent of previous
+            the second one because $\mathbf{v}_n$ is independent of previous
             observations.
 
     \end{itemize}
@@ -327,7 +327,7 @@ Notes:
     Note that a set of real random variables $\mathcal{Z}=\{z_1,\ldots,z_N\}$ is
     jointly normal if and only if their joint probability distribution is a
     multivariate Normal distribution, if and only if the logarithm of this
-    joint proability distribution is a quadratic function of the random
+    joint probability distribution is a quadratic function of the random
     variables in $\mathcal{Z}$ (i.e., $\ln P(z_1,\ldots,z_N)=k+\sum_{i=1}^N
     k_1(i)z_i+\sum_{i=1}^N\sum_{j=1}^Nk_2(i,j)z_iz_j$, with $k_1(i)$ and
     $k_2(i,j)$ real numbers).
@@ -378,7 +378,8 @@ Notes:
 We compare the accuracy of the Kalman filter and smoother with that of the
 method of finite differences, to infer velocities and accelerations of a
 simulated object following the dynamics of the Discrete Wiener Process
-Acceleration (DWPA) model.  We used the following parameters in the
+Acceleration (DWPA)
+model\footnote{\url{https://github.com/joacorapela/lds_python/blob/master/docs/tracking/tracking.pdf}}.  We used the following parameters in the
 simulations:
 
 % \begin{table}[h!]
@@ -402,7 +403,7 @@ simulations:
 We simulated measurements from the two-dimensional DWPA model with a standard
 deviation for the noise of the observations set to $\sigma=\num{1e-10}$.
 Figure~\ref{fig:simulations_low_noise} shows the state positions in blue and
-the noise-corrupted measurments in black.
+the noise-corrupted measurements in black.
 
 \begin{figure}
 
@@ -412,7 +413,7 @@ the noise-corrupted measurments in black.
     \caption{Noise corrupted measurements (black) and state positions
     (blue) simulated with low noise (standard deviation $\sigma=\num{1e-10}$)
     using a two-dimensional DWPA model. The noise was so low that the
-    differences between measurements and state positions cannot be appreicated
+    differences between measurements and state positions cannot be appreciated
     visually.  The mean-squared error (MSE) between measurements and state
     positions was less than $\num{1e-7}$. Click on the image to view its
     interactive version.}
@@ -424,7 +425,7 @@ the noise-corrupted measurments in black.
 We next inferred velocities and accelerations from the simulated measurements
 (Figure~\ref{fig:vel_acc_low_noise}). For inference we used the Kalman filter,
 Kalman smoother and the finite difference method. For these low-noise
-simulations, all velocity and acceration estimates were very accurate.
+simulations, all velocity and acceleration estimates were very accurate.
 
 \begin{figure}
 
@@ -440,7 +441,7 @@ simulations, all velocity and acceration estimates were very accurate.
         \caption{Acceleration}
     \end{subfigure}
 
-    \caption{Estimated velocities (a) and accerlations (b) from low-noise
+    \caption{Estimated velocities (a) and accelerations (b) from low-noise
     simulations.  Estimates were obtained using the finite differences method,
     the Kalman filter and the Kalman smoother. Velocity and Acceleration
     estimates using all methods were very accurate.}
@@ -454,7 +455,7 @@ simulations, all velocity and acceration estimates were very accurate.
 We simulated measurements from the two-dimensional DWPA model with a standard
 deviation for the noise of the observations set to $\sigma=\num{1e-3}$.
 Figure~\ref{fig:simulations_medium_noise} shows the state positions in blue and
-the noise-corrupted measurments in black.
+the noise-corrupted measurements in black.
 
 \begin{figure}
 
@@ -464,7 +465,7 @@ the noise-corrupted measurments in black.
     \caption{Noise corrupted measurements (black) and state positions (blue)
     simulated with medium noise (standard deviation $\sigma=\num{1e-3}$) using
     a two-dimensional DWPA model.  The noise was still so low that the
-    differences between measurements and state positions cannot be appreicated
+    differences between measurements and state positions cannot be appreciated
     visually.  The MSE between measurements and state positions is indicated in
     the title. Click on the image to view its interactive version.}
 
@@ -492,9 +493,9 @@ acceleration were not.
         \caption{Acceleration}
     \end{subfigure}
 
-    \caption{Medium-nosise simulated
+    \caption{Medium-noise simulated
     (Figure~\ref{fig:simulations_medium_noise}) and estimated horizontal an
-    vertical velocities (a) and accerlations (b).  Estimates of velocity by all
+    vertical velocities (a) and accelerations (b).  Estimates of velocity by all
     methods were accurate. Estimates of accelerations by the Kalman filter and
     smoother were also accurate, but not those by the finite difference
     method.}
@@ -508,7 +509,7 @@ acceleration were not.
 We simulated measurements from the two-dimensional DWPA model with a standard
 deviation for the noise of the observations set to $\sigma=\num{1e-1}$.
 Figure~\ref{fig:simulations_high_noise} shows the state positions in blue and
-the noise-corrupted measurments in black.
+the noise-corrupted measurements in black.
 
 \begin{figure}
 
@@ -517,7 +518,7 @@ the noise-corrupted measurments in black.
 
     \caption{Noise corrupted measurements (black) and state positions (blue)
     simulated with high noise (standard deviation $\sigma=\num{1e-1}$) using a
-    two-dimensional DWPA model. The noise can now be appreicated visually.  The
+    two-dimensional DWPA model. The noise can now be appreciated visually.  The
     MSE between measurements and state positions is indicated in the title.
     Click on the image to view its interactive version.}
 
@@ -527,7 +528,7 @@ the noise-corrupted measurments in black.
 
 We next inferred velocities and accelerations from the simulated measurements
 (Figure~\ref{fig:vel_acc_high_noise}).  For these high-noise simulations,
-velocity and acceration estimates by the Kalman filter and smoother were
+velocity and acceleration estimates by the Kalman filter and smoother were
 accurate, but those from the finite difference method were not.
 
 \begin{figure}
@@ -544,8 +545,8 @@ accurate, but those from the finite difference method were not.
         \caption{Acceleration}
     \end{subfigure}
 
-    \caption{Low-nosise simulated (Figure~\ref{fig:simulations_low_noise}) and
-    estimated horizontal an vertical velocities (a) and accerlations (b).
+    \caption{Low-noise simulated (Figure~\ref{fig:simulations_low_noise}) and
+    estimated horizontal an vertical velocities (a) and accelerations (b).
     Estimates were obtained using the finite differences method, the Kalman
     filter and the Kalman smoother. Velocity and Acceleration estimates using
     all methods were very accurate.}
