@@ -8,7 +8,7 @@ Linear dynamical systems in Python ![lint+unitTests](https://github.com/joacorap
 
 - unit tests, run by Github actions, appear [here](https://github.com/joacorapela/lds_python/tree/master/test).
 
-- derivations of the Kalman filter matrices used for tracking appear [here](docs/trackingNotes/trackingNotes.pdf).
+- derivations of the Kalman filter matrices used for tracking appear [here](docs/tracking/tracking.pdf).
 
 More to come ...
 
