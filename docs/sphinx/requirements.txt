@@ -5,4 +5,5 @@ torch
 sphinx
 sphinx_rtd_theme
 sphinx-gallery
+plotly
 matplotlib
