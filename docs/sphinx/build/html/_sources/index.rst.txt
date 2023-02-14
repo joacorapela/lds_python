@@ -16,7 +16,7 @@ Linear Dynamical Systems's documentation
    :maxdepth: 4
    :caption: Code:
 
-   lds_functions
+   modules
 
 Indices and tables
 ==================

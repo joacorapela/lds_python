@@ -1,0 +1,378 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>inference module &#8212; Linear Dynamical Systems  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css" />
+    
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="learning module" href="learning.html" />
+    <link rel="prev" title="src" href="modules.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="learning.html" title="learning module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="modules.html" title="src"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Linear Dynamical Systems  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="modules.html" accesskey="U">src</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">inference module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-inference">
+<span id="inference-module"></span><h1>inference module<a class="headerlink" href="#module-inference" title="Permalink to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="inference.OnlineKalmanFilter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">inference.</span></span><span class="sig-name descname"><span class="pre">OnlineKalmanFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.OnlineKalmanFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class implementing the online Kalman filter algorithm for the following
+linear dynamical system:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}x_n &amp;= B\ x_{n-1} + w_n,\ \textrm{where}\ w_n\sim\mathcal{N}(w_n|0, Q)\, \textrm{and}\ x_n\in\Re^M\\y_n &amp;= Z\ x_{n-1} + v_n,\ \textrm{where}\ v_n\sim\mathcal{N}(v_n|0, R)\, \textrm{and}\ y_n\in\Re^N\\x_0&amp;\in\mathcal{N}(x_0|m_0, V_0)\end{aligned}\end{align} \]</div>
+<p>Example use:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">online_kf</span> <span class="o">=</span> <span class="n">OnlineKalmanFilter</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">m0</span><span class="p">,</span> <span class="n">V0</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
+<span class="n">x_pred</span><span class="p">,</span> <span class="n">P_pred</span> <span class="o">=</span> <span class="n">online_kf</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">ys</span><span class="p">:</span>
+    <span class="n">x_filt</span><span class="p">,</span> <span class="n">P_filt</span> <span class="o">=</span> <span class="n">online_kf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">x_pred</span><span class="p">,</span> <span class="n">P_pred</span> <span class="o">=</span> <span class="n">online_kf</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Note 1:</dt><dd><p>invocation so <cite>predict()</cite> and <cite>update(y)</cite> should alternate. That is,
+each invocation to <cite>update(y)</cite> should be preceded by an invocation to
+<cite>predict()</cite>, and each invocation to <cite>predict()</cite> (except the first one)
+should be preceded by an invoation to <cite>update(y)</cite>.</p>
+</dd>
+<dt>Note 2:</dt><dd><p>observations <span class="math notranslate nohighlight">\(y_n\)</span> should be sampled uniformly.</p>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="inference.OnlineKalmanFilter.B">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">B</span></span><a class="headerlink" href="#inference.OnlineKalmanFilter.B" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="inference.OnlineKalmanFilter.P">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">P</span></span><a class="headerlink" href="#inference.OnlineKalmanFilter.P" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="inference.OnlineKalmanFilter.Q">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Q</span></span><a class="headerlink" href="#inference.OnlineKalmanFilter.Q" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="inference.OnlineKalmanFilter.R">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">R</span></span><a class="headerlink" href="#inference.OnlineKalmanFilter.R" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="inference.OnlineKalmanFilter.V0">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">V0</span></span><a class="headerlink" href="#inference.OnlineKalmanFilter.V0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="inference.OnlineKalmanFilter.Z">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Z</span></span><a class="headerlink" href="#inference.OnlineKalmanFilter.Z" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="inference.OnlineKalmanFilter.m0">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">m0</span></span><a class="headerlink" href="#inference.OnlineKalmanFilter.m0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inference.OnlineKalmanFilter.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#inference.OnlineKalmanFilter.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predicts the next state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(state, covariance): tuple containing the predicted state vector and covariance matrix.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inference.OnlineKalmanFilter.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.OnlineKalmanFilter.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the current state and covariance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>y</strong> – observation <span class="math notranslate nohighlight">\(\in\Re^M\)</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(state, covariance): tuple containing the updated state vector and covariance matrix.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="inference.OnlineKalmanFilter.x">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">x</span></span><a class="headerlink" href="#inference.OnlineKalmanFilter.x" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="inference.filterLDS_SS_withMissingValues_np">
+<span class="sig-prename descclassname"><span class="pre">inference.</span></span><span class="sig-name descname"><span class="pre">filterLDS_SS_withMissingValues_np</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.filterLDS_SS_withMissingValues_np" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kalman filter implementation of the algorithm described in Shumway and
+Stoffer 2006.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>y: time series to be smoothed</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>y: numpy array (NxT)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>B: state transition matrix</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>B: numpy matrix (MxM)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Q: state noise covariance matrix</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Q: numpy matrix (MxM)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>m0: initial state mean</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>m0: one-dimensional numpy array (M)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>V0: initial state covariance</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>V0: numpy matrix (MxM)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Z: state to observation matrix</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Z: numpy matrix (NxM)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>R: observations covariance matrix</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>R: numpy matrix (NxN)</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>{xnn1, Vnn1, xnn, Vnn, innov, K, Sn, logLike}: xnn1 and Vnn1 (predicted means, MxT, and covariances, MxMxT), xnn and Vnn (filtered means, MxT, and covariances, MxMxT), innov (innovations, NxT), K (Kalman gain matrices, MxNxT), Sn (innovations covariance matrices, NxNxT), logLike (data loglikelihood, float).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="inference.filterLDS_SS_withMissingValues_torch">
+<span class="sig-prename descclassname"><span class="pre">inference.</span></span><span class="sig-name descname"><span class="pre">filterLDS_SS_withMissingValues_torch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.filterLDS_SS_withMissingValues_torch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kalman filter implementation of the algorithm described in Shumway and
+Stoffer 2006.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>y: time series to be smoothed</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>y: numpy array (NxT)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>B: state transition matrix</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>B: numpy matrix (MxM)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Q: state noise covariance matrix</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Q: numpy matrix (MxM)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>m0: initial state mean</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>m0: one-dimensional numpy array (M)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>V0: initial state covariance</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>V0: numpy matrix (MxM)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Z: state to observation matrix</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Z: numpy matrix (NxM)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>R: observations covariance matrix</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>R: numpy matrix (NxN)</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>{xnn1, Vnn1, xnn, Vnn, innov, K, Sn, logLike}: xnn1 and Vnn1 (predicted means, MxT, and covariances, MxMxT), xnn and Vnn (filtered means, MxT, and covariances, MxMxT), innov (innovations, NxT), K (Kalman gain matrices, MxNxT), Sn (innovations covariance matrices, NxNxT), logLike (data loglikelihood, float).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="inference.smoothLDS_SS">
+<span class="sig-prename descclassname"><span class="pre">inference.</span></span><span class="sig-name descname"><span class="pre">smoothLDS_SS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xnn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Vnn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xnn1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Vnn1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.smoothLDS_SS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kalman smoother implementation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>B: state transition matrix</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>B: numpy matrix (MxM)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>xnn: filtered means (from Kalman filter)</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>xnn: numpy array (MxT)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Vnn: filtered covariances (from Kalman filter)</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Vnn: numpy array (MxMXT)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>xnn1: predicted means (from Kalman filter)</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>xnn1: numpy array (MxT)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Vnn1: predicted covariances (from Kalman filter)</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Vnn1: numpy array (MxMXT)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>m0: initial state mean</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>m0: one-dimensional numpy array (M)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>V0: initial state covariance</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>V0: numpy matrix (MxM)</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>{xnN, VnN, Jn, x0N, V0N, J0}: xnn1 and Vnn1 (smoothed means, MxT, and covariances, MxMxT), Jn (smoothing gain matrix, MxMxT), x0N and V0N (smoothed initial state mean, M, and covariance, MxM), J0 (initial smoothing gain matrix, MxN).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="modules.html"
+                          title="previous chapter">src</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="learning.html"
+                          title="next chapter">learning module</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/inference.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="learning.html" title="learning module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="modules.html" title="src"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Linear Dynamical Systems  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="modules.html" >src</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">inference module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, Joaquin Rapela.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.2.
+    </div>
+  </body>
+</html>
