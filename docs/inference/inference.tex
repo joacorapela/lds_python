@@ -375,6 +375,8 @@ Notes:
 
 \section{Evaluation}
 
+\subsection{Simulations}
+
 We compare the accuracy of the Kalman filter and smoother with that of the
 method of finite differences, to infer velocities and accelerations of a
 simulated object following the dynamics of the Discrete Wiener Process
@@ -398,7 +400,7 @@ simulations:
 
 \noindent We simulated $N=10,000$ samples with a step size $dt=0.001$.
 
-\subsection{Lower noise ($\sigma=\num{1e-10}$)}
+\subsubsection{Lower noise ($\sigma=\num{1e-10}$)}
 
 We simulated measurements from the two-dimensional DWPA model with a standard
 deviation for the noise of the observations set to $\sigma=\num{1e-10}$.
@@ -415,8 +417,8 @@ the noise-corrupted measurements in black.
     using a two-dimensional DWPA model. The noise was so low that the
     differences between measurements and state positions cannot be appreciated
     visually.  The mean-squared error (MSE) between measurements and state
-    positions was less than $\num{1e-7}$. Click on the image to view its
-    interactive version.}
+    positions is indcated in the title.
+    Click on the image to view its interactive version.}
 
         \label{fig:simulations_low_noise}
 
@@ -444,13 +446,14 @@ simulations, all velocity and acceleration estimates were very accurate.
     \caption{Estimated velocities (a) and accelerations (b) from low-noise
     simulations.  Estimates were obtained using the finite differences method,
     the Kalman filter and the Kalman smoother. Velocity and Acceleration
-    estimates using all methods were very accurate.}
+    estimates using all methods were very accurate.
+    Click on the image to view its interactive version.}
 
     \label{fig:vel_acc_low_noise}
 
 \end{figure}
 
-\subsection{Medium noise ($\sigma=\num{1e-3}$)}
+\subsubsection{Medium noise ($\sigma=\num{1e-3}$)}
 
 We simulated measurements from the two-dimensional DWPA model with a standard
 deviation for the noise of the observations set to $\sigma=\num{1e-3}$.
@@ -493,18 +496,18 @@ acceleration were not.
         \caption{Acceleration}
     \end{subfigure}
 
-    \caption{Medium-noise simulated
-    (Figure~\ref{fig:simulations_medium_noise}) and estimated horizontal an
-    vertical velocities (a) and accelerations (b).  Estimates of velocity by all
+    \caption{Estimated velocities (a) and accelerations (b) from medium-noise
+    simulations. Estimates were obtained using the finite differences method,
+    the Kalman filter and Kalman smoother.  Estimates of velocity by all
     methods were accurate. Estimates of accelerations by the Kalman filter and
-    smoother were also accurate, but not those by the finite difference
-    method.}
+    smoother were also accurate, but not those by the finite difference method.
+    Click on the image to view its interactive version.}
 
     \label{fig:vel_acc_medium_noise}
 
 \end{figure}
 
-\subsection{Higher noise ($\sigma=\num{1e-1}$)}
+\subsubsection{Higher noise ($\sigma=\num{1e-1}$)}
 
 We simulated measurements from the two-dimensional DWPA model with a standard
 deviation for the noise of the observations set to $\sigma=\num{1e-1}$.
@@ -545,25 +548,97 @@ accurate, but those from the finite difference method were not.
         \caption{Acceleration}
     \end{subfigure}
 
-    \caption{Low-noise simulated (Figure~\ref{fig:simulations_low_noise}) and
-    estimated horizontal an vertical velocities (a) and accelerations (b).
-    Estimates were obtained using the finite differences method, the Kalman
-    filter and the Kalman smoother. Velocity and Acceleration estimates using
-    all methods were very accurate.}
+    \caption{Estimated velocities (a) and accelerations (b) from high-noise
+    simulations.  Estimates were obtained using the finite differences method,
+    the Kalman filter and the Kalman smoother. Velocity and Acceleration
+    estimates by the Kalman filter and smoother were accurate, but not those by
+    the finite differences methods. Click on the image to view its interactive
+    version.}
 
     \label{fig:vel_acc_high_noise}
 
 \end{figure}
 
-\subsection{Conclusions}
+\subsubsection{Conclusions}
 
-It is remarkable that the finite difference method for the estimation of
-velocities and accelerations breaks down when adding very little noise to the
-true measurements. As we increased the amount of noise, this break down
-happened earlier for accelerations than for velocities.
+It is remarkable that the finite difference method breaks down when adding very
+little noise to the true measurements. As we increased the amount of noise,
+this break down happened earlier for accelerations than for velocities.
 %
 The Kalman filter and smoother were robust to the amount of noise considered
 here, both for the estimation of velocities and accelerations.
+
+\subsection{Foraging mouse}
+
+Figure~\ref{fig:foraging} shows the measured and Kalman filtered and smoothed
+positions of a mouse foraging in a circular arena.
+
+\begin{figure}
+    \begin{center}
+
+        \begin{subfigure}{\textwidth}
+            \centering
+            \href{http://www.gatsby.ucl.ac.uk/~rapela/fwg/lds_repo/inference/figures/positions_smoothed_session003_start0.00_end15548.27_startPosition0_numPosition10000_pos.html}{\includegraphics[width=3in]{../../figures/positions_smoothed_session003_start0.00_end15548.27_startPosition0_numPosition10000_pos.png}}
+            \caption{Positions}
+        \end{subfigure}
+
+        \begin{subfigure}{\textwidth}
+            \centering
+            \href{http://www.gatsby.ucl.ac.uk/~rapela/fwg/lds_repo/inference/figures/positions_smoothed_session003_start0.00_end15548.27_startPosition0_numPosition10000_vel.html}{\includegraphics[width=3in]{../../figures/positions_smoothed_session003_start0.00_end15548.27_startPosition0_numPosition10000_vel.png}}
+            \caption{Velocities}
+        \end{subfigure}
+
+        \begin{subfigure}{\textwidth}
+            \centering
+            \href{http://www.gatsby.ucl.ac.uk/~rapela/fwg/lds_repo/inference/figures/positions_smoothed_session003_start0.00_end15548.27_startPosition0_numPosition10000_acc.html}{\includegraphics[width=3in]{../../figures/positions_smoothed_session003_start0.00_end15548.27_startPosition0_numPosition10000_acc.png}}
+            \caption{Accelerations}
+        \end{subfigure}
+
+
+        \caption{Kalman filtered and smoothed positions, velocities and
+        accelerations of a mouse foraging in a circular arena. Click on the
+        images to see their interactive versions.}
+
+        \label{fig:foraging}
+
+    \end{center}
+\end{figure}
+
+\subsection{Mouse running on a maze}
+
+Figure~\ref{fig:runningMaze} shows the measured and Kalman filtered and smoothed
+positions of a mouse running in a maze.
+
+\begin{figure}
+    \begin{center}
+
+        \begin{subfigure}{\textwidth}
+            \centering
+            \href{http://www.gatsby.ucl.ac.uk/~rapela/fwg/lds_repo/inference/figures/smoothed_results_fede_firstSample0_numberOfSamples10000_pos.html}{\includegraphics[width=3in]{../../figures/smoothed_results_fede_firstSample0_numberOfSamples10000_pos.png}}
+            \caption{Positions}
+        \end{subfigure}
+
+        \begin{subfigure}{\textwidth}
+            \centering
+            \href{http://www.gatsby.ucl.ac.uk/~rapela/fwg/lds_repo/inference/figures/smoothed_results_fede_firstSample0_numberOfSamples10000_vel.html}{\includegraphics[width=3in]{../../figures/smoothed_results_fede_firstSample0_numberOfSamples10000_vel.png}}
+            \caption{Velocities}
+        \end{subfigure}
+
+        \begin{subfigure}{\textwidth}
+            \centering
+            \href{http://www.gatsby.ucl.ac.uk/~rapela/fwg/lds_repo/inference/figures/smoothed_results_fede_firstSample0_numberOfSamples10000_acc.html}{\includegraphics[width=3in]{../../figures/smoothed_results_fede_firstSample0_numberOfSamples10000_acc.png}}
+            \caption{Accelerations}
+        \end{subfigure}
+
+
+        \caption{Kalman filtered and smoothed positions, velocities and
+        accelerations of a mouse running in a maze. Click on the images to see
+        their interactive versions.}
+
+        \label{fig:runningMaze}
+
+    \end{center}
+\end{figure}
 
 \bibliographystyle{apalike}
 \bibliography{machineLearning}
