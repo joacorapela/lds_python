@@ -27,6 +27,10 @@ class OnlineKalmanFilter:
             x_filt, P_filt = online_kf.update(y)
             x_pred, P_pred = online_kf.predict()
 
+    A script using `OnlineKalmanFilter` for tracking the position of a mouse
+    can be found `here
+    <https://github.com/joacorapela/lds_python/blob/master/code/scripts/doOnlineFilterFWGMouseTrajectory.py>`_
+
     Note 1:
         invocation so `predict()` and `update(y)` should alternate. That is,
         each invocation to `update(y)` should be preceded by an invocation to
