@@ -1,25 +1,22 @@
-﻿name: docs 
-
-on:
-  push:
-    branches:
-      - master
-
-# workflow_dispatch:        # Un comment line if you also want to trigger action manually
-
+﻿name: Docs
+on: [push, pull_request, workflow_dispatch]
 jobs:
-  sphinx_docs_to_gh-pages:
+    docs:
     runs-on: ubuntu-latest
-    name: docs
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Running the Sphinx to gh-pages Action
-        uses: uibcdf/action-sphinx-docs-to-gh-pages@v1.0.0
-        with:
-          branch: master
-          dir_docs: docs
-          sphinxapiopts: '--separate -o . ../'
-          sphinxapiexclude: '../*setup* ../*.ipynb'
-          sphinxopts: ''
+        - uses: actions/checkout@v2
+        - uses: actions/setup-python@v2
+        - name: Install dependencies
+        run: |
+            pip install sphinx sphinx_rtd_theme
+        - name: Sphinx build
+          run: |
+            sphinx-build doc _build
+        - name: Deploy
+          uses: peaceiris/actions-gh-pages@v3
+          if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+          with:
+            publish_branch: gh-pages
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_dir: _build/
+            force_orphan: true
