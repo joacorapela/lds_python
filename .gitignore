@@ -17,3 +17,4 @@ docs/notebooks/.ipynb_checkpoints/*
 
 docs/sphinx/build/
 data/*
+**/old
