@@ -1,4 +1,4 @@
-﻿name: Docs
+﻿name: docs
 on: [push, pull_request, workflow_dispatch]
 jobs:
   docs:
@@ -11,12 +11,12 @@ jobs:
           pip install sphinx sphinx_rtd_theme
       - name: Sphinx build
         run: |
-          sphinx-build docs/sphinx _build
+          sphinx-build docs/sphinx/source/ docs/sphinx/build/
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
         with:
           publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: _build/
+          publish_dir: docs/sphinx/build/
           force_orphan: true
