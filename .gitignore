@@ -18,3 +18,4 @@ docs/notebooks/.ipynb_checkpoints/*
 docs/sphinx/build/
 data/*
 **/old
+docs/sphinx/source/auto_examples/
