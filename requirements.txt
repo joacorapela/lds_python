@@ -1,4 +1,5 @@
 numpy
 pandas
+scipy
 plotly
 torch
