@@ -1,4 +1,4 @@
-﻿name: Sphinx docs to gh-pages
+﻿name: docs 
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 jobs:
   sphinx_docs_to_gh-pages:
     runs-on: ubuntu-latest
-    name: Sphinx docs to gh-pages
+    name: docs
     steps:
       - uses: actions/checkout@v2
         with:
