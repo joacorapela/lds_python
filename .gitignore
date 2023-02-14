@@ -14,3 +14,6 @@ checkSpelling.csh
 figures/*
 results/*
 docs/notebooks/.ipynb_checkpoints/*
+
+docs/sphinx/build/
+data/*
