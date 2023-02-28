@@ -12,8 +12,9 @@ import inference
 
 def main(argv):
     parser = argparse.ArgumentParser()
-    parser.add_argument("filtering_params_filename", type=str,
-                        help="filtering parameters filename")
+    parser.add_argument("--filtering_params_filename", type=str,
+                        help="filtering parameters filename",
+                        default="../../metadata/00000009_smoothing.ini")
     parser.add_argument("--bodypart", type=str, help="body part to track",
                         default="upper_back")
     parser.add_argument("--min_likelihood", type=float,
@@ -54,6 +55,9 @@ def main(argv):
     if len(level0_values) >1:
         raise ValueError(f"More than one level0 values in {data_filename}")
     data = df[level0_values[0]][bodypart]
+    low_like_indices = data["likelihood"] < min_likelihood
+    data.loc[low_like_indices, "x"] = np.nan
+    data.loc[low_like_indices, "y"] = np.nan
 
     y = np.row_stack((data["x"], data["y"]))
     y = y[:, first_sample:(first_sample+number_samples)]
