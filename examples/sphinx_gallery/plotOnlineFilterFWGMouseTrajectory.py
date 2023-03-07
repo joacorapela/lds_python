@@ -2,7 +2,23 @@
 Infering a mouse positions, velocities and accelerations
 ========================================================
 
+The code below infers the positions, velocities and accelerations of the mouse
+shown on the left image below, as it forages in the arena shown on the right
+image below. Click on the images to see their larger versions.
+
+.. image:: /_static/mouseOnWheel.png
+   :width: 300
+   :alt: image of mouse on wheel
+
+.. image:: /_static/foragingMouse.png
+   :width: 300
+   :alt: image of foraging mouse
+
 """
+
+#%%
+# Import packages
+# ~~~~~~~~~~~~~~~
 
 import sys
 import os
@@ -18,7 +34,10 @@ import utils
 sys.path.append("../../code/src")
 import inference
 
-# configuration variables
+#%%
+# Setup configuration variables
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 filtering_params_filename = "../../metadata/00000009_smoothing.ini"
 start_position = 0
 number_positions = 10000
@@ -28,12 +47,18 @@ color_pattern_filtered = "rgba(255,0,0,{:f})"
 cb_alpha = 0.3
 data_filename ="../../data/positions_session003_start0.00_end15548.27.csv"
 
-# get measurements
+#%%
+# Get the mouse position measurements
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 data = pd.read_csv(data_filename)
 data = data.iloc[start_position:start_position+number_positions,:]
 y = np.transpose(data[["x", "y"]].to_numpy())
 
-# get confi params
+#%%
+# Get the Kalman filter configuration parameters
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 filtering_params = configparser.ConfigParser()
 filtering_params.read(filtering_params_filename)
 pos_x0 = float(filtering_params[filtering_params_section]["pos_x0"])
@@ -53,7 +78,10 @@ if np.isnan(pos_x0):
 if np.isnan(pos_y0):
     pos_y0 = y[1, 0]
 
-# build KF matrices for traking
+#%%
+# Build the Kalman filter matrices for tracking
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 date_times = pd.to_datetime(data["time"])
 dt = (date_times.iloc[1]-date_times.iloc[0]).total_seconds()
 # Taken from the book
@@ -83,7 +111,10 @@ m0 = np.array([y[0, 0], 0, 0, y[1, 0], 0, 0], dtype=np.double)
 V0 = np.diag(np.ones(len(m0))*sqrt_diag_V0_value**2)
 Q = utils.buildQfromQt_np(Qt=Qt, sigma_ax=sigma_ax, sigma_ay=sigma_ay)
 
-# filter
+#%%
+# Apply the Kalman filter to the mouse position measurements
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 onlineKF = inference.OnlineKalmanFilter(B=B, Q=Q, m0=m0, V0=V0, Z=Z, R=R)
 filtered_means = np.empty((6, 1, y.shape[1]), dtype=np.double)
 filtered_covs = np.empty((6, 6, y.shape[1]), dtype=np.double)
@@ -92,7 +123,10 @@ for i in range(y.shape[1]):
     filtered_means[:, 0, i], filtered_covs[:, :, i] = \
         onlineKF.update(y=y[:, i])
 
-# plot positions
+#%%
+# Plot the filtered positions with their 95% confidence bands
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 time = (pd.to_datetime(data["time"]) - pd.to_datetime(data["time"][0])).dt.total_seconds().to_numpy()
 filter_mean_x = filtered_means[0, 0, :]
 filter_mean_y = filtered_means[3, 0, :]
