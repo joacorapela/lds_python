@@ -77,9 +77,9 @@ def scipy_optimize_SS_tracking_DWPA_fullV0(y, B, sigma_a0, Qt, Z, diag_R_0,
     import pdb; pdb.set_trace()
 
 
-def scipy_optim_SS_tracking_DWPA_diagV0(y, B, sigma_ax0, sigma_ay0, Qt, Z,
-                                        sqrt_diag_R_0, m0_0, sqrt_diag_V0_0,
-                                        max_iter=50, disp=True):
+def scipy_optimize_SS_tracking_DWPA_diagV0(y, B, sigma_ax0, sigma_ay0, Qt, Z,
+                                           sqrt_diag_R_0, m0_0, sqrt_diag_V0_0,
+                                           max_iter=50, disp=True):
 
     def get_coefs_from_params(sigma_ax, sigma_ay, sqrt_diag_R, m0,
                               sqrt_diag_V0):
@@ -239,20 +239,19 @@ def torch_optimize_SS_tracking_DWPA_diagV0(y, B, sigma_ax0, sigma_ay0, Qt, Z,
 def em_SS_tracking_DWPA(y, B, sigma_a0, Qt, Z, R_0, m0_0, V0_0,
                         vars_to_estimate={"sigma_a": True, "R": True,
                                           "m0": True, "V0": True},
-                        max_iter=50):
+                        max_iter=50, regularization=1e-5):
     sigma_a = sigma_a0
     R = R_0
     m0 = m0_0
     V0 = V0_0
-    Qt_inv = np.linalg.inv(Qt)
-    vec_Qt_inv = Qt_inv.flatten()
 
+    Qt_inv = np.linalg.inv(Qt)
     M = B.shape[0]
     N = y.shape[1]
     log_like = np.empty(max_iter)
     for iter in range(max_iter):
         # E step
-        kf = inference.filterLDS_SS_withMissingValues(y=y, B=B, Q=sigma_a**2*Qt,
+        kf = inference.filterLDS_SS_withMissingValues_np(y=y, B=B, Q=sigma_a**2*Qt,
                                                       m0=m0, V0=V0, Z=Z, R=R)
         print("LogLike[{:04d}]={:f}".format(iter, kf["logLike"].item()))
         print("sigma_a={:f}".format(sigma_a))
@@ -282,27 +281,19 @@ def em_SS_tracking_DWPA(y, B, sigma_a0, Qt, Z, R_0, m0_0, V0_0,
                       ks["VnN"][:, :, i-1]
 
             # sigma_a
-            aux1 = S11 - S10 @ B.T - B @ S10.T + B @ S00 @ B.T
-            aux2 = Qt_inv @ aux1
-            aux3 = np.trace(aux2)
-            assert(aux3>0)
-            aux4 = math.sqrt(aux3/(N*M))
-
-            tmp = (S11 - S10 @ B.T - B @ S10.T + B @ S00 @ B.T).flatten()
-            dot_prod = np.dot(vec_Qt_inv, tmp)
-            assert(dot_prod>0)
-
-            sigma_a = math.sqrt(dot_prod/(N*M))
-
-            assert(math.abs(sigma_a-aux4)<1e-6)
-            import pdb; pdb.set_trace()
+            W = S11 - S10 @ B.T - B @ S10.T + B @ S00 @ B.T
+            # U = (np.linalg.solve(Qt.T, W.T)).T
+            U = W @ Qt_inv
+            K = np.trace(U)
+            # assert(K>0)
+            sigma_a = math.sqrt(K/((N-1)*M))
 
         # R
         if vars_to_estimate["R"]:
-            u = y[:, 0] - Z @ ks["xnN"][:, :, 0]
+            u = np.expand_dims(y[:, 0], 1) - Z @ ks["xnN"][:, :, 0]
             R = u @ u.T + Z @ ks["VnN"][:, :, 0] @ Z.T
             for i in range(1, N):
-                u = y[:, i] - Z @ ks["xnN"][:, :, i]
+                u = np.expand_dims(y[:, i], 1) - Z @ ks["xnN"][:, :, i]
                 R = R + u @ u.T + Z @ ks["VnN"][:, :, i] @ Z.T
             R = R/N
 
