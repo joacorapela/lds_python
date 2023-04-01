@@ -8,7 +8,15 @@ checkSpelling.csh
 *.out
 *.bbl
 *.blg
+*.fff
+*.lof
 *__pycache__*
 figures/*
 results/*
 docs/notebooks/.ipynb_checkpoints/*
+
+docs/sphinx/build/
+data/*
+**/old
+docs/sphinx/source/auto_examples/
+**/.mypy_cache/*

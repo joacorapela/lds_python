@@ -1,6 +1,6 @@
 Overview
 ========
 
-This documentation describes a Python implementation of linear dynamical systems with external inputs.
+This documentation describes the Python implementation of linear dynamical systems provided `here <https://github.com/joacorapela/lds_python>`_.
 
-Note: this is a work in progress. It currently only includes inference, but in the future we will add learning. A far more complete R implementation can be found `here <https://github.com/joacorapela/kalmanFilter>`_.
+Note: this is a work in progress. A far more complete R implementation can be found `here <https://github.com/joacorapela/kalmanFilter>`_.
