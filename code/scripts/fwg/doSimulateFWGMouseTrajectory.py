@@ -16,10 +16,10 @@ def main(argv):
                         help="simulation metadata number", type=int)
     parser.add_argument("--no_plot", action="store_true")
     parser.add_argument("--simMeta_filename_pattern", type=str,
-                        default="../../metadata/{:08d}_simulation.ini",
+                        default="../../../metadata/{:08d}_simulation.ini",
                         help="simulation metadata filename pattern")
     parser.add_argument("--simRes_filename_pattern", type=str,
-                        default="../../results/{:08d}_simulation.{:s}",
+                        default="../../../results/{:08d}_simulation.{:s}",
                         help="simulation results filename pattern")
     args = parser.parse_args()
 
