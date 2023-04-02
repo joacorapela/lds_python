@@ -6,7 +6,7 @@ import random
 import numpy as np
 import plotly.graph_objs as go
 
-sys.path.append("../src")
+sys.path.append("../../src")
 import simulation
 
 
@@ -58,14 +58,14 @@ def main(argv):
     Z = np.array([[1, 0, 0, 0, 0, 0],
                   [0, 0, 0, 1, 0, 0]], dtype=np.double)
     # Eq. 6.3.3-4
-    Qt = np.array([[dt**4/4, dt**3/2, dt**2/2, 0, 0, 0],
+    Qe = np.array([[dt**4/4, dt**3/2, dt**2/2, 0, 0, 0],
                    [dt**3/2, dt**2,   dt,      0, 0, 0],
                    [dt**2/2, dt,      1,       0, 0, 0],
                    [0, 0, 0, dt**4/4, dt**3/2, dt**2/2],
                    [0, 0, 0, dt**3/2, dt**2,   dt],
                    [0, 0, 0, dt**2/2, dt,      1]],
                   dtype=np.double)
-    Q = Qt*sigma_a**2
+    Q = Qe*sigma_a**2
     R = np.diag([sigma_x**2, sigma_y**2])
     m0 = np.array([pos_x0, vel_x0, ace_x0, pos_y0, vel_y0, ace_y0],
                   dtype=np.double)
@@ -93,7 +93,7 @@ def main(argv):
     with open(simRes_metadata_filename, "w") as f:
         simResConfig.write(f)
     print("Saving results to {:s}".format(simRes_results_filename))
-    np.savez(simRes_results_filename, dt=dt, x0=x0, x=x, y=y, B=B, Z=Z, Qt=Qt,
+    np.savez(simRes_results_filename, dt=dt, x0=x0, x=x, y=y, B=B, Z=Z, Qe=Qe,
              sigma_a=sigma_a, R=R, m0=m0, V0=V0)
 
     if not no_plot:
@@ -102,7 +102,7 @@ def main(argv):
                              showlegend=True, name="x")
         trace_y = go.Scatter(x=y[0, :], y=y[1, :], mode="lines+markers",
                              showlegend=True, name="y", opacity=0.3)
-        trace_start = go.Scatter(x=[x0[0]], y=[x0[1]], mode="markers",
+        trace_start = go.Scatter(x=[x0[0]], y=[x0[3]], mode="markers",
                                  text="x0", marker={"size": 7},
                                  showlegend=False)
         fig.add_trace(trace_x)
