@@ -29,7 +29,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
-sys.path.append("../../code/scripts")
+sys.path.append("../../code/scripts/simulated")
 import utils
 sys.path.append("../../code/src")
 import inference
