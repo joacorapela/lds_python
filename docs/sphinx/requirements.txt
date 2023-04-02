@@ -1,5 +1,9 @@
 numpy
 pandas
 scipy
-plotly
 torch
+plotly
+sphinx
+sphinx_rtd_theme
+sphinx-gallery
+matplotlib
