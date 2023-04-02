@@ -236,7 +236,7 @@ def torch_optimize_SS_tracking_DWPA_diagV0(y, B, sigma_ax0, sigma_ay0, Qt, Z,
     return answer
 
 
-def em_SS_tracking_DWPA(y, B, sigma_a0, Qt, Z, R_0, m0_0, V0_0,
+def em_SS_tracking_DWPA(y, B, sigma_a0, Qe, Z, R_0, m0_0, V0_0,
                         vars_to_estimate={"sigma_a": True, "R": True,
                                           "m0": True, "V0": True},
                         max_iter=50, regularization=1e-5):
@@ -245,16 +245,19 @@ def em_SS_tracking_DWPA(y, B, sigma_a0, Qt, Z, R_0, m0_0, V0_0,
     m0 = m0_0
     V0 = V0_0
 
-    Qt_inv = np.linalg.inv(Qt)
+    Qe_inv = np.linalg.pinv(Qe)
     M = B.shape[0]
     N = y.shape[1]
     log_like = np.empty(max_iter)
     for iter in range(max_iter):
         # E step
-        kf = inference.filterLDS_SS_withMissingValues_np(y=y, B=B, Q=sigma_a**2*Qt,
-                                                      m0=m0, V0=V0, Z=Z, R=R)
+        Q = Qe * sigma_a**2,
+        kf = inference.filterLDS_SS_withMissingValues_np(y=y, B=B,
+                                                         Q=Q, m0=m0, V0=V0,
+                                                         Z=Z, R=R)
         print("LogLike[{:04d}]={:f}".format(iter, kf["logLike"].item()))
         print("sigma_a={:f}".format(sigma_a))
+        breakpoint()
         print("R:")
         print(R)
         print("m0:")
@@ -282,11 +285,11 @@ def em_SS_tracking_DWPA(y, B, sigma_a0, Qt, Z, R_0, m0_0, V0_0,
 
             # sigma_a
             W = S11 - S10 @ B.T - B @ S10.T + B @ S00 @ B.T
-            # U = (np.linalg.solve(Qt.T, W.T)).T
-            U = W @ Qt_inv
+            # U = (np.linalg.solve(Qe.T, W.T)).T
+            U = W @ Qe_inv
             K = np.trace(U)
             # assert(K>0)
-            sigma_a = math.sqrt(K/((N-1)*M))
+            sigma_a = math.sqrt(K/(N*M))
 
         # R
         if vars_to_estimate["R"]:
@@ -304,6 +307,80 @@ def em_SS_tracking_DWPA(y, B, sigma_a0, Qt, Z, R_0, m0_0, V0_0,
             V0 = ks["V0N"]
 
     return R, m0, V0, sigma_a
+
+
+def em_SS_tracking_CWPA(y, B, noise_intensity0, Qe, Z, R_0, m0_0, V0_0,
+                        vars_to_estimate={"noise_intensity": True, "R": True,
+                                          "m0": True, "V0": True},
+                        max_iter=50, regularization=1e-5):
+    noise_intensity = noise_intensity0
+    R = R_0
+    m0 = m0_0
+    V0 = V0_0
+
+    Qe_inv = np.linalg.pinv(Qe)
+    M = B.shape[0]
+    N = y.shape[1]
+    log_like = np.empty(max_iter)
+    for iter in range(max_iter):
+        # E step
+        Q = Qe * noise_intensity
+        kf = inference.filterLDS_SS_withMissingValues_np(y=y, B=B,
+                                                         Q=Q, m0=m0, V0=V0,
+                                                         Z=Z, R=R)
+        print("LogLike[{:04d}]={:f}".format(iter, kf["logLike"].item()))
+        print("noise_intensity={:f}".format(noise_intensity))
+        breakpoint()
+        print("R:")
+        print(R)
+        print("m0:")
+        print(m0)
+        print("V0:")
+        print(V0)
+        log_like[iter] = kf["logLike"]
+        ks = inference.smoothLDS_SS(B=B, xnn=kf["xnn"], Vnn=kf["Vnn"],
+                                    xnn1=kf["xnn1"], Vnn1=kf["Vnn1"],
+                                    m0=m0, V0=V0)
+        # M step
+        if vars_to_estimate["noise_intensity"]:
+            Vnn1N = lag1CovSmootherLDS_SS(Z=Z, KN=kf["KN"], B=B, Vnn=kf["Vnn"],
+                                          Jn=ks["Jn"], J0=ks["J0"])
+            S11 = ks["xnN"][:,:,0] @ ks["xnN"][:,:,0].T + ks["VnN"][:,:,0]
+            S10 = ks["xnN"][:,:,0] @ ks["x0N"].T + Vnn1N[:,:,0]
+            S00 = ks["x0N"] @ ks["x0N"].T + ks["V0N"]
+            for i in range(1, N):
+                S11 = S11 + ks["xnN"][:, :, i] @ ks["xnN"][:, :, i].T + \
+                      ks["VnN"][:, :, i]
+                S10 = S10 + ks["xnN"][:, :, i] @ ks["xnN"][:, :, i-1].T + \
+                      Vnn1N[:, :, i]
+                S00 = S00 + ks["xnN"][:, :, i-1] @ ks["xnN"][:, :, i-1].T + \
+                      ks["VnN"][:, :, i-1]
+
+            # noise_intensity
+            W = S11 - S10 @ B.T - B @ S10.T + B @ S00 @ B.T
+            # U = (np.linalg.solve(Qe.T, W.T)).T
+            U = W @ Qe_inv
+            K = np.trace(U)
+            # assert(K>0)
+            noise_intensity = K/(N*M)
+
+        # R
+        if vars_to_estimate["R"]:
+            u = np.expand_dims(y[:, 0], 1) - Z @ ks["xnN"][:, :, 0]
+            R = u @ u.T + Z @ ks["VnN"][:, :, 0] @ Z.T
+            for i in range(1, N):
+                u = np.expand_dims(y[:, i], 1) - Z @ ks["xnN"][:, :, i]
+                R = R + u @ u.T + Z @ ks["VnN"][:, :, i] @ Z.T
+            R = R/N
+
+        # m0, V0
+        if vars_to_estimate["m0"]:
+            m0 = ks["x0N"]
+        if vars_to_estimate["V0"]:
+            V0 = ks["V0N"]
+        breakpoint()
+
+    return R, m0, V0, noise_intensity
 
 def lag1CovSmootherLDS_SS(Z, KN, B, Vnn, Jn, J0):
     M = KN.shape[0]
