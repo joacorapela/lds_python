@@ -43,7 +43,7 @@ sphinx_gallery_conf = {
         'repo': 'https://github.com/joacorapela/lds_python',
         'branch': 'gh-pages', # Can be any branch, tag, or commit hash. Use a branch that hosts your docs.
         'binderhub_url': 'https://mybinder.org/v2/gh/joacorapela/lds_python/master', # Any URL of a binderhub deployment. Must be full URL (e.g. https://mybinder.org).
-        'dependencies': 'requirements.txt',
+        'dependencies': '../requirements.txt',
         # Optional keys
         # 'filepath_prefix': '<prefix>' # A prefix to prepend to any filepaths in Binder links.
         # 'notebooks_dir': '<notebooks-directory-name>' # Jupyter notebooks for Binder will be copied to this directory (relative to built documentation root).
