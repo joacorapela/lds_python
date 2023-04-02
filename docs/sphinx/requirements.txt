@@ -1,5 +1,5 @@
+numpy
+pandas
+scipy
 plotly
-sphinx
-sphinx_rtd_theme
-sphinx-gallery
-matplotlib
+torch
