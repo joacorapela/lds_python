@@ -29,16 +29,12 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
-sys.path.append("../../code/scripts/simulated")
-import utils
-sys.path.append("../../code/src")
-import inference
+import lds.inference
 
 #%%
 # Setup configuration variables
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-filtering_params_filename = "../../metadata/00000009_smoothing.ini"
 start_position = 0
 number_positions = 10000
 filtering_params_section = "params"
@@ -59,24 +55,16 @@ y = np.transpose(data[["x", "y"]].to_numpy())
 # Get the Kalman filter configuration parameters
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-filtering_params = configparser.ConfigParser()
-filtering_params.read(filtering_params_filename)
-pos_x0 = float(filtering_params[filtering_params_section]["pos_x0"])
-pos_y0 = float(filtering_params[filtering_params_section]["pos_y0"])
-vel_x0 = float(filtering_params[filtering_params_section]["vel_x0"])
-vel_y0 = float(filtering_params[filtering_params_section]["vel_x0"])
-acc_x0 = float(filtering_params[filtering_params_section]["acc_x0"])
-acc_y0 = float(filtering_params[filtering_params_section]["acc_x0"])
-sigma_ax = float(filtering_params[filtering_params_section]["sigma_ax"])
-sigma_ay = float(filtering_params[filtering_params_section]["sigma_ay"])
-sigma_x = float(filtering_params[filtering_params_section]["sigma_x"])
-sigma_y = float(filtering_params[filtering_params_section]["sigma_y"])
-sqrt_diag_V0_value = float(filtering_params[filtering_params_section]["sqrt_diag_V0_value"])
-
-if np.isnan(pos_x0):
-    pos_x0 = y[0, 0]
-if np.isnan(pos_y0):
-    pos_y0 = y[1, 0]
+pos_x0 = y[0, 0]
+pos_y0 = y[0, 0]
+vel_x0 = 0.0
+vel_y0 = 0.0
+acc_x0 = 0.0
+acc_y0 = 0.0
+sigma_a = 1e4
+sigma_x = 1e2
+sigma_y = 1e2
+sqrt_diag_V0_value = 1e-3
 
 #%%
 # Build the Kalman filter matrices for tracking
@@ -109,13 +97,13 @@ Qt = np.array([[dt**4/4, dt**3/2, dt**2/2, 0, 0, 0],
 R = np.diag([sigma_x**2, sigma_y**2])
 m0 = np.array([y[0, 0], 0, 0, y[1, 0], 0, 0], dtype=np.double)
 V0 = np.diag(np.ones(len(m0))*sqrt_diag_V0_value**2)
-Q = utils.buildQfromQt_np(Qt=Qt, sigma_ax=sigma_ax, sigma_ay=sigma_ay)
+Q = Qt*sigma_a
 
 #%%
 # Apply the Kalman filter to the mouse position measurements
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-onlineKF = inference.OnlineKalmanFilter(B=B, Q=Q, m0=m0, V0=V0, Z=Z, R=R)
+onlineKF = lds.inference.OnlineKalmanFilter(B=B, Q=Q, m0=m0, V0=V0, Z=Z, R=R)
 filtered_means = np.empty((6, 1, y.shape[1]), dtype=np.double)
 filtered_covs = np.empty((6, 6, y.shape[1]), dtype=np.double)
 for i in range(y.shape[1]):
