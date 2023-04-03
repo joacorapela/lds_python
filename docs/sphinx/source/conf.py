@@ -39,10 +39,10 @@ sphinx_gallery_conf = {
     'gallery_dirs': 'auto_examples',  # path to where to save gallery generated output
     'binder': {
         # Required keys
-        'org': '',
-        'repo': 'https://github.com/joacorapela/lds_python',
+        'org': 'gh',
+        'repo': 'lds_python',
         'branch': 'gh-pages', # Can be any branch, tag, or commit hash. Use a branch that hosts your docs.
-        'binderhub_url': 'https://mybinder.org/v2/gh/joacorapela/lds_python/gh-pages', # Any URL of a binderhub deployment. Must be full URL (e.g. https://mybinder.org).
+        'binderhub_url': 'https://mybinder.org/', # Any URL of a binderhub deployment. Must be full URL (e.g. https://mybinder.org).
         'dependencies': '../requirements.txt',
         # Optional keys
         # 'filepath_prefix': '<prefix>' # A prefix to prepend to any filepaths in Binder links.
