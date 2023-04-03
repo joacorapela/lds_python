@@ -3,4 +3,3 @@ pandas
 scipy
 plotly
 torch
-lds_python
