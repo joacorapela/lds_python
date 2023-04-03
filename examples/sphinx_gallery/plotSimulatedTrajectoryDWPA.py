@@ -16,7 +16,7 @@ import sys
 import numpy as np
 import plotly.graph_objs as go
 
-import lds.simulation
+import lds_python.simulation
 
 
 #%%
