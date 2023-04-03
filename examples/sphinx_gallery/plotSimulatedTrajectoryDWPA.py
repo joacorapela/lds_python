@@ -16,8 +16,7 @@ import sys
 import numpy as np
 import plotly.graph_objs as go
 
-sys.path.append("../../code/src")
-import simulation
+import lds.simulation
 
 
 #%%
@@ -71,11 +70,11 @@ V0 = np.diag(np.ones(len(m0))*sqrt_diag_V0_value**2)
 #%%
 # Sample from the LDS
 # ~~~~~~~~~~~~~~~~~~~
-# View source code of `simulation.simulateLDS
+# View source code of `lds.simulation.simulateLDS
 # <https://joacorapela.github.io/lds_python/_modules/simulation.html#simulateLDS>`_
 
-x0, x, y = simulation.simulateLDS(N=num_pos, B=B, Q=Q, Z=Z, R=R,
-                                  m0=m0, V0=V0)
+x0, x, y = lds.simulation.simulateLDS(N=num_pos, B=B, Q=Q, Z=Z, R=R,
+                                      m0=m0, V0=V0)
 
 #%%
 # Plot state positions and measurements
