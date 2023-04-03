@@ -70,10 +70,10 @@ V0 = np.diag(np.ones(len(m0))*sqrt_diag_V0_value**2)
 #%%
 # Sample from the LDS
 # ~~~~~~~~~~~~~~~~~~~
-# View source code of `lds.simulation.simulateLDS
+# View source code of `lds._pythonsimulation.simulateLDS
 # <https://joacorapela.github.io/lds_python/_modules/simulation.html#simulateLDS>`_
 
-x0, x, y = lds.simulation.simulateLDS(N=num_pos, B=B, Q=Q, Z=Z, R=R,
+x0, x, y = lds_python.simulation.simulateLDS(N=num_pos, B=B, Q=Q, Z=Z, R=R,
                                       m0=m0, V0=V0)
 
 #%%

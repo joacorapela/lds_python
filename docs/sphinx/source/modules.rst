@@ -4,4 +4,4 @@ src
 .. toctree::
    :maxdepth: 4
 
-   lds
+   lds_python

@@ -103,7 +103,7 @@ Q = Qt*sigma_a
 # Apply the Kalman filter to the mouse position measurements
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-onlineKF = lds.inference.OnlineKalmanFilter(B=B, Q=Q, m0=m0, V0=V0, Z=Z, R=R)
+onlineKF = lds_python.inference.OnlineKalmanFilter(B=B, Q=Q, m0=m0, V0=V0, Z=Z, R=R)
 filtered_means = np.empty((6, 1, y.shape[1]), dtype=np.double)
 filtered_covs = np.empty((6, 6, y.shape[1]), dtype=np.double)
 for i in range(y.shape[1]):
