@@ -121,48 +121,6 @@ Gatsby Computational Neuroscience Unit\\University College London % Your institu
 \section{Introduction}
 
 \begin{frame}
-    \frametitle{Linear dynamical system lecture structure}
-
-    \begin{enumerate}
-
-        \item Introduction and motivation
-
-        \item \textcolor{blue}{Inference}
-
-            \begin{itemize}
-
-                \item \textcolor{blue}{Kalman filter}
-
-                \item \textcolor{blue}{Kalman smoother}
-
-                \item \textcolor{blue}{Derviation of the Kalman filter equations}
-
-            \end{itemize}
-
-        \item Learning
-
-            \begin{itemize}
-
-                \item gradient ascent
-
-                \item EM
-
-            \end{itemize}
-
-    \end{enumerate}
-\end{frame}
-
-\note[itemize] {
-
-\item I will start the lecture with motivations about why LDSs are relevant to
-    machine learning and highlight a few applications to biomedicine and
-    healthcare. I will then cover inference and then learning in LDS.
-
-\item In interest of time, today I will focus on the inference section.
-
-}
-
-\begin{frame}
     \frametitle{Linear dynamical systems}
 
     \begin{tikzpicture}[remember picture,overlay]
@@ -290,18 +248,18 @@ Gatsby Computational Neuroscience Unit\\University College London % Your institu
             acceleration.
     \end{enumerate}
 
-%     \begin{center}
-%         \includemedia[
-%             width=4.5cm,height=4.5cm,
-%             activate=pageopen,
-%             deactivate=onclick,
-%             addresource=videos/FrameTop_2021-06-09T08-00-00_ss28_t60.avi,
-%             flashvars={
-%                 source=videos/FrameTop_2021-06-09T08-00-00_ss28_t60.avi
-%                 &autoPlay=false
-%             }
-%             ]{}{VPlayer.swf}
-%     \end{center}
+    \begin{center}
+        \includemedia[
+            width=4.5cm,height=4.5cm,
+            activate=pageopen,
+            deactivate=onclick,
+            addresource=videos/FrameTop_2021-06-09T08-00-00_ss28_t60.avi,
+            flashvars={
+                source=videos/FrameTop_2021-06-09T08-00-00_ss28_t60.avi
+                &autoPlay=false
+            }
+        ]{}{VPlayer.swf}
+    \end{center}
     \hfill\tiny joint work with Foraging Working Group
 \end{frame}
 
@@ -674,6 +632,7 @@ The Kalman filtering algorithm estimates the prediction and filtering means and
     \begin{center}
         \includegraphics[width=3in]{figures/filtered_pos.png}
     \end{center}
+    \hfill\href{}{code}
 \end{frame}
 
 \subsection{Kalman smoother}
@@ -735,6 +694,7 @@ The Kalman smoother algorithm estimates the smoothed means and
     \begin{center}
         \includegraphics[width=3in]{figures/smoothed_pos.png}
     \end{center}
+    \hfill\href{}{code}
 \end{frame}
 
 \begin{frame}
@@ -762,21 +722,7 @@ The Kalman smoother algorithm estimates the smoothed means and
 
 \end{frame}
 
-\section{Forecasting}
-
-\section{Learning}
-
-\subsection{Maximum likelihood by gradient ascent}
-
-\subsection{Maximum likelihood by expectation maximization}
-
-\section{Extensions}
-
-\begin{frame}
-\Huge{\centerline{Thanks}}
-\end{frame}
-
-\section{Appendix}
+\section{Proofs}
 
 \subsection{Derivation of Kalman filter equations}
 
@@ -1054,6 +1000,10 @@ Notes:
     \end{align*}
     \end{proof}
     \normalsize
+\end{frame}
+
+\begin{frame}
+\Huge{\centerline{Thanks}}
 \end{frame}
 
 \begin{frame}
