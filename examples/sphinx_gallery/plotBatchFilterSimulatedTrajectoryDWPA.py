@@ -199,8 +199,6 @@ def get_fig_kinematics_vs_time(
                      )
     return fig
 
-N = y.shape[1]
-
 #%%
 # Plot true, measured and filtered positions (with 95% confidence band)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
