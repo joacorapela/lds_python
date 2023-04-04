@@ -23,7 +23,7 @@ import utils
 # Load simulated trajectory
 # ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-simRes_filename = "../../results/lds_simulation.npz"
+simRes_filename = "./results/lds_simulation.npz"
 simRes = np.load(simRes_filename)
 
 y = simRes["y"]
