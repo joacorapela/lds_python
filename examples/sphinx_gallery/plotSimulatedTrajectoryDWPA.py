@@ -98,7 +98,7 @@ trace_start = go.Scatter(x=[x0[0]], y=[x0[3]], mode="markers",
 fig.add_trace(trace_x)
 fig.add_trace(trace_y)
 fig.add_trace(trace_start)
-fig_filename_pattern = "../../figures/simulated_pos.{:s}"
-fig.write_image(fig_filename_pattern.format("png"))
-fig.write_html(fig_filename_pattern.format("html"))
+# fig_filename_pattern = "../../figures/simulated_pos.{:s}"
+# fig.write_image(fig_filename_pattern.format("png"))
+# fig.write_html(fig_filename_pattern.format("html"))
 fig
