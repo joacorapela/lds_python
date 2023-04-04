@@ -100,9 +100,9 @@ fig = utils.get_fig_kinematics_vs_time(
     color_true=color_true, color_measured=color_measured,
     color_estimated_pattern=color_smoothed_pattern,
     xlabel="Time (sec)", ylabel="Position (pixels)")
-fig_filename_pattern = "../../figures/smoothed_pos.{:s}"
-fig.write_image(fig_filename_pattern.format("png"))
-fig.write_html(fig_filename_pattern.format("html"))
+# fig_filename_pattern = "../../figures/smoothed_pos.{:s}"
+# fig.write_image(fig_filename_pattern.format("png"))
+# fig.write_html(fig_filename_pattern.format("html"))
 fig
 
 #%%
@@ -134,9 +134,9 @@ fig = utils.get_fig_kinematics_vs_time(
     color_true=color_true, color_measured=color_measured,
     color_estimated_pattern=color_smoothed_pattern,
     xlabel="Time (sec)", ylabel="Velocity (pixels/sec)")
-fig_filename_pattern = "../../figures/smoothed_vel.{:s}"
-fig.write_image(fig_filename_pattern.format("png"))
-fig.write_html(fig_filename_pattern.format("html"))
+# fig_filename_pattern = "../../figures/smoothed_vel.{:s}"
+# fig.write_image(fig_filename_pattern.format("png"))
+# fig.write_html(fig_filename_pattern.format("html"))
 fig
 
 #%%
@@ -168,8 +168,8 @@ fig = utils.get_fig_kinematics_vs_time(
     color_true=color_true, color_measured=color_measured,
     color_estimated_pattern=color_smoothed_pattern,
     xlabel="Time (sec)", ylabel="Acceleration (pixels/sec^2)")
-fig_filename_pattern = "../../figures/smoothed_acc.{:s}"
-fig.write_image(fig_filename_pattern.format("png"))
-fig.write_html(fig_filename_pattern.format("html"))
+# fig_filename_pattern = "../../figures/smoothed_acc.{:s}"
+# fig.write_image(fig_filename_pattern.format("png"))
+# fig.write_html(fig_filename_pattern.format("html"))
 fig
 
