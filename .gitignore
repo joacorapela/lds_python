@@ -24,3 +24,5 @@ data/*
 **/old
 docs/sphinx/source/auto_examples/
 **/.mypy_cache/*
+dist/*
+*.egg-info
