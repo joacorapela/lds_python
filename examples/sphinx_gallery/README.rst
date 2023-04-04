@@ -1,2 +1,2 @@
-Demo scripts for the online Kalman filter
-=========================================
+Demo scripts
+============
