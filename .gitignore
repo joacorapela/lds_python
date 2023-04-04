@@ -13,6 +13,7 @@ checkSpelling.csh
 *__pycache__*
 figures/*
 results/*
+!results/lds_simulation.npz
 docs/notebooks/.ipynb_checkpoints/*
 docs/lectures/neuroinformatics/2023/*
 !docs/lectures/neuroinformatics/2023/ldsForNeuro.tex
