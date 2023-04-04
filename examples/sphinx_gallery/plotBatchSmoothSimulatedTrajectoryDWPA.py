@@ -94,7 +94,7 @@ filterRes = lds_python.inference.filterLDS_SS_withMissingValues_np(
 # <https://joacorapela.github.io/lds_python/_modules/lds_python/inference.html#smoothLDS_SS>`_
 
 smoothRes = lds_python.inference.smoothLDS_SS(
-    B=simRes["B"], xnn=filterRes["xnn"], Vnn=filterRes["Vnn"],
+    B=B, xnn=filterRes["xnn"], Vnn=filterRes["Vnn"],
     xnn1=filterRes["xnn1"], Vnn1=filterRes["Vnn1"], m0=m0, V0=V0)
 
 #%%
