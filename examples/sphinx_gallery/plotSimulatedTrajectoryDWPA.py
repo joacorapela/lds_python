@@ -12,7 +12,7 @@ model.
 # Import packages
 # ~~~~~~~~~~~~~~~
 
-import sys
+import os.path
 import numpy as np
 import plotly.graph_objs as go
 
@@ -79,7 +79,11 @@ x0, x, y = lds_python.simulation.simulateLDS(N=num_pos, B=B, Q=Q, Z=Z, R=R,
 #%%
 # Save results
 # ~~~~~~~~~~~~
-simRes_filename = "../../results/lds_simulation.npz"
+simRes_filename = "./results/lds_simulation.npz"
+simRes_dirname = os.path.dirname(simRes_filename)
+if not os.path.exists(simRes_dirname):
+    print(f"Creating directory {simRes_dirname}")
+    os.mkdir(simRes_dirname)
 print("Saving results to {:s}".format(simRes_filename))
 np.savez(simRes_filename, dt=dt, x0=x0, x=x, y=y, B=B, Z=Z, Qe=Qe,
          sigma_a=sigma_a, R=R, m0=m0, V0=V0)
