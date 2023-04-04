@@ -3,7 +3,7 @@
 Offline smoothing of a simulated mouse trajectory
 =================================================
 
-The code below performs online Kalman filtering of a simulated mouse
+The code below performs online Kalman smoothing of a simulated mouse
 trajectory.
 
 """
