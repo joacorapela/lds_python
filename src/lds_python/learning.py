@@ -4,8 +4,8 @@ import numpy as np
 import scipy.optimize
 import torch
 
-import utils
-import inference
+from . import utils
+from . import inference
 
 iteration = 0
 
