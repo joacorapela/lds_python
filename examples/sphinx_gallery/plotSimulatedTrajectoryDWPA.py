@@ -74,7 +74,15 @@ V0 = np.diag(np.ones(len(m0))*sqrt_diag_V0_value**2)
 # <https://joacorapela.github.io/lds_python/_modules/lds_python/simulation.html#simulateLDS>`_
 
 x0, x, y = lds_python.simulation.simulateLDS(N=num_pos, B=B, Q=Q, Z=Z, R=R,
-                                      m0=m0, V0=V0)
+                                             m0=m0, V0=V0)
+
+#%%
+# Save results
+# ~~~~~~~~~~~~
+simRes_filename = "../../results/lds_simulation.npz"
+print("Saving results to {:s}".format(simRes_filename))
+np.savez(simRes_filename, dt=dt, x0=x0, x=x, y=y, B=B, Z=Z, Qe=Qe,
+         sigma_a=sigma_a, R=R, m0=m0, V0=V0)
 
 #%%
 # Plot state positions and measurements
@@ -90,4 +98,7 @@ trace_start = go.Scatter(x=[x0[0]], y=[x0[3]], mode="markers",
 fig.add_trace(trace_x)
 fig.add_trace(trace_y)
 fig.add_trace(trace_start)
+fig_filename_pattern = "../../figures/simulated_pos.{:s}"
+fig.write_image(fig_filename_pattern.format("png"))
+fig.write_html(fig_filename_pattern.format("html"))
 fig
