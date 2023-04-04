@@ -15,6 +15,7 @@ trajectory.
 import numpy as np
 import plotly.graph_objects as go
 
+import lds_python.simulation
 import lds_python.inference
 
 #%%
