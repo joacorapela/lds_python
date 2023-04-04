@@ -14,6 +14,9 @@ checkSpelling.csh
 figures/*
 results/*
 docs/notebooks/.ipynb_checkpoints/*
+docs/lectures/neuroinformatics/2023/*
+!docs/lectures/neuroinformatics/2023/ldsForNeuro.tex
+!docs/lectures/neuroinformatics/2023/ldsForNeuro.pdf
 
 docs/sphinx/build/
 data/*
