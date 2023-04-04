@@ -17,7 +17,7 @@ import numpy as np
 import pandas as pd
 
 import lds_python.inference
-import utils
+from ipynb.fs.full.utils import get_fig_kinematics_vs_time
 
 #%%
 # Load simulated trajectory
@@ -77,7 +77,7 @@ filter_ci_x_lower = filter_mean_x - 1.96*filter_std_x_y[:, 0]
 filter_ci_y_upper = filter_mean_y + 1.96*filter_std_x_y[:, 3]
 filter_ci_y_lower = filter_mean_y - 1.96*filter_std_x_y[:, 3]
 
-fig = utils.get_fig_kinematics_vs_time(
+fig = get_fig_kinematics_vs_time(
     time=time,
     true_x=true_x, true_y=true_y,
     measured_x=measured_x, measured_y=measured_y,
@@ -111,7 +111,7 @@ filter_ci_x_lower = filter_mean_x - 1.96*filter_std_x_y[:, 1]
 filter_ci_y_upper = filter_mean_y + 1.96*filter_std_x_y[:, 4]
 filter_ci_y_lower = filter_mean_y - 1.96*filter_std_x_y[:, 4]
 
-fig = utils.get_fig_kinematics_vs_time(
+fig = get_fig_kinematics_vs_time(
     time=time,
     true_x=true_x, true_y=true_y,
     measured_x=measured_x, measured_y=measured_y,
@@ -145,7 +145,7 @@ filter_ci_x_lower = filter_mean_x - 1.96*filter_std_x_y[:, 2]
 filter_ci_y_upper = filter_mean_y + 1.96*filter_std_x_y[:, 5]
 filter_ci_y_lower = filter_mean_y - 1.96*filter_std_x_y[:, 5]
 
-fig = utils.get_fig_kinematics_vs_time(
+fig = get_fig_kinematics_vs_time(
     time=time,
     true_x=true_x, true_y=true_y,
     measured_x=measured_x, measured_y=measured_y,
