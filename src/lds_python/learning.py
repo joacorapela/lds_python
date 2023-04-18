@@ -1,5 +1,6 @@
 
 import math
+import time
 import numpy as np
 import scipy.optimize
 import torch
@@ -10,8 +11,8 @@ from . import inference
 iteration = 0
 
 
-def scipy_optimize_SS_tracking_DWPA_fullV0(y, B, sigma_a0, Qt, Z, diag_R_0,
-                                           m0_0, V0_0, max_iter=50, disp=True):
+def scipy_optimize_SS_tracking_fullV0(y, B, sigma_a0, Qe, Z, diag_R_0,
+                                      m0_0, V0_0, max_iter, disp=True):
     iL_V0 = np.tril_indices(V0_0.shape[0])
 
     def get_coefs_from_params(sigma_a, diag_R, m0, V0, iL_V0=iL_V0):
@@ -40,7 +41,7 @@ def scipy_optimize_SS_tracking_DWPA_fullV0(y, B, sigma_a0, Qt, Z, diag_R_0,
     def optim_criterion(x):
         sigma_a, diag_R, m0, V0 = get_params_from_coefs(x)
         R = np.diag(diag_R)
-        kf = inference.filterLDS_SS_withMissingValues(y=y, B=B, Q=sigma_a*Qt,
+        kf = inference.filterLDS_SS_withMissingValues(y=y, B=B, Q=sigma_a*Qe,
                                                       m0=m0, V0=V0, Z=Z, R=R)
         answer = 0
         N = kf["Sn"].shape[2]
@@ -77,9 +78,9 @@ def scipy_optimize_SS_tracking_DWPA_fullV0(y, B, sigma_a0, Qt, Z, diag_R_0,
     import pdb; pdb.set_trace()
 
 
-def scipy_optimize_SS_tracking_DWPA_diagV0(y, B, sigma_ax0, sigma_ay0, Qt, Z,
-                                           sqrt_diag_R_0, m0_0, sqrt_diag_V0_0,
-                                           max_iter=50, disp=True):
+def scipy_optimize_SS_tracking_diagV0(y, B, sigma_ax0, sigma_ay0, Qe, Z,
+                                      sqrt_diag_R_0, m0_0, sqrt_diag_V0_0,
+                                      max_iter=50, disp=True):
 
     def get_coefs_from_params(sigma_ax, sigma_ay, sqrt_diag_R, m0,
                               sqrt_diag_V0):
@@ -108,8 +109,8 @@ def scipy_optimize_SS_tracking_DWPA_diagV0(y, B, sigma_ax0, sigma_ay0, Qt, Z,
             get_params_from_coefs(x)
         V0 = np.diag(sqrt_diag_V0**2)
         R = np.diag(sqrt_diag_R**2)
-        # build Q from Qt, sigma_ax, sigma_ay
-        Q = utils.buildQfromQt_np(Qt=Qt, sigma_ax=sigma_ax, sigma_ay=sigma_ay)
+        # build Q from Qe, sigma_ax, sigma_ay
+        Q = utils.buildQfromQe_np(Qe=Qe, sigma_ax=sigma_ax, sigma_ay=sigma_ay)
 
         kf = inference.filterLDS_SS_withMissingValues(y=y, B=B, Q=Q,
                                                       m0=m0, V0=V0, Z=Z, R=R)
@@ -161,46 +162,47 @@ def scipy_optimize_SS_tracking_DWPA_diagV0(y, B, sigma_ax0, sigma_ay0, Qt, Z,
     return answer
 
 
-def torch_optimize_SS_tracking_DWPA_diagV0(y, B, sigma_ax0, sigma_ay0, Qt, Z,
-                                           sqrt_diag_R_0, m0_0, sqrt_diag_V0_0,
-                                           max_iter=50, lr=1.0,
-                                           tolerance_grad=1e-7,
-                                           tolerance_change=1e-5,
-                                           line_search_fn="strong_wolfe",
-                                           disp=True):
+def torch_optimize_SS_tracking_diagV0(y, B, sqrt_noise_intensity0, Qe, Z,
+                                      sqrt_diag_R_0, m0_0, sqrt_diag_V0_0,
+                                      max_iter=50, lr=1.0,
+                                      tolerance_grad=1e-7,
+                                      tolerance_change=1e-5,
+                                      line_search_fn="strong_wolfe",
+                                      vars_to_estimate={
+                                          "sqrt_noise_intensity": True,
+                                          "R": True, "m0": True, "V0": True},
+                                      disp=True):
 
     def log_likelihood():
         V0 = torch.diag(sqrt_diag_V0**2)
         R = torch.diag(sqrt_diag_R**2)
-        # build Q from Qt, sigma_ax, sigma_ay
-        Q = utils.buildQfromQt_torch(Qt=Qt, sigma_ax=sigma_ax,
-                                     sigma_ay=sigma_ay)
-
+        Q = Qe * sqrt_noise_intensity**2
         kf = inference.filterLDS_SS_withMissingValues_torch(y=y, B=B, Q=Q,
                                                             m0=m0, V0=V0, Z=Z,
                                                             R=R)
-        answer = 0
-        N = y.shape[1]
-        for n in range(N):
-            innov = kf["innov"][:, :, n]
-            Sn = kf["Sn"][:, :, n]
-
-            Sn_inv = torch.inverse(Sn)
-            answer = answer + torch.logdet(Sn)
-            answer = answer + innov.T @ Sn_inv @ innov
-        return answer
+        log_like = kf["logLike"]
+        return log_like
 
     optim_params = {"max_iter": max_iter, "lr": lr,
                     "tolerance_grad": tolerance_grad,
                     "tolerance_change": tolerance_change,
                     "line_search_fn": line_search_fn}
-    sigma_ax = torch.Tensor([sigma_ax0])
-    sigma_ay = torch.Tensor([sigma_ay0])
+    sqrt_noise_intensity = torch.Tensor([sqrt_noise_intensity0])
     sqrt_diag_R = sqrt_diag_R_0
     m0 = m0_0
     sqrt_diag_V0 = sqrt_diag_V0_0
-    x = [sigma_ax, sigma_ay, sqrt_diag_R, m0, sqrt_diag_V0]
-    # torch.autograd.set_detect_anomaly(True)
+    x = []
+    if vars_to_estimate["sqrt_noise_intensity"]:
+        x.append(sqrt_noise_intensity)
+    if vars_to_estimate["sqrt_diag_R"]:
+        x.append(sqrt_diag_R)
+    if vars_to_estimate["m0"]:
+        x.append(m0)
+    if vars_to_estimate["sqrt_diag_V0"]:
+        x.append(sqrt_diag_V0)
+    if len(x) == 0:
+        raise RuntimeError("No variable to estimate. Please set one element "
+                           "of vars_to_estimate to True")
     optimizer = torch.optim.LBFGS(x, **optim_params)
     for i in range(len(x)):
         x[i].requires_grad = True
@@ -208,14 +210,12 @@ def torch_optimize_SS_tracking_DWPA_diagV0(y, B, sigma_ax0, sigma_ay0, Qt, Z,
     def closure():
         optimizer.zero_grad()
         curEval = -log_likelihood()
-        print("-logLikeL: ")
-        print(curEval)
+        print(f"logLikeL: {-curEval}")
         curEval.backward(retain_graph=True)
-        # x = [sigma_ax, sigma_ay, sqrt_diag_R, m0, sqrt_diag_V0]
-        print("sigma_ax: ")
-        print(sigma_ax)
-        print("sigma_ay: ")
-        print(sigma_ax)
+        log_like.append(-curEval.item())
+        elapsed_time.append(time.time() - start_time)
+        print("sqrt_noise_intensity: ")
+        print(sqrt_noise_intensity)
         print("sqrt_diag_R: ")
         print(sqrt_diag_R)
         print("m0: ")
@@ -224,40 +224,59 @@ def torch_optimize_SS_tracking_DWPA_diagV0(y, B, sigma_ax0, sigma_ay0, Qt, Z,
         print(sqrt_diag_V0)
         return curEval
 
+    log_like = []
+    elapsed_time = []
+    start_time = time.time()
     optimizer.step(closure)
     log_likelihood = log_likelihood()
+    for i in range(len(x)):
+        x[i].requires_grad = False
+
     stateOneEpoch = optimizer.state[optimizer._params[0]]
     nfeval = stateOneEpoch["func_evals"]
     niter = stateOneEpoch["n_iter"]
-    answer = {"log_likelihood": log_likelihood, "nfeval": nfeval,
-              "niter": niter}
-    for i in range(len(x)):
-        x[i].requires_grad = False
+    estimates = {}
+    if vars_to_estimate["sqrt_noise_intensity"]:
+        e_sqrt_noise_intensity = x.pop(0)[0].item()
+        estimates["sqrt_noise_intensity"] = e_sqrt_noise_intensity
+    if vars_to_estimate["sqrt_diag_R"]:
+        e_sqrt_diag_R = x.pop(0)
+        estimates["sqrt_diag_R"] = e_sqrt_diag_R
+    if vars_to_estimate["m0"]:
+        e_m0 = x.pop(0)
+        estimates["m0"] = e_m0
+    if vars_to_estimate["sqrt_diag_V0"]:
+        e_sqrt_diag_V0 = x.pop(0).numpy()
+        estimates["sqrt_diag_V0"] = e_sqrt_diag_V0
+    answer = {"estimates": estimates, "log_likelihood": log_likelihood,
+              "nfeval": nfeval, "niter": niter, "log_like": log_like,
+              "elapsed_time": elapsed_time}
     return answer
 
 
-def em_SS_tracking_DWPA(y, B, sigma_a0, Qe, Z, R_0, m0_0, V0_0,
-                        vars_to_estimate={"sigma_a": True, "R": True,
-                                          "m0": True, "V0": True},
+def em_SS_tracking(y, B, sqrt_noise_intensity0, Qe, Z, R_0, m0_0, V0_0,
+                   vars_to_estimate={"sqrt_noise_intensity": True, "R": True,
+                                     "m0": True, "V0": True},
                         max_iter=50, regularization=1e-5):
-    sigma_a = sigma_a0
+    sqrt_noise_intensity = sqrt_noise_intensity0
     R = R_0
     m0 = m0_0
     V0 = V0_0
 
-    Qe_inv = np.linalg.pinv(Qe)
-    M = B.shape[0]
+    Qe_inv = np.linalg.inv(Qe)
     N = y.shape[1]
+    M = Qe.shape[0]
     log_like = np.empty(max_iter)
+    elapsed_time = np.empty(max_iter)
+    start_time = time.time()
     for iter in range(max_iter):
         # E step
-        Q = Qe * sigma_a**2,
+        Q = Qe * sqrt_noise_intensity**2
         kf = inference.filterLDS_SS_withMissingValues_np(y=y, B=B,
                                                          Q=Q, m0=m0, V0=V0,
                                                          Z=Z, R=R)
         print("LogLike[{:04d}]={:f}".format(iter, kf["logLike"].item()))
-        print("sigma_a={:f}".format(sigma_a))
-        breakpoint()
+        print("sqrt_noise_intensity={:f}".format(sqrt_noise_intensity))
         print("R:")
         print(R)
         print("m0:")
@@ -265,133 +284,128 @@ def em_SS_tracking_DWPA(y, B, sigma_a0, Qe, Z, R_0, m0_0, V0_0,
         print("V0:")
         print(V0)
         log_like[iter] = kf["logLike"]
+        elapsed_time[iter] = time.time() - start_time
         ks = inference.smoothLDS_SS(B=B, xnn=kf["xnn"], Vnn=kf["Vnn"],
                                     xnn1=kf["xnn1"], Vnn1=kf["Vnn1"],
                                     m0=m0, V0=V0)
         # M step
-        if vars_to_estimate["sigma_a"]:
-            Vnn1N = lag1CovSmootherLDS_SS(Z=Z, KN=kf["KN"], B=B, Vnn=kf["Vnn"],
-                                          Jn=ks["Jn"], J0=ks["J0"])
-            S11 = ks["xnN"][:,:,0] @ ks["xnN"][:,:,0].T + ks["VnN"][:,:,0]
-            S10 = ks["xnN"][:,:,0] @ ks["x0N"].T + Vnn1N[:,:,0]
-            S00 = ks["x0N"] @ ks["x0N"].T + ks["V0N"]
-            for i in range(1, N):
-                S11 = S11 + ks["xnN"][:, :, i] @ ks["xnN"][:, :, i].T + \
-                      ks["VnN"][:, :, i]
-                S10 = S10 + ks["xnN"][:, :, i] @ ks["xnN"][:, :, i-1].T + \
-                      Vnn1N[:, :, i]
-                S00 = S00 + ks["xnN"][:, :, i-1] @ ks["xnN"][:, :, i-1].T + \
-                      ks["VnN"][:, :, i-1]
-
-            # sigma_a
+        if vars_to_estimate["sqrt_noise_intensity"]:
+            S11, S10, S00 = posteriorCorrelationMatrices(Z=Z, B=B, KN=kf["KN"],
+                                                         Vnn=kf["Vnn"], xnN=ks["xnN"],
+                                                         VnN=ks["VnN"], x0N=ks["x0N"],
+                                                         V0N=ks["V0N"], Jn=ks["Jn"],
+                                                         J0=ks["J0"])
+            # sqrt_noise_intensity
             W = S11 - S10 @ B.T - B @ S10.T + B @ S00 @ B.T
-            # U = (np.linalg.solve(Qe.T, W.T)).T
             U = W @ Qe_inv
             K = np.trace(U)
-            # assert(K>0)
-            sigma_a = math.sqrt(K/(N*M))
-
+            sqrt_noise_intensity = np.sqrt(K/(N*M))
+            print(f"sqrt_noise_intensity: {sqrt_noise_intensity}")
         # R
         if vars_to_estimate["R"]:
-            u = np.expand_dims(y[:, 0], 1) - Z @ ks["xnN"][:, :, 0]
-            R = u @ u.T + Z @ ks["VnN"][:, :, 0] @ Z.T
+            u = y[:, 0] - (Z @ ks["xnN"][:, :, 0]).squeeze()
+            R = np.outer(u, u) + Z @ ks["VnN"][:, :, 0] @ Z.T
             for i in range(1, N):
-                u = np.expand_dims(y[:, i], 1) - Z @ ks["xnN"][:, :, i]
-                R = R + u @ u.T + Z @ ks["VnN"][:, :, i] @ Z.T
+                u = y[:, i] - (Z @ ks["xnN"][:, :, i]).squeeze()
+                R = R + np.outer(u, u) + Z @ ks["VnN"][:, :, i] @ Z.T
             R = R/N
 
         # m0, V0
         if vars_to_estimate["m0"]:
             m0 = ks["x0N"]
+
         if vars_to_estimate["V0"]:
             V0 = ks["V0N"]
 
-    return R, m0, V0, sigma_a
+    optim_res = {"R": R, "m0": m0, "V0": V0,
+                 "sqrt_noise_intensity": sqrt_noise_intensity,
+                 "log_like": log_like, "elapsed_time": elapsed_time}
+    return optim_res
 
 
-def em_SS_tracking_CWPA(y, B, noise_intensity0, Qe, Z, R_0, m0_0, V0_0,
-                        vars_to_estimate={"noise_intensity": True, "R": True,
-                                          "m0": True, "V0": True},
-                        max_iter=50, regularization=1e-5):
-    noise_intensity = noise_intensity0
-    R = R_0
-    m0 = m0_0
-    V0 = V0_0
+def em_SS_LDS(y, B0, Q0, Z0, R0, m0, V0, max_iter=50, tol=1e-4,
+              varsToEstimate=dict(m0=True, V0=True, B=True, Q=True, Z=True,
+                                  R=True)):
+    B  = B0
+    Q  = Q0
+    Z  = Z0
+    R  = R0
+    V0 = V0
 
-    Qe_inv = np.linalg.pinv(Qe)
-    M = B.shape[0]
+    M = B0.shape[0]
     N = y.shape[1]
     log_like = np.empty(max_iter)
+
     for iter in range(max_iter):
-        # E step
-        Q = Qe * noise_intensity
         kf = inference.filterLDS_SS_withMissingValues_np(y=y, B=B,
                                                          Q=Q, m0=m0, V0=V0,
                                                          Z=Z, R=R)
         print("LogLike[{:04d}]={:f}".format(iter, kf["logLike"].item()))
-        print("noise_intensity={:f}".format(noise_intensity))
-        breakpoint()
-        print("R:")
-        print(R)
-        print("m0:")
-        print(m0)
-        print("V0:")
-        print(V0)
         log_like[iter] = kf["logLike"]
         ks = inference.smoothLDS_SS(B=B, xnn=kf["xnn"], Vnn=kf["Vnn"],
                                     xnn1=kf["xnn1"], Vnn1=kf["Vnn1"],
                                     m0=m0, V0=V0)
-        # M step
-        if vars_to_estimate["noise_intensity"]:
-            Vnn1N = lag1CovSmootherLDS_SS(Z=Z, KN=kf["KN"], B=B, Vnn=kf["Vnn"],
-                                          Jn=ks["Jn"], J0=ks["J0"])
-            S11 = ks["xnN"][:,:,0] @ ks["xnN"][:,:,0].T + ks["VnN"][:,:,0]
-            S10 = ks["xnN"][:,:,0] @ ks["x0N"].T + Vnn1N[:,:,0]
-            S00 = ks["x0N"] @ ks["x0N"].T + ks["V0N"]
-            for i in range(1, N):
-                S11 = S11 + ks["xnN"][:, :, i] @ ks["xnN"][:, :, i].T + \
-                      ks["VnN"][:, :, i]
-                S10 = S10 + ks["xnN"][:, :, i] @ ks["xnN"][:, :, i-1].T + \
-                      Vnn1N[:, :, i]
-                S00 = S00 + ks["xnN"][:, :, i-1] @ ks["xnN"][:, :, i-1].T + \
-                      ks["VnN"][:, :, i-1]
 
-            # noise_intensity
-            W = S11 - S10 @ B.T - B @ S10.T + B @ S00 @ B.T
-            # U = (np.linalg.solve(Qe.T, W.T)).T
-            U = W @ Qe_inv
-            K = np.trace(U)
-            # assert(K>0)
-            noise_intensity = K/(N*M)
-
-        # R
-        if vars_to_estimate["R"]:
-            u = np.expand_dims(y[:, 0], 1) - Z @ ks["xnN"][:, :, 0]
-            R = u @ u.T + Z @ ks["VnN"][:, :, 0] @ Z.T
+        S11, S10, S00 = posteriorCorrelationMatrices(Z=Z, B=B, KN=kf["KN"],
+                                                     Vnn=kf["Vnn"], xnN=ks["xnN"],
+                                                     VnN=ks["VnN"], x0N=ks["x0N"],
+                                                     V0N=ks["V0N"], Jn=ks["Jn"],
+                                                     J0=ks["J0"])
+        if varsToEstimate["Z"]:
+            Z = np.outer(y[:,0], ks["xnN"][:, :, 0])
             for i in range(1, N):
-                u = np.expand_dims(y[:, i], 1) - Z @ ks["xnN"][:, :, i]
-                R = R + u @ u.T + Z @ ks["VnN"][:, :, i] @ Z.T
+                Z = Z + np.outer(y[:, i], ks["xnN"][:, :, i])
+            Z = Z @ np.linalg.inv(S11)
+
+        if varsToEstimate["B"]:
+            B = S10 @ np.linalg.inv(S00)
+
+        if varsToEstimate["Q"]:
+            Q = (S11 - S10 @ np.linalg.inv(S00) @ S10.T)/N
+            Q = (Q.T + Q)/2
+
+        # Now that Z is estimated, lets estimate R, if requested
+        if varsToEstimate["R"]:
+            u = y[:, 0] - (Z @ ks["xnN"][:, :, 0]).squeeze()
+            R = np.outer(u, u) + Z @ ks["VnN"][:, :, 0] @ Z.T
+            for i in range(1, N):
+                u = y[:, i] - (Z @ ks["xnN"][:, :, i]).squeeze()
+                R = R + np.outer(u, u) + Z @ ks["VnN"][:, :, i] @ Z.T
             R = R/N
 
-        # m0, V0
-        if vars_to_estimate["m0"]:
+        if varsToEstimate["m0"]:
             m0 = ks["x0N"]
-        if vars_to_estimate["V0"]:
-            V0 = ks["V0N"]
-        breakpoint()
 
-    return R, m0, V0, noise_intensity
+        if varsToEstimate["V0"]:
+            V0 = ks["V0N"]
+
+    answer = dict(B=B, Q=Q, Z=Z, R=R, m0=m0, V0=V0, log_like=log_like[:iter],
+                  niter=iter)
+    return answer
+
+def posteriorCorrelationMatrices(Z, B, KN, Vnn, xnN, VnN, x0N, V0N, Jn, J0):
+    # We want to first estimate Z and then R, because R depends on Z
+    Vnn1N = lag1CovSmootherLDS_SS(Z=Z, KN=KN, B=B, Vnn=Vnn, Jn=Jn, J0=J0)
+    S11 = np.outer(xnN[:,:,0], xnN[:,:,0]) + VnN[:,:,0]
+    S10 = np.outer(xnN[:,:,0], x0N) + Vnn1N[:,:,0]
+    S00 = np.outer(x0N, x0N) + V0N
+    N = xnN.shape[2]
+    for i in range(1, N):
+        S11 = S11 + np.outer(xnN[:, :, i], xnN[:, :, i]) + VnN[:, :, i]
+        S10 = S10 + np.outer(xnN[:, :, i], xnN[:, :, i-1]) + Vnn1N[:, :, i]
+        S00 = S00 + np.outer(xnN[:, :, i-1], xnN[:, :, i-1]) + VnN[:, :, i-1]
+    return S11, S10, S00
 
 def lag1CovSmootherLDS_SS(Z, KN, B, Vnn, Jn, J0):
+    #SS16, Property 6.3
     M = KN.shape[0]
     N = Vnn.shape[2]
     Vnn1N = np.empty(shape=(M, M, N))
     eye = np.eye(M)
     Vnn1N[:, :, N-1] = (eye - KN @ Z) @ B @ Vnn[:, :, N-2]
-    for k in range(N-1, 2):
+    for k in range(N-1, 1, -1):
         Vnn1N[:, :, k-1] = Vnn[:, :, k-1] @ Jn[:, :, k-2].T + \
                            Jn[:, :, k-1] @ \
                            (Vnn1N[:, :, k] - B @ Vnn[:, :, k-1]) @ Jn[:, :, k-2].T
-    Vnn1N[:, :, 0] = Vnn[:, :, 0] @ J0.T + Jn[:, :, 0] @ \
-                     (Vnn1N[:, :, 1] - B @ Vnn[:, :, 0]) @ J0.T
+    Vnn1N[:, :, 0] = Vnn[:, :, 0] @ J0.T + Jn[:, :, 0] @ (Vnn1N[:, :, 1] - B @ Vnn[:, :, 0]) @ J0.T
     return Vnn1N
