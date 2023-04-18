@@ -177,6 +177,7 @@ def filterLDS_SS_withMissingValues_torch(y, B, Q, m0, V0, Z, R):
 
     """
 
+    assert(m0.ndim == 2 and m0.shape[1] == 1)
     # N: number of observations
     # M: dim state space
     # P: dim observations
@@ -275,6 +276,7 @@ def filterLDS_SS_withMissingValues_np(y, B, Q, m0, V0, Z, R):
 
     """
 
+    assert(m0.ndim == 2 and m0.shape[1] == 1)
     # N: number of observations
     # M: dim state space
     # P: dim observations
@@ -351,6 +353,7 @@ def smoothLDS_SS(B, xnn, Vnn, xnn1, Vnn1, m0, V0):
     :return:  {xnN, VnN, Jn, x0N, V0N, J0}: xnn1 and Vnn1 (smoothed means, MxT, and covariances, MxMxT), Jn (smoothing gain matrix, MxMxT), x0N and V0N (smoothed initial state mean, M, and covariance, MxM), J0 (initial smoothing gain matrix, MxN).
 
     """
+    assert(m0.ndim == 2 and m0.shape[1] == 1)
     N = xnn.shape[2]
     M = B.shape[0]
     xnN = np.empty(shape=[M, 1, N])
