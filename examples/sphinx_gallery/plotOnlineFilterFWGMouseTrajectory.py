@@ -1,8 +1,8 @@
 """
-Online filtering of a foraging mouse positions
-==============================================
+Online filtering of a foraging mouse trajectory
+===============================================
 
-The code below performs online Kalman filtering of the positions of the mouse
+The code below performs online Kalman filtering of a trajectory of the mouse
 shown on the left image below, as it forages in the arena shown on the right
 image below. Click on the images to see their larger versions.
 
