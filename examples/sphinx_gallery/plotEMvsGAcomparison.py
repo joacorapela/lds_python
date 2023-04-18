@@ -74,8 +74,8 @@ Qe = np.array([[dt**5/20, dt**4/8, dt**3/6, 0, 0, 0],
 Q_true = Qe*sqrt_noise_intensity_true**2
 sqrt_diag_R = np.array([sigma_x, sigma_y])
 R = np.diag(sqrt_diag_R**2)
-m0 = np.array([[pos_x0, vel_x0, acc_x0, pos_y0, vel_y0, acc_y0]],
-              dtype=np.double).T
+m0 = np.array([pos_x0, vel_x0, acc_x0, pos_y0, vel_y0, acc_y0],
+              dtype=np.double)
 sqrt_diag_V0 = np.ones(6)*sqrt_diag_V0_value
 V0 = np.diag(sqrt_diag_V0**2)
 
@@ -85,7 +85,7 @@ V0 = np.diag(sqrt_diag_V0**2)
 # Code for `lds_python.simulation.simulateLDS
 # <https://joacorapela.github.io/lds_python/_modules/lds_python/simulation.html#simulateLDS>`_
 x0, x, y = lds_python.simulation.simulateLDS(N=num_pos, B=B, Q=Q_true, Z=Z, R=R,
-                                             m0=m0.squeeze(), V0=V0)
+                                             m0=m0, V0=V0)
 
 #%%
 # Plot simulated state and measurement positions
@@ -141,6 +141,8 @@ print(f"max log^likelihood: {gs_max_ll}, "
 #%%
 # Gradient acent
 # ^^^^^^^^^^^^^^
+# Code for `lds_python.simulation.simulateLDS
+# <https://joacorapela.github.io/lds_python/_modules/lds_python/simulation.html#simulateLDS>`_
 
 tolerance_grad = 1e-9
 tolerance_change = 1e-7
@@ -223,8 +225,7 @@ em_vars_to_estimate = {"sqrt_noise_intensity": True, "R": True, "m0": True,
                        "V0": True}
 em_max_iter = 400
 
-m0_0 = np.array([[pos_x0_0, vel_x0_0, acc_x0_0, pos_y0_0, vel_y0_0,
-                  acc_y0_0]]).T
+m0_0 = np.array([pos_x0_0, vel_x0_0, acc_x0_0, pos_y0_0, vel_y0_0, acc_y0_0])
 sqrt_diag_V0_0 = np.array([sqrt_diag_V0_value0 for i in range(len(m0_0))])
 sqrt_diag_R_0 = np.array([sigma_x_0, sigma_y_0])
 
@@ -314,10 +315,10 @@ fig
 
 fig = go.Figure()
 trace = go.Bar(x=["Gradient Ascent", "EM"],
-               y=[optim_res_ga["estimates"]["m0"][0, 0],
-                  optim_res_em["m0"][0, 0]])
+               y=[optim_res_ga["estimates"]["m0"][0],
+                  optim_res_em["m0"][0]])
 fig.add_trace(trace)
-fig.add_hline(y=m0[0, 0])
+fig.add_hline(y=m0[0])
 fig.update_layout(xaxis_title="Estimation Method",
                   yaxis_title=r"$m_0[0]$")
 fig

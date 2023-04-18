@@ -95,7 +95,7 @@ Qt = np.array([[dt**4/4, dt**3/2, dt**2/2, 0, 0, 0],
                [0, 0, 0, dt**2/2, dt,      1]],
               dtype=np.double)
 R = np.diag([sigma_x**2, sigma_y**2])
-m0 = np.array([y[0, 0], 0, 0, y[1, 0], 0, 0], dtype=np.double)
+m0 = np.array([[y[0, 0], 0, 0, y[1, 0], 0, 0]], dtype=np.double).T
 V0 = np.diag(np.ones(len(m0))*sqrt_diag_V0_value**2)
 Q = Qt*sigma_a
 
@@ -108,7 +108,7 @@ filtered_means = np.empty((6, 1, y.shape[1]), dtype=np.double)
 filtered_covs = np.empty((6, 6, y.shape[1]), dtype=np.double)
 for i in range(y.shape[1]):
     _, _ = onlineKF.predict()
-    filtered_means[:, 0, i], filtered_covs[:, :, i] = \
+    filtered_means[:, :, i], filtered_covs[:, :, i] = \
         onlineKF.update(y=y[:, i])
 
 #%%

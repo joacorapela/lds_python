@@ -312,7 +312,7 @@ def em_SS_tracking(y, B, sqrt_noise_intensity0, Qe, Z, R_0, m0_0, V0_0,
 
         # m0, V0
         if vars_to_estimate["m0"]:
-            m0 = ks["x0N"]
+            m0 = ks["x0N"].squeeze()
 
         if vars_to_estimate["V0"]:
             V0 = ks["V0N"]

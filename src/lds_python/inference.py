@@ -71,6 +71,8 @@ class OnlineKalmanFilter:
         :return: (state, covariance): tuple containing the updated state vector and covariance matrix.
 
         """
+        if y.ndim == 1:
+            y = np.expand_dims(y, axis=1)
         if not np.isnan(y).any():
             pred_obs = self.Z @ self.x
             residual = y - pred_obs
@@ -177,7 +179,9 @@ def filterLDS_SS_withMissingValues_torch(y, B, Q, m0, V0, Z, R):
 
     """
 
-    assert(m0.ndim == 2 and m0.shape[1] == 1)
+    if m0.ndim != 1:
+        raise ValueError("mean must be 1 dimensional")
+
     # N: number of observations
     # M: dim state space
     # P: dim observations
@@ -198,7 +202,7 @@ def filterLDS_SS_withMissingValues_torch(y, B, Q, m0, V0, Z, R):
     Sn_h = torch.empty(size=[P, P, N], dtype=torch.double)
 
     # k==0
-    xnn1 = (B @ m0).squeeze()
+    xnn1 = B @ m0
     Vnn1 = B @ V0 @ B.T + Q
     Stmp = Z @ Vnn1 @ Z.T + R
     Sn = (Stmp + torch.transpose(Stmp, 0, 1)) / 2
@@ -276,7 +280,9 @@ def filterLDS_SS_withMissingValues_np(y, B, Q, m0, V0, Z, R):
 
     """
 
-    assert(m0.ndim == 2 and m0.shape[1] == 1)
+    if m0.ndim != 1:
+        raise ValueError("mean must be 1 dimensional")
+
     # N: number of observations
     # M: dim state space
     # P: dim observations
@@ -291,7 +297,7 @@ def filterLDS_SS_withMissingValues_np(y, B, Q, m0, V0, Z, R):
     Sn = np.empty(shape=[P, P, N])
 
     # k==0
-    xnn1[:, 0, 0] = (B @ m0).squeeze()
+    xnn1[:, 0, 0] = B @ m0
     Vnn1[:, :, 0] = B @ V0 @ B.T + Q
     Stmp = Z @ Vnn1[:, :, 0] @ Z.T + R
     Sn[:, :, 0] = (Stmp + Stmp.T) / 2
@@ -353,7 +359,9 @@ def smoothLDS_SS(B, xnn, Vnn, xnn1, Vnn1, m0, V0):
     :return:  {xnN, VnN, Jn, x0N, V0N, J0}: xnn1 and Vnn1 (smoothed means, MxT, and covariances, MxMxT), Jn (smoothing gain matrix, MxMxT), x0N and V0N (smoothed initial state mean, M, and covariance, MxM), J0 (initial smoothing gain matrix, MxN).
 
     """
-    assert(m0.ndim == 2 and m0.shape[1] == 1)
+    if m0.ndim != 1:
+        raise ValueError("mean must be 1 dimensional")
+
     N = xnn.shape[2]
     M = B.shape[0]
     xnN = np.empty(shape=[M, 1, N])
@@ -371,7 +379,7 @@ def smoothLDS_SS(B, xnn, Vnn, xnn1, Vnn1, m0, V0):
     # initial state x00 and V00
     # return the smooth estimates of the state at time 0: x0N and V0N
     J0 = V0 @ B.T @ np.linalg.inv(Vnn1[:, :, 0])
-    x0N = m0 + J0 @ (xnN[:, :, 0] - xnn1[:, :, 0])
+    x0N = np.expand_dims(m0, 1) + J0 @ (xnN[:, :, 0] - xnn1[:, :, 0])
     V0N = V0 + J0 @ (VnN[:, :, 0] - Vnn1[:, :, 0]) @ J0.T
     answer = {"xnN": xnN, "VnN": VnN, "Jn": Jn, "x0N": x0N, "V0N": V0N,
               "J0": J0}
