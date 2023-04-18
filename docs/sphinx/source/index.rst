@@ -7,6 +7,8 @@ Linear Dynamical Systems's documentation
 ========================================
 
 .. toctree::
+   :numbered:
+   :maxdepth: 6
    :caption: Contents
 
    introduction
