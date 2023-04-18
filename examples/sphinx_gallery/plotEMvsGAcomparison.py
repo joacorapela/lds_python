@@ -141,8 +141,8 @@ print(f"max log^likelihood: {gs_max_ll}, "
 #%%
 # Gradient acent
 # ^^^^^^^^^^^^^^
-# Code for `lds_python.simulation.simulateLDS
-# <https://joacorapela.github.io/lds_python/_modules/lds_python/simulation.html#simulateLDS>`_
+# Code for `lds_python.learning.torch_optimize_SS_tracking_diagV0
+# <https://joacorapela.github.io/lds_python/_modules/lds_python/learning.html#torch_optimize_SS_tracking_diagV0>`_
 
 tolerance_grad = 1e-9
 tolerance_change = 1e-7
@@ -164,6 +164,8 @@ optim_res_ga = lds_python.learning.torch_optimize_SS_tracking_diagV0(
 #%%
 # EM
 # ^^
+# Code for `lds_python.learning.em_SS_tracking
+# <https://joacorapela.github.io/lds_python/_modules/lds_python/learning.html#em_SS_tracking>`_
 Qe_reg_param = 1e-5
 Qe_regularized = Qe + Qe_reg_param*np.eye(Qe.shape[0])
 optim_res_em = lds_python.learning.em_SS_tracking(
@@ -232,6 +234,8 @@ sqrt_diag_R_0 = np.array([sigma_x_0, sigma_y_0])
 #%%
 # Gradient acent
 # ^^^^^^^^^^^^^^
+# Code for `lds_python.learning.torch_optimize_SS_tracking_diagV0
+# <https://joacorapela.github.io/lds_python/_modules/lds_python/learning.html#torch_optimize_SS_tracking_diagV0>`_
 
 tolerance_grad = 1e-9
 tolerance_change = 1e-7
@@ -253,6 +257,8 @@ optim_res_ga = lds_python.learning.torch_optimize_SS_tracking_diagV0(
 #%%
 # EM
 # ^^
+# Code for `lds_python.learning.em_SS_tracking
+# <https://joacorapela.github.io/lds_python/_modules/lds_python/learning.html#em_SS_tracking>`_
 V0_0 = np.diag(sqrt_diag_V0_0**2)
 R0 = np.diag(sqrt_diag_R_0)
 Qe_reg_param = 1e-5
