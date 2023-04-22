@@ -4,6 +4,7 @@ import time
 import numpy as np
 import scipy.optimize
 import torch
+import warnings
 
 from . import utils
 from . import inference
@@ -162,18 +163,18 @@ def scipy_optimize_SS_tracking_diagV0(y, B, sigma_ax0, sigma_ay0, Qe, Z,
     return answer
 
 
-def torch_optimize_SS_tracking_diagV0(y, B, sqrt_noise_intensity0, Qe, Z,
-                                      sqrt_diag_R_0, m0_0, sqrt_diag_V0_0,
-                                      max_iter=50, lr=1.0,
-                                      tolerance_grad=1e-7,
-                                      tolerance_change=1e-5,
-                                      line_search_fn="strong_wolfe",
-                                      vars_to_estimate={
-                                          "sqrt_noise_intensity": True,
-                                          "R": True, "m0": True, "V0": True},
-                                      disp=True):
+def torch_lbfgs_optimize_SS_tracking_diagV0(y, B, sqrt_noise_intensity0, Qe, Z,
+                                            sqrt_diag_R_0, m0_0, sqrt_diag_V0_0,
+                                            max_iter=50, lr=1.0,
+                                            tolerance_grad=1e-7,
+                                            tolerance_change=1e-5,
+                                            line_search_fn="strong_wolfe",
+                                            vars_to_estimate={
+                                                "sqrt_noise_intensity": True,
+                                                "R": True, "m0": True, "V0": True},
+                                            disp=True):
 
-    def log_likelihood():
+    def log_likelihood_fn():
         V0 = torch.diag(sqrt_diag_V0**2)
         R = torch.diag(sqrt_diag_R**2)
         Q = Qe * sqrt_noise_intensity**2
@@ -209,8 +210,9 @@ def torch_optimize_SS_tracking_diagV0(y, B, sqrt_noise_intensity0, Qe, Z,
 
     def closure():
         optimizer.zero_grad()
-        curEval = -log_likelihood()
-        print(f"logLikeL: {-curEval}")
+        curEval = -log_likelihood_fn()
+        print("--------------------------------------------------------------------------------")
+        print(f"logLike: {-curEval}")
         curEval.backward(retain_graph=True)
         log_like.append(-curEval.item())
         elapsed_time.append(time.time() - start_time)
@@ -228,7 +230,7 @@ def torch_optimize_SS_tracking_diagV0(y, B, sqrt_noise_intensity0, Qe, Z,
     elapsed_time = []
     start_time = time.time()
     optimizer.step(closure)
-    log_likelihood = log_likelihood()
+    log_likelihood_value = log_likelihood_fn()
     for i in range(len(x)):
         x[i].requires_grad = False
 
@@ -248,8 +250,94 @@ def torch_optimize_SS_tracking_diagV0(y, B, sqrt_noise_intensity0, Qe, Z,
     if vars_to_estimate["sqrt_diag_V0"]:
         e_sqrt_diag_V0 = x.pop(0).numpy()
         estimates["sqrt_diag_V0"] = e_sqrt_diag_V0
-    answer = {"estimates": estimates, "log_likelihood": log_likelihood,
+    answer = {"estimates": estimates, "log_likelihood": log_likelihood_value,
               "nfeval": nfeval, "niter": niter, "log_like": log_like,
+              "elapsed_time": elapsed_time}
+    return answer
+
+
+def torch_adam_optimize_SS_tracking_diagV0(y, B, sqrt_noise_intensity0, Qe, Z,
+                                           sqrt_diag_R_0, m0_0, sqrt_diag_V0_0,
+                                           max_iter=50, lr=1e-3, eps=1e-8,
+                                           vars_to_estimate={
+                                               "sqrt_noise_intensity": True,
+                                               "R": True, "m0": True,
+                                               "V0": True},
+                                          ):
+
+    def log_likelihood_fn():
+        V0 = torch.diag(sqrt_diag_V0**2)
+        R = torch.diag(sqrt_diag_R**2)
+        Q = Qe * sqrt_noise_intensity**2
+        kf = inference.filterLDS_SS_withMissingValues_torch(y=y, B=B, Q=Q,
+                                                            m0=m0, V0=V0, Z=Z,
+                                                            R=R)
+        log_like = kf["logLike"]
+        return log_like
+
+    optim_params = {"lr": lr, "eps": eps}
+    sqrt_noise_intensity = torch.Tensor([sqrt_noise_intensity0])
+    sqrt_diag_R = sqrt_diag_R_0
+    m0 = m0_0
+    sqrt_diag_V0 = sqrt_diag_V0_0
+    x = []
+    if vars_to_estimate["sqrt_noise_intensity"]:
+        x.append(sqrt_noise_intensity)
+    if vars_to_estimate["sqrt_diag_R"]:
+        x.append(sqrt_diag_R)
+    if vars_to_estimate["m0"]:
+        x.append(m0)
+    if vars_to_estimate["sqrt_diag_V0"]:
+        x.append(sqrt_diag_V0)
+    if len(x) == 0:
+        raise RuntimeError("No variable to estimate. Please set one element "
+                           "of vars_to_estimate to True")
+    optimizer = torch.optim.Adam(x, **optim_params)
+    for i in range(len(x)):
+        x[i].requires_grad = True
+
+    log_like = []
+    elapsed_time = []
+    start_time = time.time()
+    for i in range(max_iter):
+        breakpoint()
+        optimizer.zero_grad()
+        curEval = -log_likelihood_fn()
+        curEval.backward()
+        optimizer.step()
+        log_like.append(-curEval.item())
+        elapsed_time.append(time.time() - start_time)
+        print("--------------------------------------------------------------------------------")
+        print(f"iteration: {i} ({max_iter})")
+        print(f"logLike: {-curEval}")
+        print("sqrt_noise_intensity: ")
+        print(sqrt_noise_intensity)
+        print("sqrt_diag_R: ")
+        print(sqrt_diag_R)
+        print("m0: ")
+        print(m0)
+        print("sqrt_diag_V0: ")
+        print(sqrt_diag_V0)
+
+    log_likelihood_value = log_likelihood_fn()
+    for i in range(len(x)):
+        x[i].requires_grad = False
+
+    estimates = {}
+    if vars_to_estimate["sqrt_noise_intensity"]:
+        e_sqrt_noise_intensity = x.pop(0)[0].item()
+        estimates["sqrt_noise_intensity"] = e_sqrt_noise_intensity
+    if vars_to_estimate["sqrt_diag_R"]:
+        e_sqrt_diag_R = x.pop(0)
+        estimates["sqrt_diag_R"] = e_sqrt_diag_R
+    if vars_to_estimate["m0"]:
+        e_m0 = x.pop(0)
+        estimates["m0"] = e_m0
+    if vars_to_estimate["sqrt_diag_V0"]:
+        e_sqrt_diag_V0 = x.pop(0).numpy()
+        estimates["sqrt_diag_V0"] = e_sqrt_diag_V0
+    answer = {"estimates": estimates, "log_likelihood": log_likelihood_value,
+              "log_like": log_like,
               "elapsed_time": elapsed_time}
     return answer
 
@@ -257,7 +345,7 @@ def torch_optimize_SS_tracking_diagV0(y, B, sqrt_noise_intensity0, Qe, Z,
 def em_SS_tracking(y, B, sqrt_noise_intensity0, Qe, Z, R_0, m0_0, V0_0,
                    vars_to_estimate={"sqrt_noise_intensity": True, "R": True,
                                      "m0": True, "V0": True},
-                        max_iter=50, regularization=1e-5):
+                   max_iter=50, tolerance_change=1e-9):
     sqrt_noise_intensity = sqrt_noise_intensity0
     R = R_0
     m0 = m0_0
@@ -266,8 +354,9 @@ def em_SS_tracking(y, B, sqrt_noise_intensity0, Qe, Z, R_0, m0_0, V0_0,
     Qe_inv = np.linalg.inv(Qe)
     N = y.shape[1]
     M = Qe.shape[0]
-    log_like = np.empty(max_iter)
-    elapsed_time = np.empty(max_iter)
+    termination_info = "success: reached maximum number of iterations"
+    log_like = []
+    elapsed_time = []
     start_time = time.time()
     for iter in range(max_iter):
         # E step
@@ -283,13 +372,40 @@ def em_SS_tracking(y, B, sqrt_noise_intensity0, Qe, Z, R_0, m0_0, V0_0,
         print(m0)
         print("V0:")
         print(V0)
-        log_like[iter] = kf["logLike"]
-        elapsed_time[iter] = time.time() - start_time
+        log_like.append(kf["logLike"])
+        if iter > 0 and log_like[-1] < log_like[-2]:
+            termination_info = "error: log likelihood increased"
+            warnings.warn(termination_info)
+            # begin backtrack
+            if vars_to_estimate["sqrt_noise_intensity"]:
+                sqrt_noise_intensity = sqrt_noise_intensity_prev
+            if vars_to_estimate["R"]:
+                R = R_prev
+            if vars_to_estimate["m0"]:
+                m0 = m0_prev
+            if vars_to_estimate["V0"]:
+                V0 = V0_prev
+            del log_like[-1]
+            # end backtrack
+            print("LogLike[{:04d}]={:f}".format(iter, log_like[-1].item()))
+            print("sqrt_noise_intensity={:f}".format(sqrt_noise_intensity))
+            print("R:")
+            print(R)
+            print("m0:")
+            print(m0)
+            print("V0:")
+            print(V0)
+            break
+        elif iter > 0 and log_like[-1] - log_like[-2] < tolerance_change:
+            termination_info = "success: converged"
+            break
+        elapsed_time.append(time.time() - start_time)
         ks = inference.smoothLDS_SS(B=B, xnn=kf["xnn"], Vnn=kf["Vnn"],
                                     xnn1=kf["xnn1"], Vnn1=kf["Vnn1"],
                                     m0=m0, V0=V0)
         # M step
         if vars_to_estimate["sqrt_noise_intensity"]:
+            sqrt_noise_intensity_prev = sqrt_noise_intensity
             S11, S10, S00 = posteriorCorrelationMatrices(Z=Z, B=B, KN=kf["KN"],
                                                          Vnn=kf["Vnn"], xnN=ks["xnN"],
                                                          VnN=ks["VnN"], x0N=ks["x0N"],
@@ -300,9 +416,9 @@ def em_SS_tracking(y, B, sqrt_noise_intensity0, Qe, Z, R_0, m0_0, V0_0,
             U = W @ Qe_inv
             K = np.trace(U)
             sqrt_noise_intensity = np.sqrt(K/(N*M))
-            print(f"sqrt_noise_intensity: {sqrt_noise_intensity}")
         # R
         if vars_to_estimate["R"]:
+            R_prev = R
             u = y[:, 0] - (Z @ ks["xnN"][:, :, 0]).squeeze()
             R = np.outer(u, u) + Z @ ks["VnN"][:, :, 0] @ Z.T
             for i in range(1, N):
@@ -312,14 +428,18 @@ def em_SS_tracking(y, B, sqrt_noise_intensity0, Qe, Z, R_0, m0_0, V0_0,
 
         # m0, V0
         if vars_to_estimate["m0"]:
+            m0_prev = m0
             m0 = ks["x0N"].squeeze()
 
         if vars_to_estimate["V0"]:
+            V0_prev = V0
             V0 = ks["V0N"]
+
 
     optim_res = {"R": R, "m0": m0, "V0": V0,
                  "sqrt_noise_intensity": sqrt_noise_intensity,
-                 "log_like": log_like, "elapsed_time": elapsed_time}
+                 "log_like": log_like, "elapsed_time": elapsed_time,
+                 "termination_info": termination_info}
     return optim_res
 
 
