@@ -241,6 +241,7 @@ def torch_lbfgs_optimize_SS_tracking_diagV0(y, B, sqrt_noise_intensity0, Qe, Z,
         elapsed_time.append(time.time() - start_time)
         print("--------------------------------------------------------------------------------")
         print(f"epoch: {epoch}")
+        print(f"likelihood: {log_like[-1]}")
         if vars_to_estimate["sqrt_noise_intensity"]:
             print("sqrt_noise_intensity: ")
             print(sqrt_noise_intensity)
