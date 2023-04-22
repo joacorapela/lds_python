@@ -107,8 +107,8 @@ fig.update_layout(xaxis_title="horizontal direction",
 fig
 
 #%%
-# Estimation of the :math:`\sigma^2` parameter
-# --------------------------------------------
+# Estimation of the :math:`\sigma^2` parameter only
+# -------------------------------------------------
 
 sqrt_noise_intensity0 = 0.25
 ga_vars_to_estimate = {"sqrt_noise_intensity": True, "sqrt_diag_R": False,
