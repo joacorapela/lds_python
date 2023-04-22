@@ -5,6 +5,7 @@ import numpy as np
 import scipy.optimize
 import torch
 import warnings
+import copy
 
 from . import utils
 from . import inference
@@ -165,9 +166,10 @@ def scipy_optimize_SS_tracking_diagV0(y, B, sigma_ax0, sigma_ay0, Qe, Z,
 
 def torch_lbfgs_optimize_SS_tracking_diagV0(y, B, sqrt_noise_intensity0, Qe, Z,
                                             sqrt_diag_R_0, m0_0, sqrt_diag_V0_0,
-                                            max_iter=50, lr=1.0,
+                                            max_iter=20, lr=1.0,
                                             tolerance_grad=1e-7,
-                                            tolerance_change=1e-5,
+                                            tolerance_change=1e-9,
+                                            n_epochs = 100, tol=1e-6,
                                             line_search_fn="strong_wolfe",
                                             vars_to_estimate={
                                                 "sqrt_noise_intensity": True,
@@ -211,48 +213,65 @@ def torch_lbfgs_optimize_SS_tracking_diagV0(y, B, sqrt_noise_intensity0, Qe, Z,
     def closure():
         optimizer.zero_grad()
         curEval = -log_likelihood_fn()
-        print("--------------------------------------------------------------------------------")
-        print(f"logLike: {-curEval}")
         curEval.backward(retain_graph=True)
-        log_like.append(-curEval.item())
-        elapsed_time.append(time.time() - start_time)
-        print("sqrt_noise_intensity: ")
-        print(sqrt_noise_intensity)
-        print("sqrt_diag_R: ")
-        print(sqrt_diag_R)
-        print("m0: ")
-        print(m0)
-        print("sqrt_diag_V0: ")
-        print(sqrt_diag_V0)
         return curEval
 
+    termination_info = "success: reached maximum number of iterations"
     log_like = []
     elapsed_time = []
     start_time = time.time()
-    optimizer.step(closure)
-    log_likelihood_value = log_likelihood_fn()
+    for epoch in range(n_epochs):
+        prev_x = copy.deepcopy(x)
+        try:
+            curEval = optimizer.step(closure)
+        except RuntimeError:
+            # begin backtracking
+            if vars_to_estimate["sqrt_noise_intensity"]:
+                sqrt_noise_intensity = prev_x.pop()
+            if vars_to_estimate["sqrt_diag_R"]:
+                sqrt_diag_R = prev_x.pop()
+            if vars_to_estimate["m0"]:
+                m0 = prev_x.pop()
+            if vars_to_estimate["sqrt_diag_V0"]:
+                sqrt_diag_V0 = prev_x.pop()
+            # end backtracking
+            termination_info = "error: nan generated"
+            break
+        log_like.append(-curEval.item())
+        elapsed_time.append(time.time() - start_time)
+        print("--------------------------------------------------------------------------------")
+        print(f"epoch: {epoch}")
+        if vars_to_estimate["sqrt_noise_intensity"]:
+            print("sqrt_noise_intensity: ")
+            print(sqrt_noise_intensity)
+        if vars_to_estimate["sqrt_diag_R"]:
+            print("sqrt_diag_R: ")
+            print(sqrt_diag_R)
+        if vars_to_estimate["m0"]:
+            print("m0: ")
+            print(m0)
+        if vars_to_estimate["sqrt_diag_V0"]:
+            print("sqrt_diag_V0: ")
+            print(sqrt_diag_V0)
+        if epoch > 0 and log_like[-1] - log_like[-2] < tol:
+            termination_info = "success: converged"
+            break
     for i in range(len(x)):
         x[i].requires_grad = False
 
-    stateOneEpoch = optimizer.state[optimizer._params[0]]
-    nfeval = stateOneEpoch["func_evals"]
-    niter = stateOneEpoch["n_iter"]
     estimates = {}
     if vars_to_estimate["sqrt_noise_intensity"]:
-        e_sqrt_noise_intensity = x.pop(0)[0].item()
-        estimates["sqrt_noise_intensity"] = e_sqrt_noise_intensity
+        estimates["sqrt_noise_intensity"] = sqrt_noise_intensity
     if vars_to_estimate["sqrt_diag_R"]:
-        e_sqrt_diag_R = x.pop(0)
-        estimates["sqrt_diag_R"] = e_sqrt_diag_R
+        estimates["sqrt_diag_R"] = sqrt_diag_R
     if vars_to_estimate["m0"]:
-        e_m0 = x.pop(0)
-        estimates["m0"] = e_m0
+        estimates["m0"] = m0
     if vars_to_estimate["sqrt_diag_V0"]:
-        e_sqrt_diag_V0 = x.pop(0).numpy()
-        estimates["sqrt_diag_V0"] = e_sqrt_diag_V0
-    answer = {"estimates": estimates, "log_likelihood": log_likelihood_value,
-              "nfeval": nfeval, "niter": niter, "log_like": log_like,
-              "elapsed_time": elapsed_time}
+        estimates["sqrt_diag_V0"] = sqrt_diag_V0
+    answer = {"estimates": estimates,
+              "epochs": epoch, "log_like": log_like,
+              "elapsed_time": elapsed_time,
+              "termination_info": termination_info}
     return answer
 
 
