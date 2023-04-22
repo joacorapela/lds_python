@@ -214,7 +214,7 @@ def filterLDS_SS_withMissingValues_torch(y, B, Q, m0, V0, Z, R):
     logLike = -N*P*math.log(2*math.pi) - torch.logdet(Sn) - \
         innov.T @ Sinv @ innov
     if torch.isnan(logLike):
-        raise ValueError("obtained nan log likelihood")
+        raise RuntimeError("obtained nan log likelihood")
 
     xnn1_h[:, :, 0] = torch.unsqueeze(xnn1, 1)
     Vnn1_h[:, :, 0] = Vnn1
