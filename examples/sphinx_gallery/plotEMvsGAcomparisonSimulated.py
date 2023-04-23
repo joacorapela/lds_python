@@ -1,9 +1,9 @@
 """
-Comparison between EM and gradient ascent for parameter learning
-================================================================
+Comparison between EM and gradient ascent for tracking a simulated mouse
+========================================================================
 
 The code below compares the expectation maximization (EM) and gradient ascent
-algorithm for learning the parameters of a linear dynamical sytem for tracking.
+algorithm for tracking a simulated mouse.
 
 
 """
