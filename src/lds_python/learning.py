@@ -227,13 +227,13 @@ def torch_lbfgs_optimize_SS_tracking_diagV0(y, B, sqrt_noise_intensity0, Qe, Z,
         except RuntimeError:
             # begin backtracking
             if vars_to_estimate["sqrt_noise_intensity"]:
-                sqrt_noise_intensity = prev_x.pop()
+                sqrt_noise_intensity = prev_x.pop(0)
             if vars_to_estimate["sqrt_diag_R"]:
-                sqrt_diag_R = prev_x.pop()
+                sqrt_diag_R = prev_x.pop(0)
             if vars_to_estimate["m0"]:
-                m0 = prev_x.pop()
+                m0 = prev_x.pop(0)
             if vars_to_estimate["sqrt_diag_V0"]:
-                sqrt_diag_V0 = prev_x.pop()
+                sqrt_diag_V0 = prev_x.pop(0)
             # end backtracking
             termination_info = "error: nan generated"
             break
