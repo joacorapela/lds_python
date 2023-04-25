@@ -41,7 +41,7 @@ filtering_params_section = "params"
 color_measures = "black"
 color_pattern_filtered = "rgba(255,0,0,{:f})"
 cb_alpha = 0.3
-data_filename ="../../data/positions_session003_start0.00_end15548.27.csv"
+data_filename = "http://www.gatsby.ucl.ac.uk/~rapela/svGPFA/data/positions_session003_start0.00_end15548.27.csv"
 
 #%%
 # Get the mouse position measurements
