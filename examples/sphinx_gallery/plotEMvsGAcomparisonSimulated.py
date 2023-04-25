@@ -196,7 +196,7 @@ fig.update_layout(xaxis_title="Elapsed Time (sec)",
 fig
 
 #%%
-# :math:'\sigma_a` estimates
+# :math:`\sigma_a` estimates
 # """""""""""""""""""""""""""
 
 fig = go.Figure()
