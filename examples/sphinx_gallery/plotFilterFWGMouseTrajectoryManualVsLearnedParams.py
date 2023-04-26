@@ -177,8 +177,8 @@ optim_res_learned = lds_python.learning.torch_lbfgs_optimize_SS_tracking_diagV0(
     tol=lbfgs_tol)
 
 #%%
-# Filtering with learned parameters
-# ---------------------------------
+# Filter
+# ~~~~~~
 
 Q_learned = optim_res_learned["estimates"]["sigma_a"].item()**2*Qe
 m0_learned = optim_res_learned["estimates"]["m0"].numpy()
