@@ -37,7 +37,6 @@ import lds_python.inference
 
 start_position = 0
 number_positions = 10000
-filtering_params_section = "params"
 color_measures = "black"
 color_pattern_filtered = "rgba(255,0,0,{:f})"
 cb_alpha = 0.3
