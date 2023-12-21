@@ -179,6 +179,9 @@ def filterLDS_SS_withMissingValues_torch(y, B, Q, m0, V0, Z, R):
 
     """
 
+    if np.any(np.isnan(y[:, 0])) or np.any(np.isnan(y[:, -1])):
+        raise ValueError("The first or last observation cannot contain nan")
+
     if m0.ndim != 1:
         raise ValueError("mean must be 1 dimensional")
 

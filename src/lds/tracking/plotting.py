@@ -5,102 +5,148 @@ import plotly.graph_objects as go
 def get_fig_mfs_positions_2D(time, measured_x=None, measured_y=None,
                              filtered_x=None, filtered_y=None,
                              smoothed_x=None, smoothed_y=None,
-                             xlabel="x", ylabel="y",
                              color_measured="black",
+                             color_filtered="red",
+                             color_smoothed="green",
+                             xlabel="x (pixels)", ylabel="y (pixels)",
+                             hovertemplate="<b>x:</b>%{x:.3f}<br><b>y</b>:%{y:.3f}<br><b>time</b>:%{customdata} sec",
                             ):
-    """Returns a figure with measured, filtered and smoothed (mfs) positions
+    """Returns a figure with measured, measured and/or smoothed (mfs) positions
+    with the x and y components plotted against each other.
     """
+    fig = go.Figure()
     if measured_x is not None and measured_y is not None:
-        trace_fd = go.Scatter(x=measured_x, y=measured_x,
-                              mode="markers",
-                              marker={"color": color_measured},
-                              customdata=time,
-                              hovertemplate="<b>x:</b>%{x:.3f}<br><b>y</b>:%{y:.3f}<br><b>time</b>:%{customdata} sec",
-                              name="measured",
-                              showlegend=True,
-                              )
+        trace = go.Scatter(x=measured_x, y=measured_y,
+                          mode="lines+markers",
+                          marker={"color": color_measured},
+                          customdata=time,
+                          hovertemplate=hovertemplate,
+                          name="measured",
+                          showlegend=True,
+                          )
+        fig.add_trace(trace)
     if filtered_x is not None and filtered_y is not None:
-        trace_filtered = go.Scatter(x=smoothed_data["fpos1"],
-                                    y=smoothed_data["fpos2"],
-                                    mode="markers",
-                                    marker={"color": color_filtered},
-                                    customdata=smoothed_data["time"],
-                                    hovertemplate="<b>x:</b>%{x:.3f}<br><b>y</b>:%{y:.3f}<br><b>time</b>:%{customdata} sec",
-                                    name="filtered",
-                                    showlegend=True,
-                                    )
-        trace_smoothed = go.Scatter(x=smoothed_data["spos1"],
-                                    y=smoothed_data["spos2"],
-                                    mode="markers",
-                                    marker={"color": color_smoothed},
-                                    customdata=smoothed_data["time"],
-                                    hovertemplate="<b>x:</b>%{x:.3f}<br><b>y</b>:%{y:.3f}<br><b>time</b>:%{customdata} sec",
-                                    name="smoothed",
-                                    showlegend=True,
-                                    )
-        fig.add_trace(trace_fd)
-        fig.add_trace(trace_filtered)
-        fig.add_trace(trace_smoothed)
-        fig.update_layout(xaxis_title="x (pixels)", yaxis_title="y (pixels)",
-                          paper_bgcolor='rgba(0,0,0,0)',
-                          plot_bgcolor='rgba(0,0,0,0)')
+        trace = go.Scatter(x=filtered_x,
+                           y=filtered_y,
+                           mode="lines+markers",
+                           marker={"color": color_filtered},
+                           customdata=time,
+                           hovertemplate=hovertemplate,
+                           name="filtered",
+                           showlegend=True,
+                           )
+        fig.add_trace(trace)
+    if smoothed_x is not None and smoothed_y is not None:
+        trace = go.Scatter(x=smoothed_x,
+                           y=smoothed_y,
+                           mode="lines+markers",
+                           marker={"color": color_smoothed},
+                           customdata=time,
+                           hovertemplate=hovertemplate,
+                           name="smoothed",
+                           showlegend=True,
+                           )
+        fig.add_trace(trace)
+    fig.update_layout(xaxis_title=xlabel, yaxis_title=ylabel,
+                      paper_bgcolor='rgba(0,0,0,0)',
+                      plot_bgcolor='rgba(0,0,0,0)')
+    return fig
 
-def get_fig_mfs_kinematics_1D(time, measured_x, measured_y, fd_x, fd_y,
-                              filtered_x, filtered_y, smoothed_x, smoothed_y,
-                              xlabel="x", ylabel="y"):
-    trace_fd_x = go.Scatter(x=smoothed_data["time"],
-                             y=y_acc_fd[0, :],
+def get_fig_mfdfs_kinematics_1D(time, yaxis_title,
+                                measured_x=None, measured_y=None,
+                                fd_x=None, fd_y=None,
+                                filtered_x=None, filtered_y=None,
+                                smoothed_x=None, smoothed_y=None,
+                                color_measured="black",
+                                color_fd="blue",
+                                color_filtered="red",
+                                color_smoothed="green",
+                                symbol_x="circle", symbol_y="circle-open",
+                                xlabel1D="x (pixels)", ylabel1D="y (pixels)",
+                                xlabel2D="time (sec)", ylabel2D="position (pixels)",
+                               ):
+    """Returns a figure with measured, finite differences, measured and/or
+    smoothed (mfs) kinematics (e.g., positions, velocities or accelerations)
+    with the x and y components plotted against time.
+    """
+    fig = go.Figure()
+    if fd_x is not None and fd_y is not None:
+        trace_x = go.Scatter(x=time,
+                             y=fd_x,
                              mode="lines+markers",
-                             marker={"color": color_measured},
+                             marker={"color": color_fd},
                              name="finite diff x",
                              showlegend=True,
                              )
-    trace_fd_y = go.Scatter(x=smoothed_data["time"],
-                             y=y_acc_fd[1, :],
+        trace_y = go.Scatter(x=time,
+                             y=fd_y,
                              mode="lines+markers",
-                             marker={"color": color_measured},
+                             marker={"color": color_fd},
                              name="finite diff y",
                              showlegend=True,
                              )
-    trace_filtered_x = go.Scatter(x=smoothed_data["time"],
-                                  y=smoothed_data["facc1"],
-                                  mode="lines+markers",
-                                  marker={"color": color_filtered,
-                                          "symbol": symbol_x},
-                                  name="filtered x",
-                                  showlegend=True,
-                                  )
-    trace_filtered_y = go.Scatter(x=smoothed_data["time"],
-                                  y=smoothed_data["facc2"],
-                                  mode="lines+markers",
-                                  marker={"color": color_filtered,
-                                          "symbol": symbol_y},
-                                  name="filtered y",
-                                  showlegend=True,
-                                  )
-    trace_smoothed_x = go.Scatter(x=smoothed_data["time"],
-                                  y=smoothed_data["sacc1"],
-                                  mode="lines+markers",
-                                  marker={"color": color_smoothed,
-                                          "symbol": symbol_x},
-                                  name="smoothed x",
-                                  showlegend=True,
-                                  )
-    trace_smoothed_y = go.Scatter(x=smoothed_data["time"],
-                                  y=smoothed_data["sacc2"],
-                                  mode="lines+markers",
-                                  marker={"color": color_smoothed,
-                                          "symbol": symbol_y},
-                                  name="smoothed y",
-                                  showlegend=True,
-                                  )
-    fig.add_trace(trace_fd_x)
-    fig.add_trace(trace_fd_y)
-    fig.add_trace(trace_filtered_x)
-    fig.add_trace(trace_filtered_y)
-    fig.add_trace(trace_smoothed_x)
-    fig.add_trace(trace_smoothed_y)
-    fig.update_layout(xaxis_title="time", yaxis_title="acceleration",
-                      paper_bgcolor='rgba(0,0,0,0)',
-                      plot_bgcolor='rgba(0,0,0,0)')
-
+        fig.add_trace(trace_x)
+        fig.add_trace(trace_y)
+    if measured_x is not None and measured_y is not None:
+        trace_x = go.Scatter(x=time,
+                             y=measured_x,
+                             mode="lines+markers",
+                             marker={"color": color_measured,
+                                     "symbol": symbol_x},
+                             name="measured x",
+                             showlegend=True,
+                             )
+        trace_y = go.Scatter(x=time,
+                             y=measured_y,
+                             mode="lines+markers",
+                             marker={"color": color_measured,
+                                     "symbol": symbol_y},
+                             name="measured y",
+                             showlegend=True,
+                             )
+        fig.add_trace(trace_x)
+        fig.add_trace(trace_y)
+    if filtered_x is not None and filtered_y is not None:
+        trace_x = go.Scatter(x=time,
+                             y=filtered_x,
+                             mode="lines+markers",
+                             marker={"color": color_filtered,
+                                     "symbol": symbol_x},
+                             name="filtered x",
+                             showlegend=True,
+                             )
+        trace_y = go.Scatter(x=time,
+                             y=filtered_y,
+                             mode="lines+markers",
+                             marker={"color": color_filtered,
+                                     "symbol": symbol_y},
+                             name="filtered y",
+                             showlegend=True,
+                             )
+        fig.add_trace(trace_x)
+        fig.add_trace(trace_y)
+    if smoothed_x is not None and smoothed_y is not None:
+        trace_x = go.Scatter(x=time,
+                             y=smoothed_x,
+                             mode="lines+markers",
+                             marker={"color": color_smoothed,
+                                     "symbol": symbol_x},
+                             name="smoothed x",
+                             showlegend=True,
+                             )
+        trace_y = go.Scatter(x=time,
+                             y=smoothed_y,
+                             mode="lines+markers",
+                             marker={"color": color_smoothed,
+                                     "symbol": symbol_y},
+                             name="smoothed y",
+                             showlegend=True,
+                             )
+        fig.add_trace(trace_x)
+        fig.add_trace(trace_y)
+    fig.update_layout(paper_bgcolor='rgba(0,0,0,0)',
+                      plot_bgcolor='rgba(0,0,0,0)',
+                      xaxis_title="time (sec)",
+                      yaxis_title=yaxis_title,
+                     )
+    return fig
