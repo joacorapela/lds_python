@@ -30,7 +30,7 @@ def getLDSmatricesForTracking(dt, sigma_a, sigma_x, sigma_y):
     R = np.diag([sigma_x**2, sigma_y**2])
     Q = buildQfromQt_np(Qt=Qt, sigma_ax=sigma_a, sigma_ay=sigma_a)
 
-    return B, Q, Z, R
+    return B, Q, Z, R, Qt
 
 
 def buildQfromQt_np(Qt, sigma_ax, sigma_ay):

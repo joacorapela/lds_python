@@ -7,8 +7,8 @@ import torch
 import warnings
 import copy
 
-from . import utils
 from . import inference
+from .tracking import utils
 
 iteration = 0
 
