@@ -1,3 +1,3 @@
 #!/bin/csh
 
-sphinx-apidoc -f -o source/ ../../code/src/
+sphinx-apidoc -f -o source/ ../../src/
