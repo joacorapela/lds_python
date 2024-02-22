@@ -149,6 +149,153 @@ class OnlineKalmanFilter:
         self._P = P
 
 
+class TimeVaryingOnlineKalmanFilter:
+    """
+    Class implementing the time-varying and online Kalman filter algorithm for the following
+    linear dynamical system:
+
+    .. math::
+       x_n &= B_n\ x_{n-1} + w_n,\ \\textrm{where}\ w_n\sim\mathcal{N}(w_n|0, Q_n)\, \\textrm{and}\ x_n\in\Re^M
+
+       y_n &= Z_n\ x_{n-1} + v_n,\ \\textrm{where}\ v_n\sim\mathcal{N}(v_n|0, R_n)\, \\textrm{and}\ y_n\in\Re^N
+
+       x_0&\in\mathcal{N}(x_0|m_0, V_0)
+
+    Example use:
+
+    .. code-block:: python
+
+        online_kf = OnlineKalmanFilter(m0, V0)
+        x_pred, P_pred = online_kf.predict()
+
+        for y in ys:
+            x_filt, P_filt = online_kf.update(y)
+            x_pred, P_pred = online_kf.predict()
+
+    A script using `OnlineKalmanFilter` for tracking the position of a mouse
+    can be found `here
+    <https://github.com/joacorapela/lds_python/blob/master/code/scripts/doOnlineFilterFWGMouseTrajectory.py>`_
+
+    Note 1:
+        invocation so `predict()` and `update(y)` should alternate. That is,
+        each invocation to `update(y)` should be preceded by an invocation to
+        `predict()`, and each invocation to `predict()` (except the first one)
+        should be preceded by an invoation to `update(y)`.
+
+    Note 2:
+        observations :math:`y_n` should be sampled uniformly.
+    """
+    def __init__(self, B, Q, m0, V0, Z, R):
+        self._B = B
+        self._Q = Q
+        self._m0 = m0
+        self._V0 = V0
+        self._Z = Z
+        self._R = R
+
+        self._x = m0
+        self._P = V0
+
+        M = len(m0)
+        self.I = np.eye(M)
+
+    def predict(self, x, P, B, Q):
+        """Predicts the next state.
+
+        :return: (state, covariance): tuple containing the predicted state vector and covariance matrix.
+
+        """
+        x = B @ x
+        P = B @ P @ B.T + Q
+        return x, P
+
+    def update(self, y, x, P, Z, R):
+        """Updates the current state and covariance.
+
+        :param y: observation :math:`\in\Re^M`
+        :return: (state, covariance): tuple containing the updated state vector and covariance matrix.
+
+        """
+        if y.ndim == 1:
+            y = np.expand_dims(y, axis=1)
+        if not np.isnan(y).any():
+            M = len(x)
+            I = np.eye(M)
+            pred_obs = Z @ x
+            residual = y - pred_obs
+            Stmp = Z @ P @ Z.T + R
+            S = (Stmp + Stmp.T) / 2
+            Sinv = np.linalg.inv(S)
+            K = P @ Z.T @ Sinv
+            x = x + K @ residual
+            P = (I - K @ Z) @ P
+        return x, P
+
+    @property
+    def B(self):
+        return self._B
+
+    @B.setter
+    def B(self, B):
+        self._B = B
+
+    @property
+    def Q(self):
+        return self._Q
+
+    @Q.setter
+    def Q(self, Q):
+        self._Q = Q
+
+    @property
+    def m0(self):
+        return self._m0
+
+    @m0.setter
+    def m0(self, m0):
+        self._m0 = m0
+
+    @property
+    def V0(self):
+        return self._V0
+
+    @V0.setter
+    def V0(self, V0):
+        self._V0 = V0
+
+    @property
+    def Z(self):
+        return self._Z
+
+    @Z.setter
+    def Z(self, Z):
+        self._Z = Z
+
+    @property
+    def R(self):
+        return self._R
+
+    @R.setter
+    def R(self, R):
+        self._R = R
+
+    @property
+    def x(self):
+        return self._x
+
+    @x.setter
+    def x(self, x):
+        self._x = x
+
+    @property
+    def P(self):
+        return self._P
+
+    @P.setter
+    def P(self, P):
+        self._P = P
+
+
 def filterLDS_SS_withMissingValues_torch(y, B, Q, m0, V0, Z, R):
     """ Kalman filter implementation of the algorithm described in Shumway and
     Stoffer 2006.
@@ -304,8 +451,8 @@ def filterLDS_SS_withMissingValues_np(y, B, Q, m0, V0, Z, R):
     Sn = np.empty(shape=[P, P, N])
 
     # k==0
-    xnn1[:, 0, 0] = B @ m0
-    Vnn1[:, :, 0] = B @ V0 @ B.T + Q
+    xnn1[:, 0, 0] = m0
+    Vnn1[:, :, 0] = V0
     Stmp = Z @ Vnn1[:, :, 0] @ Z.T + R
     Sn[:, :, 0] = (Stmp + Stmp.T) / 2
     Sinv = np.linalg.inv(Sn[:, :, 0])
