@@ -1,29 +1,29 @@
-lds\_python package
-===================
+lds package
+===========
 
 Submodules
 ----------
 
-lds\_python.inference module
-----------------------------
+lds.inference module
+--------------------
 
-.. automodule:: lds_python.inference
+.. automodule:: lds.inference
    :members:
    :undoc-members:
    :show-inheritance:
 
-lds\_python.learning module
----------------------------
+lds.learning module
+-------------------
 
-.. automodule:: lds_python.learning
+.. automodule:: lds.learning
    :members:
    :undoc-members:
    :show-inheritance:
 
-lds\_python.simulation module
------------------------------
+lds.simulation module
+---------------------
 
-.. automodule:: lds_python.simulation
+.. automodule:: lds.simulation
    :members:
    :undoc-members:
    :show-inheritance:
@@ -31,7 +31,7 @@ lds\_python.simulation module
 Module contents
 ---------------
 
-.. automodule:: lds_python
+.. automodule:: lds
    :members:
    :undoc-members:
    :show-inheritance:
