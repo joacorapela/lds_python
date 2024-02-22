@@ -35,7 +35,7 @@ extensions = ['sphinx.ext.autodoc','sphinx_gallery.gen_gallery',
 # sphinx-gallery
 
 sphinx_gallery_conf = {
-    'examples_dirs': '../../../examples/sphinx_gallery',   # path to your example scripts
+    'examples_dirs': '../../../examples/sphinx_gallery/tracking',   # path to your example scripts
     'gallery_dirs': 'auto_examples',  # path to where to save gallery generated output
     'binder': {
         # Required keys
