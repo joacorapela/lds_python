@@ -7,6 +7,6 @@ sphinx
 sphinx_rtd_theme
 sphinx-gallery
 matplotlib
-lds_python
+lds
 ipynb
 pandas
