@@ -16,8 +16,8 @@ import configparser
 import numpy as np
 import plotly.graph_objects as go
 
-import lds_python.simulation
-import lds_python.inference
+import lds.simulation
+import lds.inference
 
 
 #%%
@@ -71,29 +71,29 @@ V0 = np.diag(np.ones(len(m0))*sqrt_diag_V0_value**2)
 #%%
 # Sample from the LDS
 # ~~~~~~~~~~~~~~~~~~~
-# View source code of `lds_python.simulation.simulateLDS
-# <https://joacorapela.github.io/lds_python/_modules/lds_python/simulation.html#simulateLDS>`_
+# View source code of `lds.simulation.simulateLDS
+# <https://joacorapela.github.io/lds_python/_modules/lds/simulation.html#simulateLDS>`_
 
-x0, x, y = lds_python.simulation.simulateLDS(N=num_pos, B=B, Q=Q, Z=Z, R=R,
+x0, x, y = lds.simulation.simulateLDS(N=num_pos, B=B, Q=Q, Z=Z, R=R,
                                              m0=m0, V0=V0)
 
 #%%
 # Perform batch filtering
 # ~~~~~~~~~~~~~~~~~~~~~~~
-# View source code of `lds_python.inference.filterLDS_SS_withMissingValues_np
-# <https://joacorapela.github.io/lds_python/_modules/lds_python/inference.html#filterLDS_SS_withMissingValues_np>`_
+# View source code of `lds.inference.filterLDS_SS_withMissingValues_np
+# <https://joacorapela.github.io/lds_python/_modules/lds/inference.html#filterLDS_SS_withMissingValues_np>`_
 
 Q = sigma_a*Qe
-filterRes = lds_python.inference.filterLDS_SS_withMissingValues_np(
+filterRes = lds.inference.filterLDS_SS_withMissingValues_np(
     y=y, B=B, Q=Q, m0=m0, V0=V0, Z=Z, R=R)
 
 #%%
 # Perform batch smoothing
 # ~~~~~~~~~~~~~~~~~~~~~~~
-# View source code of `lds_python.inference.smoothLDS_SS
-# <https://joacorapela.github.io/lds_python/_modules/lds_python/inference.html#smoothLDS_SS>`_
+# View source code of `lds.inference.smoothLDS_SS
+# <https://joacorapela.github.io/lds_python/_modules/lds/inference.html#smoothLDS_SS>`_
 
-smoothRes = lds_python.inference.smoothLDS_SS(
+smoothRes = lds.inference.smoothLDS_SS(
     B=B, xnn=filterRes["xnn"], Vnn=filterRes["Vnn"],
     xnn1=filterRes["xnn1"], Vnn1=filterRes["Vnn1"], m0=m0, V0=V0)
 
