@@ -106,9 +106,9 @@ onlineKF = lds.inference.OnlineKalmanFilter(B=B, Q=Q, m0=m0, V0=V0, Z=Z, R=R)
 filtered_means = np.empty((6, 1, y.shape[1]), dtype=np.double)
 filtered_covs = np.empty((6, 6, y.shape[1]), dtype=np.double)
 for i in range(y.shape[1]):
+    _, _ = onlineKF.predict()
     filtered_means[:, :, i], filtered_covs[:, :, i] = \
         onlineKF.update(y=y[:, i])
-    _, _ = onlineKF.predict()
 
 #%%
 # Plot the filtered positions with their 95% confidence bands
