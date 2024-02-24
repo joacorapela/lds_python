@@ -185,20 +185,6 @@ class TimeVaryingOnlineKalmanFilter:
     Note 2:
         observations :math:`y_n` should be sampled uniformly.
     """
-    def __init__(self, B, Q, m0, V0, Z, R):
-        self._B = B
-        self._Q = Q
-        self._m0 = m0
-        self._V0 = V0
-        self._Z = Z
-        self._R = R
-
-        self._x = m0
-        self._P = V0
-
-        M = len(m0)
-        self.I = np.eye(M)
-
     def predict(self, x, P, B, Q):
         """Predicts the next state.
 
@@ -230,70 +216,6 @@ class TimeVaryingOnlineKalmanFilter:
             x = x + K @ residual
             P = (I - K @ Z) @ P
         return x, P
-
-    @property
-    def B(self):
-        return self._B
-
-    @B.setter
-    def B(self, B):
-        self._B = B
-
-    @property
-    def Q(self):
-        return self._Q
-
-    @Q.setter
-    def Q(self, Q):
-        self._Q = Q
-
-    @property
-    def m0(self):
-        return self._m0
-
-    @m0.setter
-    def m0(self, m0):
-        self._m0 = m0
-
-    @property
-    def V0(self):
-        return self._V0
-
-    @V0.setter
-    def V0(self, V0):
-        self._V0 = V0
-
-    @property
-    def Z(self):
-        return self._Z
-
-    @Z.setter
-    def Z(self, Z):
-        self._Z = Z
-
-    @property
-    def R(self):
-        return self._R
-
-    @R.setter
-    def R(self, R):
-        self._R = R
-
-    @property
-    def x(self):
-        return self._x
-
-    @x.setter
-    def x(self, x):
-        self._x = x
-
-    @property
-    def P(self):
-        return self._P
-
-    @P.setter
-    def P(self, P):
-        self._P = P
 
 
 def filterLDS_SS_withMissingValues_torch(y, B, Q, m0, V0, Z, R):
@@ -451,8 +373,8 @@ def filterLDS_SS_withMissingValues_np(y, B, Q, m0, V0, Z, R):
     Sn = np.empty(shape=[P, P, N])
 
     # k==0
-    xnn1[:, 0, 0] = m0
-    Vnn1[:, :, 0] = V0
+    xnn1[:, 0, 0] = B @ m0
+    Vnn1[:, :, 0] = B @ V0 @ B.T + Q
     Stmp = Z @ Vnn1[:, :, 0] @ Z.T + R
     Sn[:, :, 0] = (Stmp + Stmp.T) / 2
     Sinv = np.linalg.inv(Sn[:, :, 0])
