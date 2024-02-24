@@ -176,4 +176,4 @@ for n, t in enumerate(y):
         fig.update_xaxes(title_text="x", row=index_sample+2, col=3)
         fig.update_yaxes(title_text="y", row=index_sample+2, col=3)
 
-fig.show()
+fig
