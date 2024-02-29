@@ -77,7 +77,7 @@ def scipy_optimize_SS_tracking_fullV0(y, B, sigma_a0, Qe, Z, diag_R_0,
     options={"disp": disp, "maxiter": max_iter}
     opt_res = scipy.optimize.minimize(optim_criterion, x0, method="Nelder-Mead",
                                       callback=callback, options=options)
-    import pdb; pdb.set_trace()
+    breakpoint()
 
 
 def scipy_optimize_SS_tracking_diagV0(y, B, sigma_ax0, sigma_ay0, Qe, Z,
@@ -114,8 +114,8 @@ def scipy_optimize_SS_tracking_diagV0(y, B, sigma_ax0, sigma_ay0, Qe, Z,
         # build Q from Qe, sigma_ax, sigma_ay
         Q = utils.buildQfromQe_np(Qe=Qe, sigma_ax=sigma_ax, sigma_ay=sigma_ay)
 
-        kf = inference.filterLDS_SS_withMissingValues(y=y, B=B, Q=Q,
-                                                      m0=m0, V0=V0, Z=Z, R=R)
+        kf = inference.filterLDS_SS_withMissingValues_np(y=y, B=B, Q=Q,
+                                                         m0=m0, V0=V0, Z=Z, R=R)
         answer = 0
         N = kf["Sn"].shape[2]
         for n in range(N):
@@ -401,7 +401,7 @@ def em_SS_tracking(y, B, sigma_a0, Qe, Z, R_0, m0_0, V0_0,
             if math.isnan(log_like[-1]):
                 termination_info = "nan detected"
             else:
-                termination_info = "log likelihood increased"
+                termination_info = "log likelihood decreased"
             # begin backtrack
             if vars_to_estimate["sigma_a"]:
                 sigma_a = sigma_a_prev
