@@ -22,7 +22,7 @@ import torch
 import scipy
 import plotly.graph_objects as go
 
-import lds_python.learning
+import lds.learning
 
 
 #%%
@@ -148,7 +148,7 @@ B_torch = torch.from_numpy(B.astype(np.double))
 Qe_regularized_ga_torch = torch.from_numpy(Qe_regularized_ga.astype(np.double))
 Z_torch = torch.from_numpy(Z.astype(np.double))
 
-optim_res_ga = lds_python.learning.torch_lbfgs_optimize_SS_tracking_diagV0(
+optim_res_ga = lds.learning.torch_lbfgs_optimize_SS_tracking_diagV0(
     y=y_torch, B=B_torch, sigma_a0=sigma_a0,
     Qe=Qe_regularized_ga_torch, Z=Z_torch, sqrt_diag_R_0=sqrt_diag_R_torch, m0_0=m0_torch,
     sqrt_diag_V0_0=sqrt_diag_V0_torch, max_iter=lbfgs_max_iter, lr=lbfgs_lr,
@@ -183,7 +183,7 @@ if Qe_reg_param_em is not None:
 else:
     Qe_regularized_em = Qe
 
-optim_res_em  = lds_python.learning.em_SS_tracking(
+optim_res_em  = lds.learning.em_SS_tracking(
     y=y_interpolated, B=B, sigma_a0=sigma_a0,
     Qe=Qe_regularized_em, Z=Z, R_0=R_0, m0_0=m0_0, V0_0=V0_0,
     vars_to_estimate=vars_to_estimate,
@@ -217,24 +217,24 @@ fig
 #%%
 # Perform batch filtering
 # #######################
-# View source code of `lds_python.inference.filterLDS_SS_withMissingValues_np
-# <https://joacorapela.github.io/lds_python/_modules/lds_python/inference.html#filterLDS_SS_withMissingValues_np>`_
+# View source code of `lds.inference.filterLDS_SS_withMissingValues_np
+# <https://joacorapela.github.io/lds_python/_modules/lds/inference.html#filterLDS_SS_withMissingValues_np>`_
 
 Q_ga = optim_res_ga["estimates"]["sigma_a"].item()**2*Qe
 m0_ga = optim_res_ga["estimates"]["m0"].numpy()
 V0_ga = np.diag(optim_res_ga["estimates"]["sqrt_diag_V0"].numpy()**2)
 R_ga = np.diag(optim_res_ga["estimates"]["sqrt_diag_R"].numpy()**2)
 
-filterRes_ga = lds_python.inference.filterLDS_SS_withMissingValues_np(
+filterRes_ga = lds.inference.filterLDS_SS_withMissingValues_np(
     y=y, B=B, Q=Q_ga, m0=m0_ga, V0=V0_ga, Z=Z, R=R_ga)
 
 #%%
 # Perform batch smoothing
 # #######################
-# View source code of `lds_python.inference.smoothLDS_SS
-# <https://joacorapela.github.io/lds_python/_modules/lds_python/inference.html#smoothLDS_SS>`_
+# View source code of `lds.inference.smoothLDS_SS
+# <https://joacorapela.github.io/lds_python/_modules/lds/inference.html#smoothLDS_SS>`_
 
-smoothRes_ga = lds_python.inference.smoothLDS_SS(
+smoothRes_ga = lds.inference.smoothLDS_SS(
     B=B, xnn=filterRes_ga["xnn"], Vnn=filterRes_ga["Vnn"],
     xnn1=filterRes_ga["xnn1"], Vnn1=filterRes_ga["Vnn1"], m0=m0_ga, V0=V0_ga)
 
@@ -245,24 +245,24 @@ smoothRes_ga = lds_python.inference.smoothLDS_SS(
 #%%
 # Perform batch filtering
 # #######################
-# View source code of `lds_python.inference.filterLDS_SS_withMissingValues_np
-# <https://joacorapela.github.io/lds_python/_modules/lds_python/inference.html#filterLDS_SS_withMissingValues_np>`_
+# View source code of `lds.inference.filterLDS_SS_withMissingValues_np
+# <https://joacorapela.github.io/lds_python/_modules/lds/inference.html#filterLDS_SS_withMissingValues_np>`_
 
 Q_em = optim_res_em["estimates"]["sigma_a"].item()**2*Qe
 m0_em = optim_res_em["estimates"]["m0"]
 V0_em = optim_res_em["estimates"]["V0"]
 R_em = optim_res_em["estimates"]["R"]
 
-filterRes_em = lds_python.inference.filterLDS_SS_withMissingValues_np(
+filterRes_em = lds.inference.filterLDS_SS_withMissingValues_np(
     y=y, B=B, Q=Q_em, m0=m0_em, V0=V0_em, Z=Z, R=R_em)
 
 #%%
 # Perform batch smoothing
 # #######################
-# View source code of `lds_python.inference.smoothLDS_SS
-# <https://joacorapela.github.io/lds_python/_modules/lds_python/inference.html#smoothLDS_SS>`_
+# View source code of `lds.inference.smoothLDS_SS
+# <https://joacorapela.github.io/lds_python/_modules/lds/inference.html#smoothLDS_SS>`_
 
-smoothRes_em = lds_python.inference.smoothLDS_SS(
+smoothRes_em = lds.inference.smoothLDS_SS(
     B=B, xnn=filterRes_em["xnn"], Vnn=filterRes_em["Vnn"],
     xnn1=filterRes_em["xnn1"], Vnn1=filterRes_em["Vnn1"], m0=m0_em, V0=V0_em)
 
