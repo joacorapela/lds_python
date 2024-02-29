@@ -31,8 +31,8 @@ import pandas as pd
 import torch
 import plotly.graph_objects as go
 
-import lds_python.inference
-import lds_python.learning
+import lds.inference
+import lds.learning
 
 #%%
 # Setup configuration variables
@@ -102,10 +102,10 @@ R_manual = np.diag([sigma_x_manual**2, sigma_y_manual**2])
 V0_manual = np.diag(np.ones(len(m0_manual))*sqrt_diag_V0_value_manual**2)
 Q_manual = Qe*sigma_a_manual
 
-filterRes_manual = lds_python.inference.filterLDS_SS_withMissingValues_np(
+filterRes_manual = lds.inference.filterLDS_SS_withMissingValues_np(
     y=y, B=B, Q=Q_manual, m0=m0_manual, V0=V0_manual, Z=Z, R=R_manual)
 
-smoothRes_manual = lds_python.inference.smoothLDS_SS(
+smoothRes_manual = lds.inference.smoothLDS_SS(
     B=B, xnn=filterRes_manual["xnn"], Vnn=filterRes_manual["Vnn"],
     xnn1=filterRes_manual["xnn1"], Vnn1=filterRes_manual["Vnn1"],
     m0=m0_manual, V0=V0_manual)
@@ -168,7 +168,7 @@ else:
     vars_to_estimate["sqrt_diag_V0"] = True
     vars_to_estimate["V0"] = True
 
-optim_res_learned = lds_python.learning.torch_lbfgs_optimize_SS_tracking_diagV0(
+optim_res_learned = lds.learning.torch_lbfgs_optimize_SS_tracking_diagV0(
     y=y_torch, B=B_torch, sigma_a0=sigma_a_manual,
     Qe=Qe_regularized_learned_torch, Z=Z_torch, sqrt_diag_R_0=sqrt_diag_R_torch, m0_0=m0_torch,
     sqrt_diag_V0_0=sqrt_diag_V0_torch, max_iter=lbfgs_max_iter, lr=lbfgs_lr,
@@ -185,10 +185,10 @@ m0_learned = optim_res_learned["estimates"]["m0"].numpy()
 V0_learned = np.diag(optim_res_learned["estimates"]["sqrt_diag_V0"].numpy()**2)
 R_learned = np.diag(optim_res_learned["estimates"]["sqrt_diag_R"].numpy()**2)
 
-filterRes_learned = lds_python.inference.filterLDS_SS_withMissingValues_np(
+filterRes_learned = lds.inference.filterLDS_SS_withMissingValues_np(
     y=y, B=B, Q=Q_learned, m0=m0_learned, V0=V0_learned, Z=Z, R=R_learned)
 
-smoothRes_learned = lds_python.inference.smoothLDS_SS(
+smoothRes_learned = lds.inference.smoothLDS_SS(
     B=B, xnn=filterRes_learned["xnn"], Vnn=filterRes_learned["Vnn"],
     xnn1=filterRes_learned["xnn1"], Vnn1=filterRes_learned["Vnn1"], m0=m0_learned, V0=V0_learned)
 
