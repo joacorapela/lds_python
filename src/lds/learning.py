@@ -3,7 +3,6 @@ import math
 import time
 import numpy as np
 import scipy.optimize
-import torch
 import warnings
 import copy
 
@@ -176,6 +175,7 @@ def torch_lbfgs_optimize_SS_tracking_diagV0(y, B, sigma_a0, Qe, Z,
                                                 "R": True, "m0": True, "V0": True},
                                             disp=True):
 
+    import torch
     def log_likelihood_fn():
         V0 = torch.diag(sqrt_diag_V0**2)
         R = torch.diag(sqrt_diag_R**2)
@@ -289,6 +289,7 @@ def torch_adam_optimize_SS_tracking_diagV0(y, B, sigma_a0, Qe, Z,
                                                "V0": True},
                                           ):
 
+    import torch
     def log_likelihood_fn():
         V0 = torch.diag(sqrt_diag_V0**2)
         R = torch.diag(sqrt_diag_R**2)

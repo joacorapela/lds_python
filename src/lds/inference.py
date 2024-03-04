@@ -1,7 +1,6 @@
 
 import math
 import numpy as np
-import torch
 
 
 class OnlineKalmanFilter:
@@ -248,6 +247,7 @@ def filterLDS_SS_withMissingValues_torch(y, B, Q, m0, V0, Z, R):
 
     """
 
+    import torch
     if torch.any(torch.isnan(y[:, 0])) or torch.any(torch.isnan(y[:, -1])):
         raise ValueError("The first or last observation cannot contain nan")
 
