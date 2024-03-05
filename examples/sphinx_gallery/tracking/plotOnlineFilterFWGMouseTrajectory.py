@@ -29,6 +29,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
+import lds.tracking.utils
 import lds.inference
 
 #%%
@@ -71,32 +72,10 @@ sqrt_diag_V0_value = 1e-3
 
 date_times = pd.to_datetime(data["time"])
 dt = (date_times.iloc[1]-date_times.iloc[0]).total_seconds()
-# Taken from the book
-# barShalomEtAl01-estimationWithApplicationToTrackingAndNavigation.pdf
-# section 6.3.3
-    # Eq. 6.3.3-2
-B = np.array([[1, dt, .5*dt**2, 0, 0, 0],
-               [0, 1, dt, 0, 0, 0],
-               [0, 0, 1, 0, 0, 0],
-               [0, 0, 0, 1, dt, .5*dt**2],
-               [0, 0, 0, 0, 1, dt],
-               [0, 0, 0, 0, 0, 1]],
-              dtype=np.double)
-Z = np.array([[1, 0, 0, 0, 0, 0],
-               [0, 0, 0, 1, 0, 0]],
-              dtype=np.double)
-    # Eq. 6.3.3-4
-Qt = np.array([[dt**4/4, dt**3/2, dt**2/2, 0, 0, 0],
-               [dt**3/2, dt**2,   dt,      0, 0, 0],
-               [dt**2/2, dt,      1,       0, 0, 0],
-               [0, 0, 0, dt**4/4, dt**3/2, dt**2/2],
-               [0, 0, 0, dt**3/2, dt**2,   dt],
-               [0, 0, 0, dt**2/2, dt,      1]],
-              dtype=np.double)
-R = np.diag([sigma_x**2, sigma_y**2])
+B, Q, Z, R, Qe = lds.tracking.utils.getLDSmatricesForTracking(
+    dt=dt, sigma_a=sigma_a, sigma_x=sigma_x, sigma_y=sigma_y)
 m0 = np.array([[y[0, 0], 0, 0, y[1, 0], 0, 0]], dtype=np.double).T
 V0 = np.diag(np.ones(len(m0))*sqrt_diag_V0_value**2)
-Q = Qt*sigma_a
 
 #%%
 # Apply the Kalman filter to the mouse position measurements

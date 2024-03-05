@@ -83,26 +83,8 @@ dt = (date_times.iloc[1]-date_times.iloc[0]).total_seconds()
 # Build the matrices of the CWPA model
 # ------------------------------------
 
-# Taken from the book
-# barShalomEtAl01-estimationWithApplicationToTrackingAndNavigation.pdf
-# section 6.2.3
-# Eq. 6.2.3-7
-B = np.array([[1, dt, .5*dt**2, 0, 0, 0],
-              [0, 1,  dt,       0, 0, 0],
-              [0, 0,  1,        0, 0, 0],
-              [0, 0,  0,        1, dt, .5*dt**2],
-              [0, 0,  0,        0, 1,  dt],
-              [0, 0,  0,        0, 0,  1]], dtype=np.double)
-Z = np.array([[1, 0, 0, 0, 0, 0],
-              [0, 0, 0, 1, 0, 0]], dtype=np.double)
-# Eq. 6.2.3-8
-Qe = np.array([[dt**5/20, dt**4/8, dt**3/6, 0, 0, 0],
-               [dt**4/8, dt**3/3,  dt**2/2, 0, 0, 0],
-               [dt**3/6, dt**2/2,  dt,      0, 0, 0],
-               [0, 0, 0,                    dt**5/20, dt**4/8, dt**3/6],
-               [0, 0, 0,                    dt**4/8, dt**3/3,  dt**2/2],
-               [0, 0, 0,                    dt**3/6, dt**2/2,  dt]],
-              dtype=np.double)
+B, _, Z, _, Qe = lds.tracking.utils.getLDSmatricesForTracking(
+    dt=dt, sigma_a=np.nan, sigma_x=np.nan, sigma_y=np.nan)
 m0 = np.array([pos_x0, vel_x0, ace_x0, pos_y0, vel_y0, ace_y0],
               dtype=np.double)
 

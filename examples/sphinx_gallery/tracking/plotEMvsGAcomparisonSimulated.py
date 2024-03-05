@@ -12,6 +12,7 @@ import numpy as np
 import torch
 import plotly.graph_objs as go
 
+import lds.tracking.utils
 import lds.simulation
 import lds.learning
 
@@ -51,29 +52,10 @@ sigma_x = 5e-0
 sigma_y = 5e-0
 sqrt_diag_V0_value = 1e-3
 
-# Taken from the book
-# barShalomEtAl01^estimationWithApplicationToTrackingAndNavigation.pdf
-# section 6.2.3
-# Eq. 6.2.3^7
-B = np.array([[1, dt, .5*dt**2, 0, 0, 0],
-              [0, 1,  dt,       0, 0, 0],
-              [0, 0,  1,        0, 0, 0],
-              [0, 0,  0,        1, dt, .5*dt**2],
-              [0, 0,  0,        0, 1,  dt],
-              [0, 0,  0,        0, 0,  1]], dtype=np.double)
-Z = np.array([[1, 0, 0, 0, 0, 0],
-              [0, 0, 0, 1, 0, 0]], dtype=np.double)
-# Eq. 6.2.3^8
-Qe = np.array([[dt**5/20, dt**4/8, dt**3/6, 0, 0, 0],
-               [dt**4/8,  dt**3/3, dt**2/2, 0, 0, 0],
-               [dt**3/6,  dt**2/2, dt,      0, 0, 0],
-               [0, 0, 0,                    dt**5/20, dt**4/8, dt**3/6],
-               [0, 0, 0,                    dt**4/8,  dt**3/3, dt**2/2],
-               [0, 0, 0,                    dt**3/6,  dt**2/2, dt]],
-              dtype=np.double)
+B, _, Z, R, Qe = lds.tracking.utils.getLDSmatricesForTracking(
+    dt=dt, sigma_a=np.nan, sigma_x=sigma_x, sigma_y=sigma_y)
 Q_true = Qe*sigma_a_true**2
 sqrt_diag_R = np.array([sigma_x, sigma_y])
-R = np.diag(sqrt_diag_R**2)
 m0 = np.array([pos_x0, vel_x0, acc_x0, pos_y0, vel_y0, acc_y0],
               dtype=np.double)
 sqrt_diag_V0 = np.ones(6)*sqrt_diag_V0_value
