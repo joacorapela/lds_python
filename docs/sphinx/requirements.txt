@@ -9,3 +9,4 @@ sphinx-gallery
 matplotlib
 ipynb
 pandas
+torch
