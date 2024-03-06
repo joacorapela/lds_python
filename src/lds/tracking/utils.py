@@ -1,6 +1,5 @@
 
 import numpy as np
-import torch
 
 
 def getLDSmatricesForTracking(dt, sigma_a, sigma_x, sigma_y):
@@ -43,6 +42,7 @@ def buildQfromQe_np(Qe, sigma_ax, sigma_ay):
 
 
 def buildQfromQe_torch(Qe, sigma_ax, sigma_ay):
+    import torch
     Q = torch.zeros_like(Qe)
     lower_slice = slice(0, int(Q.shape[0]/2))
     upper_slice = slice(int(Q.shape[0]/2), Q.shape[0])
