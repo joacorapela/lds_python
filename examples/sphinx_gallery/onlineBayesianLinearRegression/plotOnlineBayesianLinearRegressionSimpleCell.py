@@ -1,10 +1,21 @@
 
 """
-Online Bayesian linear regression
-=================================
+Online Bayesian linear regression: simple cell
+==============================================
 
-The code below uses an online algorithm to estimate the posterior of the weighs
-of a linear regression model using simulate data.
+The code below uses an online algorithm to estimate the linear receptive field
+of a simple cell recorded from an anesthetized cat, as described in
+
+article{touryan2005spatial,
+  title={Spatial structure of complex cell receptive fields measured with natural images},
+  author={Touryan, Jon and Felsen, Gidon and Dan, Yang},
+  journal={Neuron},
+  volume={45},
+  number={5},
+  pages={781--791},
+  year={2005},
+  publisher={Elsevier}
+}
 
 """
 
