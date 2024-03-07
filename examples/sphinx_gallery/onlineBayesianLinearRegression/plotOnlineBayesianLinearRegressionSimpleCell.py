@@ -43,6 +43,8 @@ image_height = image_width
 Phi = Phi[:-response_delay_samples,]
 responses = responses[response_delay_samples:]
 
+n_samples_to_use = min(Phi.shape[0], n_samples_to_use)
+print(f"Using {n_samples_to_use} out of {Phi.shape[0]} samples")
 Phi = Phi[:n_samples_to_use,]
 responses = responses[:n_samples_to_use]
 
