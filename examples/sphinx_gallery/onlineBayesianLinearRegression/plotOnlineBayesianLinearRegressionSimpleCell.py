@@ -1,21 +1,12 @@
 
 """
-Online Bayesian linear regression: simple cell
-==============================================
+Anesthetized cat V1 simple cell
+===============================
 
 The code below uses an online algorithm to estimate the linear receptive field
-of a simple cell recorded from an anesthetized cat, as described in
-
-article{touryan2005spatial,
-  title={Spatial structure of complex cell receptive fields measured with natural images},
-  author={Touryan, Jon and Felsen, Gidon and Dan, Yang},
-  journal={Neuron},
-  volume={45},
-  number={5},
-  pages={781--791},
-  year={2005},
-  publisher={Elsevier}
-}
+of a simple cell recorded from an anesthetized cat, as described in "Touryan,
+Jon and Felsen, Gidon and Dan, Yang (2005). Spatial structure of complex cell
+receptive fields measured with natural images. Neuron 45 (5), 781-791."
 
 """
 

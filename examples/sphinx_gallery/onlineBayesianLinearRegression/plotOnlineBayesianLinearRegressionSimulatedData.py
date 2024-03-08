@@ -1,7 +1,7 @@
 
 """
-Online Bayesian linear regression
-=================================
+Simulated data
+==============
 
 The code below uses an online algorithm to estimate the posterior of the weighs
 of a linear regression model using simulate data.
@@ -17,7 +17,7 @@ import scipy.stats
 import plotly.subplots
 import plotly.graph_objects as go
 
-import lds.inference
+import inference
 
 #%%
 # Define data generation variables
