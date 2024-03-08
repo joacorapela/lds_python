@@ -17,7 +17,7 @@ import scipy.stats
 import plotly.subplots
 import plotly.graph_objects as go
 
-import inference
+import lds.inference
 
 #%%
 # Define data generation variables
