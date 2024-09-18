@@ -326,6 +326,94 @@ def filterLDS_SS_withMissingValues_torch(y, B, Q, m0, V0, Z, R):
     return answer
 
 
+def logLikeLDS_SS_withMissingValues_torch(y, B, Q, m0, V0, Z, R):
+    """ Kalman filter implementation of the algorithm described in Shumway and
+    Stoffer 2006.
+
+    :param: y: time series to be smoothed
+    :type: y: numpy array (NxT)
+
+    :param: B: state transition matrix
+    :type: B: numpy matrix (MxM)
+
+    :param: Q: state noise covariance matrix
+    :type: Q: numpy matrix (MxM)
+
+    :param: m0: initial state mean
+    :type: m0: one-dimensional numpy array (M)
+
+    :param: V0: initial state covariance
+    :type: V0: numpy matrix (MxM)
+
+    :param: Z: state to observation matrix
+    :type: Z: numpy matrix (NxM)
+
+    :param: R: observations covariance matrix
+    :type: R: numpy matrix (NxN)
+
+    :return:  logLike (data loglikelihood, float).
+    :rtype: dictionary
+
+    """
+
+    import torch
+    if torch.any(torch.isnan(y[:, 0])) or torch.any(torch.isnan(y[:, -1])):
+        raise ValueError("The first or last observation cannot contain nan")
+
+    if m0.ndim != 1:
+        raise ValueError("mean must be 1 dimensional")
+
+    # N: number of observations
+    # M: dim state space
+    # P: dim observations
+    M = B.shape[0]
+    N = y.shape[1]
+    P = y.shape[0]
+    xnn1 = torch.empty(size=[M, 1], dtype=torch.double)
+    Vnn1 = torch.empty(size=[M, M], dtype=torch.double)
+    xnn = torch.empty(size=[M, 1], dtype=torch.double)
+    Vnn = torch.empty(size=[M, M], dtype=torch.double)
+    innov = torch.empty(size=[P, 1], dtype=torch.double)
+    Sn = torch.empty(size=[P, P], dtype=torch.double)
+
+    # k==0
+    xnn1 = B @ m0
+    Vnn1 = B @ V0 @ B.T + Q
+    Stmp = Z @ Vnn1 @ Z.T + R
+    Sn = (Stmp + torch.transpose(Stmp, 0, 1)) / 2
+    Sinv = torch.linalg.inv(Sn)
+    K = Vnn1 @ Z.T @ Sinv
+    innov = y[:, 0] - (Z @  xnn1).squeeze()
+    xnn = xnn1 + K @ innov
+    Vnn = Vnn1 - K @ Z @ Vnn1
+    logLike = -N*P*math.log(2*math.pi) - torch.logdet(Sn) - \
+        innov.T @ Sinv @ innov
+    if torch.isnan(logLike):
+        raise RuntimeError("obtained nan log likelihood")
+
+    # k>1
+    for k in range(1, N):
+        xnn1 = B @ xnn
+        Vnn1 = B @ Vnn @ B.T + Q
+        if(torch.any(torch.isnan(y[:, k]))):
+            xnn = xnn1
+            Vnn = Vnn1
+        else:
+            Stmp = Z @ Vnn1 @ Z.T + R
+            Sn = (Stmp + Stmp.T)/2
+            Sinv = torch.linalg.inv(Sn)
+            K = Vnn1 @ Z.T @ Sinv
+            innov = y[:, k] - (Z @ xnn1).squeeze()
+            xnn = xnn1 + K @ innov
+            Vnn = Vnn1 - K @ Z @ Vnn1
+        logLike = logLike-torch.logdet(Sn) -\
+            innov.T @ Sinv @ innov
+        if torch.isnan(logLike):
+            raise ValueError("obtained nan log likelihood")
+    logLike = 0.5 * logLike
+    return logLike
+
+
 def filterLDS_SS_withMissingValues_np(y, B, Q, m0, V0, Z, R):
     """ Kalman filter implementation of the algorithm described in Shumway and
     Stoffer 2006.
