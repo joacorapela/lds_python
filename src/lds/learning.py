@@ -76,7 +76,6 @@ def scipy_optimize_SS_tracking_fullV0(y, B, sigma_a0, Qe, Z, diag_R_0,
     options={"disp": disp, "maxiter": max_iter}
     opt_res = scipy.optimize.minimize(optim_criterion, x0, method="Nelder-Mead",
                                       callback=callback, options=options)
-    breakpoint()
 
 
 def scipy_optimize_SS_tracking_diagV0(y, B, sigma_ax0, sigma_ay0, Qe, Z,
@@ -180,17 +179,15 @@ def torch_lbfgs_optimize_SS_tracking_diagV0(y, B, sigma_a0, Qe, Z,
         V0 = torch.diag(sqrt_diag_V0**2)
         R = torch.diag(sqrt_diag_R**2)
         Q = Qe * sigma_a**2
-        kf = inference.filterLDS_SS_withMissingValues_torch(y=y, B=B, Q=Q,
-                                                            m0=m0, V0=V0, Z=Z,
-                                                            R=R)
-        log_like = kf["logLike"]
+        log_like = inference.logLikeLDS_SS_withMissingValues_torch(
+            y=y, B=B, Q=Q, m0=m0, V0=V0, Z=Z, R=R)
         return log_like
 
     optim_params = {"max_iter": max_iter, "lr": lr,
                     "tolerance_grad": tolerance_grad,
                     "tolerance_change": tolerance_change,
                     "line_search_fn": line_search_fn}
-    sigma_a = torch.Tensor([sigma_a0])
+    sigma_a = torch.tensor([sigma_a0], dtype=torch.double)
     sqrt_diag_R = sqrt_diag_R_0
     m0 = m0_0
     sqrt_diag_V0 = sqrt_diag_V0_0
@@ -213,6 +210,7 @@ def torch_lbfgs_optimize_SS_tracking_diagV0(y, B, sigma_a0, Qe, Z,
     def closure():
         optimizer.zero_grad()
         curEval = -log_likelihood_fn()
+        print(f"in closure, ll={-curEval}")
         curEval.backward(retain_graph=True)
         return curEval
 
@@ -325,7 +323,6 @@ def torch_adam_optimize_SS_tracking_diagV0(y, B, sigma_a0, Qe, Z,
     elapsed_time = []
     start_time = time.time()
     for i in range(max_iter):
-        breakpoint()
         optimizer.zero_grad()
         curEval = -log_likelihood_fn()
         curEval.backward()
@@ -453,7 +450,6 @@ def em_SS_tracking(y, B, sigma_a0, Qe, Z, R_0, m0_0, V0_0,
         if vars_to_estimate["V0"]:
             V0_prev = V0
             V0 = ks["V0N"]
-
     estimates = {}
     if vars_to_estimate["sigma_a"]:
         estimates["sigma_a"] = sigma_a
