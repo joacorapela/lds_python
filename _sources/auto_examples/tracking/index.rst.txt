@@ -1,0 +1,152 @@
+
+
+.. _sphx_glr_auto_examples_tracking:
+
+Tracking
+========
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The code below samples from a Discrete Wiener Process Acceleration (DWPA) model.">
+
+.. only:: html
+
+  .. image:: /auto_examples/tracking/images/thumb/sphx_glr_plotSimulatedTrajectoryDWPA_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_tracking_plotSimulatedTrajectoryDWPA.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Sampling from a Discrete Wiener Process Acceleration Model</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The code below performs online Kalman filtering of a trajectory of the mouse shown on the left image below, as it forages in the arena shown on the right image below. Click on the images to see their larger versions.">
+
+.. only:: html
+
+  .. image:: /auto_examples/tracking/images/thumb/sphx_glr_plotOnlineFilterFWGMouseTrajectory_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_tracking_plotOnlineFilterFWGMouseTrajectory.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Online filtering of a foraging mouse trajectory</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The code below performs online Kalman filtering of a simulated mouse trajectory.">
+
+.. only:: html
+
+  .. image:: /auto_examples/tracking/images/thumb/sphx_glr_plotBatchFilterSimulatedTrajectoryDWPA_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_tracking_plotBatchFilterSimulatedTrajectoryDWPA.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Offline filtering of a simulated mouse trajectory</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The code below performs online Kalman smoothing of a simulated mouse trajectory.">
+
+.. only:: html
+
+  .. image:: /auto_examples/tracking/images/thumb/sphx_glr_plotBatchSmoothSimulatedTrajectoryDWPA_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_tracking_plotBatchSmoothSimulatedTrajectoryDWPA.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Offline smoothing of a simulated mouse trajectory</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The code below compares the expectation maximization (EM) and gradient ascent algorithm for tracking a simulated mouse.">
+
+.. only:: html
+
+  .. image:: /auto_examples/tracking/images/thumb/sphx_glr_plotEMvsGAcomparisonSimulated_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_tracking_plotEMvsGAcomparisonSimulated.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Comparison between EM and gradient ascent for tracking a simulated mouse</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The code below compares the expectation maximization (EM) and gradient ascent algorithm for tracking a foraging mouse.">
+
+.. only:: html
+
+  .. image:: /auto_examples/tracking/images/thumb/sphx_glr_plotEMvsGAcomparisonForagingMouse_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_tracking_plotEMvsGAcomparisonForagingMouse.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Comparison between EM and gradient ascent for tracking a foraging mouse</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The code below performs Kalman filtering and smoothing of a trajectory of the mouse shown on the left image below, as it forages in the arena shown on the right image below, with manual and learned parameters. Click on the images to see their larger versions.">
+
+.. only:: html
+
+  .. image:: /auto_examples/tracking/images/thumb/sphx_glr_plotFilterFWGMouseTrajectoryManualVsLearnedParams_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_tracking_plotFilterFWGMouseTrajectoryManualVsLearnedParams.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Filtering of a foraging mouse trajectory with manual vs learned parameters</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/tracking/plotSimulatedTrajectoryDWPA
+   /auto_examples/tracking/plotOnlineFilterFWGMouseTrajectory
+   /auto_examples/tracking/plotBatchFilterSimulatedTrajectoryDWPA
+   /auto_examples/tracking/plotBatchSmoothSimulatedTrajectoryDWPA
+   /auto_examples/tracking/plotEMvsGAcomparisonSimulated
+   /auto_examples/tracking/plotEMvsGAcomparisonForagingMouse
+   /auto_examples/tracking/plotFilterFWGMouseTrajectoryManualVsLearnedParams
+

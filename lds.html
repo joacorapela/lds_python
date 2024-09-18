@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>lds package &mdash; Linear Dynamical Systems  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="src" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Linear Dynamical Systems
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Demo scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html#online-bayesian-linear-regression">Online Bayesian linear regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html#tracking">Tracking</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">lds package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-lds.inference">lds.inference module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#lds.inference.OnlineKalmanFilter"><code class="docutils literal notranslate"><span class="pre">OnlineKalmanFilter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lds.inference.TimeVaryingOnlineKalmanFilter"><code class="docutils literal notranslate"><span class="pre">TimeVaryingOnlineKalmanFilter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lds.inference.filterLDS_SS_withMissingValues_np"><code class="docutils literal notranslate"><span class="pre">filterLDS_SS_withMissingValues_np()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lds.inference.filterLDS_SS_withMissingValues_torch"><code class="docutils literal notranslate"><span class="pre">filterLDS_SS_withMissingValues_torch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lds.inference.logLikeLDS_SS_withMissingValues_torch"><code class="docutils literal notranslate"><span class="pre">logLikeLDS_SS_withMissingValues_torch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lds.inference.smoothLDS_SS"><code class="docutils literal notranslate"><span class="pre">smoothLDS_SS()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-lds.learning">lds.learning module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#lds.learning.em_SS_LDS"><code class="docutils literal notranslate"><span class="pre">em_SS_LDS()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lds.learning.em_SS_tracking"><code class="docutils literal notranslate"><span class="pre">em_SS_tracking()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lds.learning.lag1CovSmootherLDS_SS"><code class="docutils literal notranslate"><span class="pre">lag1CovSmootherLDS_SS()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lds.learning.posteriorCorrelationMatrices"><code class="docutils literal notranslate"><span class="pre">posteriorCorrelationMatrices()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lds.learning.scipy_optimize_SS_tracking_diagV0"><code class="docutils literal notranslate"><span class="pre">scipy_optimize_SS_tracking_diagV0()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lds.learning.scipy_optimize_SS_tracking_fullV0"><code class="docutils literal notranslate"><span class="pre">scipy_optimize_SS_tracking_fullV0()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lds.learning.torch_adam_optimize_SS_tracking_diagV0"><code class="docutils literal notranslate"><span class="pre">torch_adam_optimize_SS_tracking_diagV0()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lds.learning.torch_lbfgs_optimize_SS_tracking_diagV0"><code class="docutils literal notranslate"><span class="pre">torch_lbfgs_optimize_SS_tracking_diagV0()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-lds.simulation">lds.simulation module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#lds.simulation.simulateLDS"><code class="docutils literal notranslate"><span class="pre">simulateLDS()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-lds">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Linear Dynamical Systems</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">src</a></li>
+      <li class="breadcrumb-item active">lds package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/lds.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="lds-package">
+<h1>lds package<a class="headerlink" href="#lds-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-lds.inference">
+<span id="lds-inference-module"></span><h2>lds.inference module<a class="headerlink" href="#module-lds.inference" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="lds.inference.OnlineKalmanFilter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lds.inference.</span></span><span class="sig-name descname"><span class="pre">OnlineKalmanFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds/inference.html#OnlineKalmanFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lds.inference.OnlineKalmanFilter" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class implementing the online Kalman filter algorithm for the following
+linear dynamical system:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}x_n &amp;= B\ x_{n-1} + w_n,\ \textrm{where}\ w_n\sim\mathcal{N}(w_n|0, Q)\, \textrm{and}\ x_n\in\Re^M\\y_n &amp;= Z\ x_{n-1} + v_n,\ \textrm{where}\ v_n\sim\mathcal{N}(v_n|0, R)\, \textrm{and}\ y_n\in\Re^N\\x_0&amp;\in\mathcal{N}(x_0|m_0, V_0)\end{aligned}\end{align} \]</div>
+<p>Example use:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">online_kf</span> <span class="o">=</span> <span class="n">OnlineKalmanFilter</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">m0</span><span class="p">,</span> <span class="n">V0</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
+<span class="n">x_pred</span><span class="p">,</span> <span class="n">P_pred</span> <span class="o">=</span> <span class="n">online_kf</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">ys</span><span class="p">:</span>
+    <span class="n">x_filt</span><span class="p">,</span> <span class="n">P_filt</span> <span class="o">=</span> <span class="n">online_kf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">x_pred</span><span class="p">,</span> <span class="n">P_pred</span> <span class="o">=</span> <span class="n">online_kf</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>A script using <cite>OnlineKalmanFilter</cite> for tracking the position of a mouse
+can be found <a class="reference external" href="https://github.com/joacorapela/lds_python/blob/master/code/scripts/doOnlineFilterFWGMouseTrajectory.py">here</a></p>
+<dl class="simple">
+<dt>Note 1:</dt><dd><p>invocation so <cite>predict()</cite> and <cite>update(y)</cite> should alternate. That is,
+each invocation to <cite>update(y)</cite> should be preceded by an invocation to
+<cite>predict()</cite>, and each invocation to <cite>predict()</cite> (except the first one)
+should be preceded by an invoation to <cite>update(y)</cite>.</p>
+</dd>
+<dt>Note 2:</dt><dd><p>observations <span class="math notranslate nohighlight">\(y_n\)</span> should be sampled uniformly.</p>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="lds.inference.OnlineKalmanFilter.B">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">B</span></span><a class="headerlink" href="#lds.inference.OnlineKalmanFilter.B" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lds.inference.OnlineKalmanFilter.P">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">P</span></span><a class="headerlink" href="#lds.inference.OnlineKalmanFilter.P" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lds.inference.OnlineKalmanFilter.Q">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Q</span></span><a class="headerlink" href="#lds.inference.OnlineKalmanFilter.Q" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lds.inference.OnlineKalmanFilter.R">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">R</span></span><a class="headerlink" href="#lds.inference.OnlineKalmanFilter.R" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lds.inference.OnlineKalmanFilter.V0">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">V0</span></span><a class="headerlink" href="#lds.inference.OnlineKalmanFilter.V0" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lds.inference.OnlineKalmanFilter.Z">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Z</span></span><a class="headerlink" href="#lds.inference.OnlineKalmanFilter.Z" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lds.inference.OnlineKalmanFilter.m0">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">m0</span></span><a class="headerlink" href="#lds.inference.OnlineKalmanFilter.m0" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lds.inference.OnlineKalmanFilter.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds/inference.html#OnlineKalmanFilter.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lds.inference.OnlineKalmanFilter.predict" title="Link to this definition"></a></dt>
+<dd><p>Predicts the next state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(state, covariance): tuple containing the predicted state vector and covariance matrix.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lds.inference.OnlineKalmanFilter.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds/inference.html#OnlineKalmanFilter.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lds.inference.OnlineKalmanFilter.update" title="Link to this definition"></a></dt>
+<dd><p>Updates the current state and covariance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>y</strong> – observation <span class="math notranslate nohighlight">\(\in\Re^M\)</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(state, covariance): tuple containing the updated state vector and covariance matrix.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lds.inference.OnlineKalmanFilter.x">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">x</span></span><a class="headerlink" href="#lds.inference.OnlineKalmanFilter.x" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="lds.inference.TimeVaryingOnlineKalmanFilter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lds.inference.</span></span><span class="sig-name descname"><span class="pre">TimeVaryingOnlineKalmanFilter</span></span><a class="reference internal" href="_modules/lds/inference.html#TimeVaryingOnlineKalmanFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lds.inference.TimeVaryingOnlineKalmanFilter" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class implementing the time-varying and online Kalman filter algorithm for the following
+linear dynamical system:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}x_n &amp;= B_n\ x_{n-1} + w_n,\ \textrm{where}\ w_n\sim\mathcal{N}(w_n|0, Q_n)\, \textrm{and}\ x_n\in\Re^M\\y_n &amp;= Z_n\ x_{n-1} + v_n,\ \textrm{where}\ v_n\sim\mathcal{N}(v_n|0, R_n)\, \textrm{and}\ y_n\in\Re^N\\x_0&amp;\in\mathcal{N}(x_0|m_0, V_0)\end{aligned}\end{align} \]</div>
+<p>Example use:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">online_kf</span> <span class="o">=</span> <span class="n">OnlineKalmanFilter</span><span class="p">(</span><span class="n">m0</span><span class="p">,</span> <span class="n">V0</span><span class="p">)</span>
+<span class="n">x_pred</span><span class="p">,</span> <span class="n">P_pred</span> <span class="o">=</span> <span class="n">online_kf</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">ys</span><span class="p">:</span>
+    <span class="n">x_filt</span><span class="p">,</span> <span class="n">P_filt</span> <span class="o">=</span> <span class="n">online_kf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">x_pred</span><span class="p">,</span> <span class="n">P_pred</span> <span class="o">=</span> <span class="n">online_kf</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>A script using <cite>OnlineKalmanFilter</cite> for tracking the position of a mouse
+can be found <a class="reference external" href="https://github.com/joacorapela/lds_python/blob/master/code/scripts/doOnlineFilterFWGMouseTrajectory.py">here</a></p>
+<dl class="simple">
+<dt>Note 1:</dt><dd><p>invocation so <cite>predict()</cite> and <cite>update(y)</cite> should alternate. That is,
+each invocation to <cite>update(y)</cite> should be preceded by an invocation to
+<cite>predict()</cite>, and each invocation to <cite>predict()</cite> (except the first one)
+should be preceded by an invoation to <cite>update(y)</cite>.</p>
+</dd>
+<dt>Note 2:</dt><dd><p>observations <span class="math notranslate nohighlight">\(y_n\)</span> should be sampled uniformly.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="lds.inference.TimeVaryingOnlineKalmanFilter.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds/inference.html#TimeVaryingOnlineKalmanFilter.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lds.inference.TimeVaryingOnlineKalmanFilter.predict" title="Link to this definition"></a></dt>
+<dd><p>Predicts the next state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(state, covariance): tuple containing the predicted state vector and covariance matrix.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lds.inference.TimeVaryingOnlineKalmanFilter.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds/inference.html#TimeVaryingOnlineKalmanFilter.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lds.inference.TimeVaryingOnlineKalmanFilter.update" title="Link to this definition"></a></dt>
+<dd><p>Updates the current state and covariance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>y</strong> – observation <span class="math notranslate nohighlight">\(\in\Re^M\)</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(state, covariance): tuple containing the updated state vector and covariance matrix.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lds.inference.filterLDS_SS_withMissingValues_np">
+<span class="sig-prename descclassname"><span class="pre">lds.inference.</span></span><span class="sig-name descname"><span class="pre">filterLDS_SS_withMissingValues_np</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds/inference.html#filterLDS_SS_withMissingValues_np"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lds.inference.filterLDS_SS_withMissingValues_np" title="Link to this definition"></a></dt>
+<dd><p>Kalman filter implementation of the algorithm described in Shumway and
+Stoffer 2006.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>y: time series to be smoothed</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>y: numpy array (NxT)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>B: state transition matrix</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>B: numpy matrix (MxM)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Q: state noise covariance matrix</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Q: numpy matrix (MxM)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>m0: initial state mean</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>m0: one-dimensional numpy array (M)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>V0: initial state covariance</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>V0: numpy matrix (MxM)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Z: state to observation matrix</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Z: numpy matrix (NxM)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>R: observations covariance matrix</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>R: numpy matrix (NxN)</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>{xnn1, Vnn1, xnn, Vnn, innov, K, Sn, logLike}: xnn1 and Vnn1 (predicted means, MxT, and covariances, MxMxT), xnn and Vnn (filtered means, MxT, and covariances, MxMxT), innov (innovations, NxT), K (Kalman gain matrices, MxNxT), Sn (innovations covariance matrices, NxNxT), logLike (data loglikelihood, float).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lds.inference.filterLDS_SS_withMissingValues_torch">
+<span class="sig-prename descclassname"><span class="pre">lds.inference.</span></span><span class="sig-name descname"><span class="pre">filterLDS_SS_withMissingValues_torch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds/inference.html#filterLDS_SS_withMissingValues_torch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lds.inference.filterLDS_SS_withMissingValues_torch" title="Link to this definition"></a></dt>
+<dd><p>Kalman filter implementation of the algorithm described in Shumway and
+Stoffer 2006.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>y: time series to be smoothed</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>y: numpy array (NxT)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>B: state transition matrix</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>B: numpy matrix (MxM)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Q: state noise covariance matrix</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Q: numpy matrix (MxM)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>m0: initial state mean</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>m0: one-dimensional numpy array (M)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>V0: initial state covariance</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>V0: numpy matrix (MxM)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Z: state to observation matrix</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Z: numpy matrix (NxM)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>R: observations covariance matrix</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>R: numpy matrix (NxN)</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>{xnn1, Vnn1, xnn, Vnn, innov, K, Sn, logLike}: xnn1 and Vnn1 (predicted means, MxT, and covariances, MxMxT), xnn and Vnn (filtered means, MxT, and covariances, MxMxT), innov (innovations, NxT), K (Kalman gain matrices, MxNxT), Sn (innovations covariance matrices, NxNxT), logLike (data loglikelihood, float).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lds.inference.logLikeLDS_SS_withMissingValues_torch">
+<span class="sig-prename descclassname"><span class="pre">lds.inference.</span></span><span class="sig-name descname"><span class="pre">logLikeLDS_SS_withMissingValues_torch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds/inference.html#logLikeLDS_SS_withMissingValues_torch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lds.inference.logLikeLDS_SS_withMissingValues_torch" title="Link to this definition"></a></dt>
+<dd><p>Kalman filter implementation of the algorithm described in Shumway and
+Stoffer 2006.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>y: time series to be smoothed</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>y: numpy array (NxT)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>B: state transition matrix</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>B: numpy matrix (MxM)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Q: state noise covariance matrix</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Q: numpy matrix (MxM)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>m0: initial state mean</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>m0: one-dimensional numpy array (M)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>V0: initial state covariance</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>V0: numpy matrix (MxM)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Z: state to observation matrix</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Z: numpy matrix (NxM)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>R: observations covariance matrix</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>R: numpy matrix (NxN)</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>logLike (data loglikelihood, float).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lds.inference.smoothLDS_SS">
+<span class="sig-prename descclassname"><span class="pre">lds.inference.</span></span><span class="sig-name descname"><span class="pre">smoothLDS_SS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xnn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Vnn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xnn1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Vnn1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds/inference.html#smoothLDS_SS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lds.inference.smoothLDS_SS" title="Link to this definition"></a></dt>
+<dd><p>Kalman smoother implementation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>B: state transition matrix</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>B: numpy matrix (MxM)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>xnn: filtered means (from Kalman filter)</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>xnn: numpy array (MxT)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Vnn: filtered covariances (from Kalman filter)</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Vnn: numpy array (MxMXT)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>xnn1: predicted means (from Kalman filter)</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>xnn1: numpy array (MxT)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Vnn1: predicted covariances (from Kalman filter)</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Vnn1: numpy array (MxMXT)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>m0: initial state mean</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>m0: one-dimensional numpy array (M)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>V0: initial state covariance</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>V0: numpy matrix (MxM)</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>{xnN, VnN, Jn, x0N, V0N, J0}: xnn1 and Vnn1 (smoothed means, MxT, and covariances, MxMxT), Jn (smoothing gain matrix, MxMxT), x0N and V0N (smoothed initial state mean, M, and covariance, MxM), J0 (initial smoothing gain matrix, MxN).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-lds.learning">
+<span id="lds-learning-module"></span><h2>lds.learning module<a class="headerlink" href="#module-lds.learning" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="lds.learning.em_SS_LDS">
+<span class="sig-prename descclassname"><span class="pre">lds.learning.</span></span><span class="sig-name descname"><span class="pre">em_SS_LDS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">varsToEstimate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'B':</span> <span class="pre">True,</span> <span class="pre">'Q':</span> <span class="pre">True,</span> <span class="pre">'R':</span> <span class="pre">True,</span> <span class="pre">'V0':</span> <span class="pre">True,</span> <span class="pre">'Z':</span> <span class="pre">True,</span> <span class="pre">'m0':</span> <span class="pre">True}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds/learning.html#em_SS_LDS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lds.learning.em_SS_LDS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lds.learning.em_SS_tracking">
+<span class="sig-prename descclassname"><span class="pre">lds.learning.</span></span><span class="sig-name descname"><span class="pre">em_SS_tracking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_a0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Qe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m0_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V0_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vars_to_estimate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'R':</span> <span class="pre">True,</span> <span class="pre">'V0':</span> <span class="pre">True,</span> <span class="pre">'m0':</span> <span class="pre">True,</span> <span class="pre">'sigma_a':</span> <span class="pre">True}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance_change</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-09</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds/learning.html#em_SS_tracking"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lds.learning.em_SS_tracking" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lds.learning.lag1CovSmootherLDS_SS">
+<span class="sig-prename descclassname"><span class="pre">lds.learning.</span></span><span class="sig-name descname"><span class="pre">lag1CovSmootherLDS_SS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">KN</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Vnn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Jn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">J0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds/learning.html#lag1CovSmootherLDS_SS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lds.learning.lag1CovSmootherLDS_SS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lds.learning.posteriorCorrelationMatrices">
+<span class="sig-prename descclassname"><span class="pre">lds.learning.</span></span><span class="sig-name descname"><span class="pre">posteriorCorrelationMatrices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">KN</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Vnn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xnN</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">VnN</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V0N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Jn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">J0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds/learning.html#posteriorCorrelationMatrices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lds.learning.posteriorCorrelationMatrices" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lds.learning.scipy_optimize_SS_tracking_diagV0">
+<span class="sig-prename descclassname"><span class="pre">lds.learning.</span></span><span class="sig-name descname"><span class="pre">scipy_optimize_SS_tracking_diagV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_ax0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_ay0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Qe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sqrt_diag_R_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m0_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sqrt_diag_V0_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds/learning.html#scipy_optimize_SS_tracking_diagV0"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lds.learning.scipy_optimize_SS_tracking_diagV0" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lds.learning.scipy_optimize_SS_tracking_fullV0">
+<span class="sig-prename descclassname"><span class="pre">lds.learning.</span></span><span class="sig-name descname"><span class="pre">scipy_optimize_SS_tracking_fullV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_a0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Qe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diag_R_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m0_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V0_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds/learning.html#scipy_optimize_SS_tracking_fullV0"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lds.learning.scipy_optimize_SS_tracking_fullV0" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lds.learning.torch_adam_optimize_SS_tracking_diagV0">
+<span class="sig-prename descclassname"><span class="pre">lds.learning.</span></span><span class="sig-name descname"><span class="pre">torch_adam_optimize_SS_tracking_diagV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_a0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Qe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sqrt_diag_R_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m0_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sqrt_diag_V0_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vars_to_estimate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'R':</span> <span class="pre">True,</span> <span class="pre">'V0':</span> <span class="pre">True,</span> <span class="pre">'m0':</span> <span class="pre">True,</span> <span class="pre">'sigma_a':</span> <span class="pre">True}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds/learning.html#torch_adam_optimize_SS_tracking_diagV0"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lds.learning.torch_adam_optimize_SS_tracking_diagV0" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lds.learning.torch_lbfgs_optimize_SS_tracking_diagV0">
+<span class="sig-prename descclassname"><span class="pre">lds.learning.</span></span><span class="sig-name descname"><span class="pre">torch_lbfgs_optimize_SS_tracking_diagV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_a0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Qe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sqrt_diag_R_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m0_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sqrt_diag_V0_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance_grad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-07</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance_change</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-09</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_search_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'strong_wolfe'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vars_to_estimate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'R':</span> <span class="pre">True,</span> <span class="pre">'V0':</span> <span class="pre">True,</span> <span class="pre">'m0':</span> <span class="pre">True,</span> <span class="pre">'sigma_a':</span> <span class="pre">True}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds/learning.html#torch_lbfgs_optimize_SS_tracking_diagV0"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lds.learning.torch_lbfgs_optimize_SS_tracking_diagV0" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-lds.simulation">
+<span id="lds-simulation-module"></span><h2>lds.simulation module<a class="headerlink" href="#module-lds.simulation" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="lds.simulation.simulateLDS">
+<span class="sig-prename descclassname"><span class="pre">lds.simulation.</span></span><span class="sig-name descname"><span class="pre">simulateLDS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds/simulation.html#simulateLDS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lds.simulation.simulateLDS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-lds">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lds" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="src" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Joaquin Rapela.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
