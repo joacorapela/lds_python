@@ -201,18 +201,18 @@ class TimeVaryingOnlineKalmanFilter:
         :return: (state, covariance): tuple containing the updated state vector and covariance matrix.
 
         """
-        if y.ndim == 1:
-            y = np.expand_dims(y, axis=1)
+        # if y.ndim == 1:
+        #     y = np.expand_dims(y, axis=1)
         if not np.isnan(y).any():
             M = len(x)
             I = np.eye(M)
             pred_obs = Z @ x
-            residual = y - pred_obs
+            innovation = y - pred_obs
             Stmp = Z @ P @ Z.T + R
             S = (Stmp + Stmp.T) / 2
             Sinv = np.linalg.inv(S)
             K = P @ Z.T @ Sinv
-            x = x + K @ residual
+            x = x + K @ innovation
             P = (I - K @ Z) @ P
         return x, P
 
@@ -395,6 +395,9 @@ def logLikeLDS_SS_withMissingValues_torch(y, B, Q, m0, V0, Z, R):
     for k in range(1, N):
         xnn1 = B @ xnn
         Vnn1 = B @ Vnn @ B.T + Q
+        # print(Vnn1)
+        # Vnn1.register_hook(print)  # This will print the gradient when it's computed.
+
         if(torch.any(torch.isnan(y[:, k]))):
             xnn = xnn1
             Vnn = Vnn1
