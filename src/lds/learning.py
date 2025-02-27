@@ -4,7 +4,7 @@ import time
 import numpy as np
 import scipy.optimize
 import warnings
-import copy
+# import copy
 
 from . import inference
 from .tracking import utils
@@ -211,7 +211,10 @@ def torch_lbfgs_optimize_SS_tracking_diagV0(y, B, sigma_a0, Qe, Z,
         optimizer.zero_grad()
         curEval = -log_likelihood_fn()
         print(f"in closure, ll={-curEval}")
-        curEval.backward(retain_graph=True)
+        for i in range(len(x)):
+            print(f"x[{i}]={x[i]}")
+        # curEval.backward(retain_graph=True)
+        curEval.backward()
         return curEval
 
     termination_info = "success: reached maximum number of iterations"
@@ -219,26 +222,30 @@ def torch_lbfgs_optimize_SS_tracking_diagV0(y, B, sigma_a0, Qe, Z,
     elapsed_time = []
     start_time = time.time()
     for epoch in range(n_epochs):
-        prev_x = copy.deepcopy(x)
-        try:
-            curEval = optimizer.step(closure)
-        except RuntimeError:
-            # begin backtracking
-            if vars_to_estimate["sigma_a"]:
-                sigma_a = prev_x.pop(0)
-                sigma_a.requires_grad = False
-            if vars_to_estimate["sqrt_diag_R"]:
-                sqrt_diag_R = prev_x.pop(0)
-                sqrt_diag_R.requires_grad = False
-            if vars_to_estimate["m0"]:
-                m0 = prev_x.pop(0)
-                m0.requires_grad = False
-            if vars_to_estimate["sqrt_diag_V0"]:
-                sqrt_diag_V0 = prev_x.pop(0)
-                sqrt_diag_V0.requires_grad = False
-            # end backtracking
-            termination_info = "nan generated"
-            break
+        curEval = optimizer.step(closure)
+#         optimizer.step(closure)
+#         prev_x = copy.deepcopy(x)
+#         try:
+#             curEval = optimizer.step(closure)
+#         except RuntimeError:
+#             breakpoint()
+#             # begin backtracking
+#             if vars_to_estimate["sigma_a"]:
+#                 sigma_a = prev_x.pop(0)
+#                 sigma_a.requires_grad = False
+#             if vars_to_estimate["sqrt_diag_R"]:
+#                 sqrt_diag_R = prev_x.pop(0)
+#                 sqrt_diag_R.requires_grad = False
+#             if vars_to_estimate["m0"]:
+#                 m0 = prev_x.pop(0)
+#                 m0.requires_grad = False
+#             if vars_to_estimate["sqrt_diag_V0"]:
+#                 sqrt_diag_V0 = prev_x.pop(0)
+#                 sqrt_diag_V0.requires_grad = False
+#             # end backtracking
+#             termination_info = "nan generated"
+#             break
+        curEval = -log_likelihood_fn()
         log_like.append(-curEval.item())
         elapsed_time.append(time.time() - start_time)
         print("--------------------------------------------------------------------------------")
