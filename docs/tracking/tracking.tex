@@ -52,6 +52,8 @@ linear dynamical system
 
 \begin{itemize}
 
+    \item[--] $y_n$ is the position of the object at sample time $n$,
+
     \item[--]
         $\mathbf{x}_n=\left[\xi[n],\dot{\xi}[n],\ddot{\xi}[n]\right]^\intercal$
         and $\xi[n],\dot{\xi}[n],\ddot{\xi}[n]$ are random variables representing
@@ -61,7 +63,7 @@ linear dynamical system
     \item[--]
         \begin{equation}
             A=\begin{bmatrix}
-                1 & T & T^2\\
+                1 & T & \frac{1}{2}T^2\\
                 0 & 1 & T\\
                 0 & 0 & 1
             \end{bmatrix}
@@ -117,7 +119,7 @@ $v(k)\sim\mathcal{N}(0,\gamma^2)$ (Eq.~\ref{eq:accDiscreteApprox}).
 \end{align}
 
 Replacing $\ddot{\xi}_a(t)$ by $\ddot{\xi}(t)$ in Eqs.~\ref{eq:posTaylor2},
-\ref{eq:velTaylor2} and~\ref{eq:accTaylor2} and discretizing we obtain in
+\ref{eq:velTaylor2} and~\ref{eq:accTaylor2} and discretising we obtain in
 Eqs.~\ref{eq:posDWPA}, \ref{eq:velDWPA} and~\ref{eq:accDWPA} the motion
 equations for the DWPA model.
 
@@ -133,7 +135,7 @@ equations in matrix form.
 
 \begin{align}
     x(k)&=\begin{bmatrix}
-        1 & T & T^2\\
+        1 & T & \frac{1}{2}T^2\\
         0 & 1 & T\\
         0 & 0 & 1
            \end{bmatrix}
@@ -152,7 +154,7 @@ equations in matrix form.
 
 \begin{align}
     A&=\begin{bmatrix}
-          1 & T & T^2\\
+           1 & T & \frac{1}{2}T^2\\
           0 & 1 & T\\
           0 & 0 & 1
     \end{bmatrix}\\
@@ -203,7 +205,7 @@ dimensions independent of each other. This independence yields the following
 linear dynamical system.
 
 \begin{alignat}{3}
-    \tilde{\mathbf{x}}_n &= \tilde{A}\mathbf{x}_{n-1} + \tilde{\mathbf{w}}_n && \quad \text{with} \quad\tilde{\mathbf{w}}_n\sim N(\mathbf{0}, \tilde{Q})\quad \text{and} \quad\tilde{\mathbf{x}}_0\sim N(\tilde{\mathbf{m}}_0, \tilde{V}_0)\label{eq:2D_DWPA_state}\\
+    \tilde{\mathbf{x}}_n &= \tilde{A}\tilde{\mathbf{x}}_{n-1} + \tilde{\mathbf{w}}_n && \quad \text{with} \quad\tilde{\mathbf{w}}_n\sim N(\mathbf{0}, \tilde{Q})\quad \text{and} \quad\tilde{\mathbf{x}}_0\sim N(\tilde{\mathbf{m}}_0, \tilde{V}_0)\label{eq:2D_DWPA_state}\\
     \tilde{\mathbf{y}}_n &= \tilde{C}\tilde{\mathbf{x}}_{n} + \tilde{\mathbf{v}}_n && \quad \text{with} \quad \tilde{\mathbf{v}}_n\sim N(0, \tilde{R})\label{eq:2D_DWPA_measurement}
 \end{alignat}
 
@@ -212,11 +214,14 @@ linear dynamical system.
 \begin{itemize}
 
     \item[--]
-        $\mathbf{x}_n=\left[\xi_1[n],\dot{\xi_1}[n],\ddot{\xi_1}[n],\xi_2[n],\dot{\xi_2}[n],\ddot{\xi_2}[n]\right]^\intercal$
+        $\tilde{\mathbf{x}}_n=\left[\xi_1[n],\dot{\xi_1}[n],\ddot{\xi_1}[n],\xi_2[n],\dot{\xi_2}[n],\ddot{\xi_2}[n]\right]^\intercal$
         and $\xi_i[n],\dot{\xi_i}[n],\ddot{\xi_i}[n]$ are random variables representing
         the position, velocity and acceleration of the object along dimension
         $i$ at sample time
         $n$,
+
+    \item[--] $\tilde{\mathbf{y}}_n=[y_{n1},y_{n2}]^\intercal$ is
+        the measured position of the object at sample time $n$,
 
     \item[--]
         \begin{align*}
@@ -252,6 +257,116 @@ linear dynamical system.
                 0 & \sigma^2_2
             \end{bmatrix}
             \label{eq:Rtilde}
+        \end{align}
+\end{itemize}
+
+\section{DWPA model in two dimensions and a circular variable}
+
+We add a circular variable $\theta$ to the DWPA model in two dimensions. We
+assume that $\theta$ evolves with a constant angular velocity $\omega$:
+
+\begin{align*}
+    \theta(t)=\omega t
+\end{align*}
+
+Due to their singularity, circular variables are difficult to model with linear
+dynamical systems. To overcome this problem we will model $\cos\theta$ and
+$\sin\theta$. Then
+
+\begin{align}
+    \frac{\partial}{\partial
+    t}\cos\theta(t)&=-\omega\sin\theta(t)\label{eq:dCos}\\
+    \frac{\partial}{\partial t}\sin\theta(t)&=\omega\cos\theta(t)\label{eq:dSin}
+\end{align}
+
+When mice move at high velocity, their head orientation tends to align with the
+mouse velocity, or
+
+\begin{align*}
+    \cos\theta(t)&=\frac{v_x(t)}{v(t)}\\
+    \sin\theta(t)&=\frac{v_y(t)}{v(t)}
+\end{align*}
+
+\noindent with $v_x(t), v_y(t)$ the x- and y-components of $\mathbf{v}(t)$, and
+$v(t)$ the magnitude of the velocity vector; i.e.,
+$v(t)=|\mathbf{v}(t)|=\sqrt{v_x^2(t)+v_y^2(t)}$.
+
+Next we incorporate these constraints into Eqs.~\ref{eq:dCos} and~\ref{eq:dSin}
+
+\begin{align}
+    \frac{\partial}{\partial t}\cos\theta(t)&=-\omega\sin\theta(t)+\alpha\left(v_x(t)-v(t)\cos\theta(t)\right)\label{eq:dCosCons}\\
+    \frac{\partial}{\partial t}\sin\theta(t)&=\omega\cos\theta(t)+\alpha\left(v_y(t)-v(t)\sin\theta(t)\right)\label{eq:dSinConst}
+\end{align}
+
+We now discretise Eqs.~\ref{eq:dCosCons} and~\ref{eq:dSinConst}, with the
+Euler method, and model the angular velocity, $\omega$, as a random walk with
+drift
+
+\begin{align}
+    \cos\theta[n+1]&=\left(1-\alpha v[n]T\right)\cos\theta[n]-w[n]T\sin\theta[n]+\alpha T\;v_x[n]\\
+    \sin\theta[n+1]&=\left(1-\alpha v[n]T\right)\sin\theta[n]-w[n]T\cos\theta[n]+\alpha T\;v_y[n]\\
+    \omega[n+1]&=\omega[k]
+\end{align}
+
+With the addition of the circular variable, the components of
+Eqs.~\ref{eq:2D_DWPA_state}
+and~\ref{eq:2D_DWPA_measurement} become:
+
+\begin{itemize}
+
+    \item[--]
+        $\tilde{\mathbf{x}}_n=\left[\xi_1[n],\dot{\xi_1}[n],\ddot{\xi_1}[n],\xi_2[n],\dot{\xi_2}[n],\ddot{\xi_2}[n],\cos\theta[n],\sin\theta[n],\omega[n]\right]^\intercal$,
+
+    \item[--] $\tilde{\mathbf{y}}_n=[y_{n1},y_{n2},
+        \cos_m[n],\sin_m[n]]^\intercal$, with $[y_{n1},y_{n2}]$ the
+        measured position of the object at time n and $[\cos_m[n],\sin_m[n]]$
+        the sine and cosine of the measured orientation at time $n$.
+
+    \item[--]
+        \begin{align*}
+            \tilde{A}&=\begin{bmatrix}
+                1 & T & \frac{1}{2}T^2 & 0 & 0 & 0& 0 & 0 & 0\\
+                0 & 1 & T & 0 & 0 & 0& 0 & 0 & 0\\
+                0 & 0 & 1 & 0 & 0 & 0& 0 & 0 & 0\\
+                0 & 0 & 0 & 1 & T & \frac{1}{2}T^2 & 0 & 0 & 0\\
+                0 & 0 & 0 & 0 & 1 & T & 0 & 0 & 0\\
+                0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0\\
+                0 & \alpha T & 0 & 0 & 0 & 0 & 1-\alpha v[n]T & -\omega[n]T & 0\\
+                0 & 0 & 0 & 0 & \alpha T & 0 & \omega[n]T & 1-\alpha v[n]T & 0\\
+                0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1
+            \end{bmatrix}\nonumber\\
+        \end{align*}
+
+    \item[--]
+        \begin{align*}
+            \tilde{Q}=\begin{bmatrix}[1.5]
+                \gamma^2_1Q_e & \mathbf{0} & \mathbf{0} & \mathbf{0} & \mathbf{0}\\
+                \mathbf{0} & \gamma^2_2Q_e & \mathbf{0} & \mathbf{0} & \mathbf{0}\\
+                \mathbf{0} & \mathbf{0} & \gamma^2_{cos} & 0 & 0\\
+                \mathbf{0} & \mathbf{0} & 0 & \gamma^2_{sin} & 0\\
+                \mathbf{0} & \mathbf{0} & 0 & 0 & \gamma^2_\omega
+            \end{bmatrix}
+        \end{align*}
+        and $Q_e$ is given in Eq.~\ref{eq:Qe}
+
+    \item[--]
+        \begin{align*}
+            \tilde{C}=\begin{bmatrix}[1.5]
+                1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+                0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0\\
+                0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0\\
+                0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0\\
+            \end{bmatrix}
+        \end{align*}
+
+    \item[--]
+        \begin{align}
+            \tilde{R}=\begin{bmatrix}[1.5]
+                \sigma^2_1 & 0 & 0 & 0\\
+                0 & \sigma^2_2 & 0 & 0\\
+                0 & 0 & \sigma^2_{cos} & 0\\
+                0 & 0 & 0 & \sigma^2_{sin}
+            \end{bmatrix}
         \end{align}
 \end{itemize}
 
