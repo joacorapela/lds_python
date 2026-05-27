@@ -9,11 +9,11 @@ class OnlineKalmanFilter:
     linear dynamical system:
 
     .. math::
-       x_n &= B\ x_{n-1} + w_n,\ \\textrm{where}\ w_n\sim\mathcal{N}(w_n|0, Q)\, \\textrm{and}\ x_n\in\Re^M
+       x_n &= B\\ x_{n-1} + w_n,\\ \\textrm{where}\\ w_n\\sim\\mathcal{N}(w_n|0, Q)\\, \\textrm{and}\\ x_n\\in\\Re^M
 
-       y_n &= Z\ x_{n-1} + v_n,\ \\textrm{where}\ v_n\sim\mathcal{N}(v_n|0, R)\, \\textrm{and}\ y_n\in\Re^N
+       y_n &= Z\\ x_{n-1} + v_n,\\ \\textrm{where}\\ v_n\\sim\\mathcal{N}(v_n|0, R)\\, \\textrm{and}\\ y_n\\in\\Re^N
 
-       x_0&\in\mathcal{N}(x_0|m_0, V_0)
+       x_0&\\in\\mathcal{N}(x_0|m_0, V_0)
 
     Example use:
 
@@ -66,7 +66,7 @@ class OnlineKalmanFilter:
     def update(self, y):
         """Updates the current state and covariance.
 
-        :param y: observation :math:`\in\Re^M`
+        :param y: observation :math:`\\in\\Re^M`
         :return: (state, covariance): tuple containing the updated state vector and covariance matrix.
 
         """
@@ -154,11 +154,11 @@ class TimeVaryingOnlineKalmanFilter:
     linear dynamical system:
 
     .. math::
-       x_n &= B_n\ x_{n-1} + w_n,\ \\textrm{where}\ w_n\sim\mathcal{N}(w_n|0, Q_n)\, \\textrm{and}\ x_n\in\Re^M
+       x_n &= B_n\\ x_{n-1} + w_n,\\ \\textrm{where}\\ w_n\\sim\\mathcal{N}(w_n|0, Q_n)\\, \\textrm{and}\\ x_n\\in\\Re^M
 
-       y_n &= Z_n\ x_{n-1} + v_n,\ \\textrm{where}\ v_n\sim\mathcal{N}(v_n|0, R_n)\, \\textrm{and}\ y_n\in\Re^N
+       y_n &= Z_n\\ x_{n-1} + v_n,\\ \\textrm{where}\\ v_n\\sim\\mathcal{N}(v_n|0, R_n)\\, \\textrm{and}\\ y_n\\in\\Re^N
 
-       x_0&\in\mathcal{N}(x_0|m_0, V_0)
+       x_0&\\in\\mathcal{N}(x_0|m_0, V_0)
 
     Example use:
 
@@ -197,7 +197,7 @@ class TimeVaryingOnlineKalmanFilter:
     def update(self, y, x, P, Z, R):
         """Updates the current state and covariance.
 
-        :param y: observation :math:`\in\Re^M`
+        :param y: observation :math:`\\in\\Re^M`
         :return: (state, covariance): tuple containing the updated state vector and covariance matrix.
 
         """
@@ -242,7 +242,7 @@ def filterLDS_SS_withMissingValues_torch(y, B, Q, m0, V0, Z, R):
     :param: R: observations covariance matrix
     :type: R: numpy matrix (NxN)
 
-    :return:  {xnn1, Pnn1, xnn, Pnn, innov, K, Sn, logLike}: xnn1 and Pnn1 (predicted means, MxT, and covariances, MxMxT), xnn and Pnn (filtered means, MxT, and covariances, MxMxT), innov (innovations, NxT), K (Kalman gain matrices, MxNxT), Sn (innovations covariance matrices, NxNxT), logLike (data loglikelihood, float).
+    :return:  {xnn1, Pnn1, xnn, Pnn, innov, K, Sn, log_like}: xnn1 and Pnn1 (predicted means, MxT, and covariances, MxMxT), xnn and Pnn (filtered means, MxT, and covariances, MxMxT), innov (innovations, NxT), K (Kalman gain matrices, MxNxT), Sn (innovations covariance matrices, NxNxT), log_like (data loglikelihood, float).
     :rtype: dictionary
 
     """
@@ -277,9 +277,9 @@ def filterLDS_SS_withMissingValues_torch(y, B, Q, m0, V0, Z, R):
     innov = y[:, 0] - (Z @  xnn1).squeeze()
     xnn = xnn1 + K @ innov
     Pnn = Pnn1 - K @ Z @ Pnn1
-    logLike = -N*P*math.log(2*math.pi) - torch.logdet(Sn) - \
+    log_like = -N*P*math.log(2*math.pi) - torch.logdet(Sn) - \
         innov.T @ Sinv @ innov
-    if torch.isnan(logLike):
+    if torch.isnan(log_like):
         raise RuntimeError("obtained nan log likelihood")
 
     xnn1_h[:, :, 0] = torch.unsqueeze(xnn1, 1)
@@ -304,9 +304,9 @@ def filterLDS_SS_withMissingValues_torch(y, B, Q, m0, V0, Z, R):
             innov = y[:, k] - (Z @ xnn1).squeeze()
             xnn = xnn1 + K @ innov
             Pnn = Pnn1 - K @ Z @ Pnn1
-        logLike = logLike-torch.logdet(Sn) -\
+        log_like = log_like-torch.logdet(Sn) -\
             innov.T @ Sinv @ innov
-        if torch.isnan(logLike):
+        if torch.isnan(log_like):
             raise ValueError("obtained nan log likelihood")
         xnn1_h[:, :, k] = torch.unsqueeze(xnn1, 1)
         Pnn1_h[:, :, k] = Pnn1
@@ -314,9 +314,9 @@ def filterLDS_SS_withMissingValues_torch(y, B, Q, m0, V0, Z, R):
         Pnn_h[:, :, k] = Pnn
         innov_h[:, :, k] = torch.unsqueeze(innov, 1)
         Sn_h[:, :, k] = Sn
-    logLike = 0.5 * logLike
+    log_like = 0.5 * log_like
     answer = {"xnn1": xnn1_h, "Pnn1": Pnn1_h, "xnn": xnn_h, "Pnn": Pnn_h,
-              "innov": innov_h, "KN": K, "Sn": Sn_h, "logLike": logLike}
+              "innov": innov_h, "KN": K, "Sn": Sn_h, "log_like": log_like}
     return answer
 
 
@@ -357,7 +357,7 @@ def logLikeLDS_withMissingValues_torch(y, u, B, Q, m0, V0, a, Z, R):
     :param: R: observations covariance matrix
     :type: R: numpy matrix (NxN)
 
-    :return:  logLike (data loglikelihood, float).
+    :return:  log_like (data loglikelihood, float).
     :rtype: dictionary
 
     """
@@ -378,7 +378,7 @@ def logLikeLDS_withMissingValues_torch(y, u, B, Q, m0, V0, a, Z, R):
 
     xnn = m0
     Pnn = V0
-    logLike = 0.0
+    log_like = 0.0
     log2Pi = torch.log(torch.tensor(2.0 * torch.pi))
     for k in range(T):
         xnn1 = u + B @ xnn
@@ -398,11 +398,11 @@ def logLikeLDS_withMissingValues_torch(y, u, B, Q, m0, V0, a, Z, R):
             innov = y[:, k] - pred_obs
             xnn = xnn1 + K @ innov
             Pnn = Pnn1 - K @ Z @ Pnn1
-        logLike += -0.5 * (N * log2Pi + torch.logdet(Sn) +
+        log_like += -0.5 * (N * log2Pi + torch.logdet(Sn) +
                            innov.T @ torch.linalg.solve(Sn, innov))
-        if torch.isnan(logLike):
+        if torch.isnan(log_like):
             raise ValueError("obtained nan log likelihood")
-    return logLike
+    return log_like
 
 
 def lds_state_forecast(xnn, Pnn, u, B, Q, h):
@@ -567,19 +567,19 @@ def ekf_forecast(xnn, Pnn, B, Bdot, Q, h):
     T: number of observations
 
     :param: xnn: filtered state mean at time n
-    :type: xnn: :math:`\Re^{N\\times 1\\times T}`
+    :type: xnn: :math:`\\Re^{N\\times 1\\times T}`
 
     :param: Pnn: filtered state covariance at time n
-    :type: Pnn: :math:`\Re^{N\\times N\\times T}`
+    :type: Pnn: :math:`\\Re^{N\\times N\\times T}`
 
     :param: B: state transition function
-    :type: B: :math:`\Re^M\\rightarrow\Re^M`
+    :type: B: :math:`\\Re^M\\rightarrow\\Re^M`
 
     :param: Bdot: Jacobian of state transition function
-    :type: Bdot: :math:`\Re^M\\rightarrow\Re^{M\\times M}`
+    :type: Bdot: :math:`\\Re^M\\rightarrow\\Re^{M\\times M}`
 
     :param: Q: state noise covariance function
-    :type: Q: :math:`\Re^M\\rightarrow\Re^{M\\times M}`
+    :type: Q: :math:`\\Re^M\\rightarrow\\Re^{M\\times M}`
 
     :param: h: forecasting horizon
     :type: h: int
@@ -626,33 +626,33 @@ def filterEKF_withMissingValues_torch(y, B, Bdot, Q, m0, V0, Z, Zdot, R,
     T: number of observations
 
     :param: y: time series to be smoothed
-    :type: y: :math:`\Re^{N\\times T}`
+    :type: y: :math:`\\Re^{N\\times T}`
 
     :param: B: state transition function
-    :type: B: :math:`\Re^M\\rightarrow\Re^M`
+    :type: B: :math:`\\Re^M\\rightarrow\\Re^M`
 
     :param: Bdot: Jacobian of state transition function
-    :type: Bdot: :math:`\Re^M\\rightarrow\Re^{M\\times M}`
+    :type: Bdot: :math:`\\Re^M\\rightarrow\\Re^{M\\times M}`
 
     :param: Q: state noise covariance function
-    :type: Q: :math:`\Re^M\\rightarrow\Re^{M\\times M}`
+    :type: Q: :math:`\\Re^M\\rightarrow\\Re^{M\\times M}`
 
     :param: m0: initial state mean
-    :type: m0: :math:`\Re^{M}`
+    :type: m0: :math:`\\Re^{M}`
 
     :param: V0: initial state covariance
-    :type: V0: :math:`\Re^{M\\times M}`
+    :type: V0: :math:`\\Re^{M\\times M}`
 
     :param: Z: state to observation function
-    :type: Z: :math:`\Re^M\\rightarrow\Re^N`
+    :type: Z: :math:`\\Re^M\\rightarrow\\Re^N`
 
     :param: Zdot: Jacobian of state to observation function
-    :type: Zdot: :math:`\Re^M\\rightarrow\Re^{N\\times M}`
+    :type: Zdot: :math:`\\Re^M\\rightarrow\\Re^{N\\times M}`
 
     :param: R: observations covariance function
-    :type: R: :math:`\Re^M\\rightarrow\Re^{N\\times N}`
+    :type: R: :math:`\\Re^M\\rightarrow\\Re^{N\\times N}`
 
-    :return:  {xnn1, Pnn1, xnn, Pnn, innov, K, Sn, logLike}: xnn1 and Pnn1 (predicted means, MxT, and covariances, MxMxT), xnn and Pnn (filtered means, MxT, and covariances, MxMxT), innov (innovations, NxT), K (Kalman gain matrices, MxNxT), Sn (innovations covariance matrices, NxNxT), logLike (data loglikelihood, float).
+    :return:  {xnn1, Pnn1, xnn, Pnn, innov, K, Sn, log_like}: xnn1 and Pnn1 (predicted means, MxT, and covariances, MxMxT), xnn and Pnn (filtered means, MxT, and covariances, MxMxT), innov (innovations, NxT), K (Kalman gain matrices, MxNxT), Sn (innovations covariance matrices, NxNxT), log_like (data loglikelihood, float).
     :rtype: dictionary
 
     """
@@ -680,7 +680,7 @@ def filterEKF_withMissingValues_torch(y, B, Bdot, Q, m0, V0, Z, Zdot, R,
 
     xnn = m0
     Pnn = V0
-    logLike = 0.0
+    log_like = 0.0
     log2Pi = torch.log(torch.tensor(2.0 * torch.pi))
 
     for k in range(T):
@@ -697,9 +697,9 @@ def filterEKF_withMissingValues_torch(y, B, Bdot, Q, m0, V0, Z, Zdot, R,
             innov = y[:, k] - Z(xnn1)
             xnn = xnn1 + K @ innov
             Pnn = Pnn1 - K @ Zdot(xnn1) @ Pnn1
-        logLike += -0.5 * (N * log2Pi + torch.logdet(Sn) +
+        log_like += -0.5 * (N * log2Pi + torch.logdet(Sn) +
                            innov.T @ torch.linalg.solve(Sn, innov))
-        if torch.isnan(logLike):
+        if torch.isnan(log_like):
             raise ValueError("obtained nan log likelihood")
         xnn1_h[:, :, k] = torch.unsqueeze(xnn1, 1)
         Pnn1_h[:, :, k] = Pnn1
@@ -708,7 +708,7 @@ def filterEKF_withMissingValues_torch(y, B, Bdot, Q, m0, V0, Z, Zdot, R,
         innov_h[:, :, k] = torch.unsqueeze(innov, 1)
         Sn_h[:, :, k] = Sn
     answer = {"xnn1": xnn1_h, "Pnn1": Pnn1_h, "xnn": xnn_h, "Pnn": Pnn_h,
-              "innov": innov_h, "KN": K, "Sn": Sn_h, "logLike": logLike}
+              "innov": innov_h, "KN": K, "Sn": Sn_h, "log_like": log_like}
     return answer
 
 
@@ -723,33 +723,33 @@ def logLikeEKF_withMissingValues_torch(y, B, Bdot, Q, m0, V0, Z, Zdot, R,
     T: number of observations
 
     :param: y: time series to be smoothed
-    :type: y: :math:`\Re^{N\\times T}`
+    :type: y: :math:`\\Re^{N\\times T}`
 
     :param: B: state transition function
-    :type: B: :math:`\Re^M\\rightarrow\Re^M`
+    :type: B: :math:`\\Re^M\\rightarrow\\Re^M`
 
     :param: Bdot: Jacobian of state transition function
-    :type: Bdot: :math:`\Re^M\\rightarrow\Re^{M\\times M}`
+    :type: Bdot: :math:`\\Re^M\\rightarrow\\Re^{M\\times M}`
 
     :param: Q: state noise covariance function
-    :type: Q: :math:`\Re^M\\rightarrow\Re^{M\\times M}`
+    :type: Q: :math:`\\Re^M\\rightarrow\\Re^{M\\times M}`
 
     :param: m0: initial state mean
-    :type: m0: :math:`\Re^{M}`
+    :type: m0: :math:`\\Re^{M}`
 
     :param: V0: initial state covariance
-    :type: V0: :math:`\Re^{M\\times M}`
+    :type: V0: :math:`\\Re^{M\\times M}`
 
     :param: Z: state to observation function
-    :type: Z: :math:`\Re^M\\rightarrow\Re^N`
+    :type: Z: :math:`\\Re^M\\rightarrow\\Re^N`
 
     :param: Zdot: Jacobian of state to observation function
-    :type: Zdot: :math:`\Re^M\\rightarrow\Re^{N\\times M}`
+    :type: Zdot: :math:`\\Re^M\\rightarrow\\Re^{N\\times M}`
 
     :param: R: observations covariance function
-    :type: R: :math:`\Re^M\\rightarrow\Re^{N\\times N}`
+    :type: R: :math:`\\Re^M\\rightarrow\\Re^{N\\times N}`
 
-    :return:  {xnn1, Pnn1, xnn, Pnn, innov, K, Sn, logLike}: xnn1 and Pnn1 (predicted means, MxT, and covariances, MxMxT), xnn and Pnn (filtered means, MxT, and covariances, MxMxT), innov (innovations, NxT), K (Kalman gain matrices, MxNxT), Sn (innovations covariance matrices, NxNxT), logLike (data loglikelihood, float).
+    :return:  {xnn1, Pnn1, xnn, Pnn, innov, K, Sn, log_like}: xnn1 and Pnn1 (predicted means, MxT, and covariances, MxMxT), xnn and Pnn (filtered means, MxT, and covariances, MxMxT), innov (innovations, NxT), K (Kalman gain matrices, MxNxT), Sn (innovations covariance matrices, NxNxT), log_like (data loglikelihood, float).
     :rtype: dictionary
 
     """
@@ -770,7 +770,7 @@ def logLikeEKF_withMissingValues_torch(y, B, Bdot, Q, m0, V0, Z, Zdot, R,
 
     xnn = m0
     Pnn = V0
-    logLike = 0.0
+    log_like = 0.0
     log2Pi = torch.log(torch.tensor(2.0 * torch.pi))
     for k in range(T):
         xnn1 = B(xnn)
@@ -786,11 +786,11 @@ def logLikeEKF_withMissingValues_torch(y, B, Bdot, Q, m0, V0, Z, Zdot, R,
             innov = y[:, k] - Z(xnn1)
             xnn = xnn1 + K @ innov
             Pnn = Pnn1 - K @ Zdot(xnn1) @ Pnn1
-        logLike += -0.5 * (N * log2Pi + torch.logdet(Sn) +
+        log_like += -0.5 * (N * log2Pi + torch.logdet(Sn) +
                            innov.T @ torch.linalg.solve(Sn, innov))
-        if torch.isnan(logLike):
+        if torch.isnan(log_like):
             raise ValueError("obtained nan log likelihood")
-    return logLike
+    return log_like
 
 
 def filterLDS_SS_withMissingValues_np(y, u, B, Q, m0, V0, a, Z, R):
@@ -824,7 +824,7 @@ def filterLDS_SS_withMissingValues_np(y, u, B, Q, m0, V0, a, Z, R):
     :param: R: observations covariance matrix
     :type: R: numpy matrix (NxN)
 
-    :return:  {xnn1, Pnn1, xnn, Pnn, innov, K, Sn, logLike}: xnn1 and Pnn1 (predicted means, Mx1xT, and covariances, MxMxT), xnn and Pnn (filtered means, Mx1xT, and covariances, MxMxT), innov (innovations, Nx1xT), K (Kalman gain matrices, MxNxT), Sn (innovations covariance matrices, NxNxT), logLike (data loglikelihood, float).
+    :return:  {xnn1, Pnn1, xnn, Pnn, innov, K, Sn, log_like}: xnn1 and Pnn1 (predicted means, Mx1xT, and covariances, MxMxT), xnn and Pnn (filtered means, Mx1xT, and covariances, MxMxT), innov (innovations, Nx1xT), K (Kalman gain matrices, MxNxT), Sn (innovations covariance matrices, NxNxT), log_like (data loglikelihood, float).
     :rtype: dictionary
 
     """
@@ -856,7 +856,7 @@ def filterLDS_SS_withMissingValues_np(y, u, B, Q, m0, V0, a, Z, R):
     innov[:, 0, 0] = y[:, 0] - pred_obs
     xnn[:, :, 0] = xnn1[:, :, 0] + K @ innov[:, :, 0]
     Pnn[:, :, 0] = Pnn1[:, :, 0] - K @ Z @ Pnn1[:, :, 0]
-    logLike = -N*P*np.log(2*np.pi) - np.linalg.slogdet(Sn[:, :, 0])[1] - \
+    log_like = -N*P*np.log(2*np.pi) - np.linalg.slogdet(Sn[:, :, 0])[1] - \
         innov[:, :, 0].T @ Sinv @ innov[:, :, 0]
 
     # k>1
@@ -875,11 +875,11 @@ def filterLDS_SS_withMissingValues_np(y, u, B, Q, m0, V0, a, Z, R):
             innov[:, 0, k] = y[:, k] - pred_obs
             xnn[:, :, k] = xnn1[:, :, k] + K @ innov[:, :, k]
             Pnn[:, :, k] = Pnn1[:, :, k] - K @ Z @ Pnn1[:, :, k]
-        logLike = logLike-np.linalg.slogdet(Sn[:, :, k])[1] -\
+        log_like = log_like-np.linalg.slogdet(Sn[:, :, k])[1] -\
             innov[:, :, k].T @ Sinv @ innov[:, :, k]
-    logLike = 0.5 * logLike
+    log_like = 0.5 * log_like
     answer = {"xnn1": xnn1, "Pnn1": Pnn1, "xnn": xnn, "Pnn": Pnn,
-              "innov": innov, "KN": K, "Sn": Sn, "logLike": logLike}
+              "innov": innov, "KN": K, "Sn": Sn, "log_like": log_like}
     return answer
 
 
