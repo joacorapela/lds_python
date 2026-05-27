@@ -2,28 +2,38 @@ import math
 import torch
 
 
-def getLDSmatricesForKinematics_torch(dt, sigma_a, pos_x_R_std, pos_y_R_std):
+def getLDSmatricesFor1DKinematics_torch(dt, sigma_a, pos_R_std):
     # Taken from the book
     # barShalomEtAl01-estimationWithApplicationToTrackingAndNavigation.pdf
     # section 6.3.3
 
     # Eq. 6.3.3-2
     import torch
-    B = torch.tensor([[1, dt, .5*dt**2, 0, 0, 0],
-                     [0, 1, dt, 0, 0, 0],
-                     [0, 0, 1, 0, 0, 0],
-                     [0, 0, 0, 1, dt, .5*dt**2],
-                     [0, 0, 0, 0, 1, dt],
-                     [0, 0, 0, 0, 0, 1]],
+    B = torch.tensor([[1, dt, .5*dt**2],
+                      [0, 1, dt],
+                      [0, 0, 1]],
+                     dtype=torch.double)
+    Z = torch.tensor([[1, 0, 0]],
                     dtype=torch.double)
+    # Eq. 6.3.3-4
+    Qe = torch.tensor([[dt**4/4, dt**3/2, dt**2/2],
+                       [dt**3/2, dt**2,   dt],
+                       [dt**2/2, dt,      1]],
+                      dtype=torch.double)
+    Q = sigma_a**2 * Qe
+    R = torch.diag(torch.tensor([pos_R_std**2]))
+
+    return B, Q, Qe, Z, R
+
+def getLDSmatricesFor2DKinematics_torch(dt, sigma_a, pos_x_R_std, pos_y_R_std):
+    B_1D, _, Qt, _, _ = getLDSmatricesFor1DKinematics_torch(
+        dt=dt, sigma_a=sigma_a, pos_R_std=NaN)
+    B = torch.zeros(size=(6, 6), dtype=torch.double)
+    B[:3, :3] = B_1D
+    B[3:6, 3:6] = B_1D
     Z = torch.tensor([[1, 0, 0, 0, 0, 0],
                      [0, 0, 0, 1, 0, 0]],
                     dtype=torch.double)
-    # Eq. 6.3.3-4
-    Qt = torch.tensor([[dt**4/4, dt**3/2, dt**2/2],
-                      [dt**3/2, dt**2,   dt],
-                      [dt**2/2, dt,      1]],
-                     dtype=torch.double)
     Qe = torch.zeros(size=(6, 6), dtype=torch.double)
     Qe[:3, :3] = Qt
     Qe[3:6, 3:6] = Qt
@@ -32,8 +42,15 @@ def getLDSmatricesForKinematics_torch(dt, sigma_a, pos_x_R_std, pos_y_R_std):
 
     return B, Q, Qe, Z, R
 
-def getLDSmatricesForKinematics_np(dt, sigma_a, pos_x_R_std, pos_y_R_std):
-    B, Q, Qe, Z, R = getLDSmatricesForKinematics_torch(dt, sigma_a, pos_x_R_std, pos_y_R_std)
+def getLDSmatricesFor1DKinematics_np(dt, sigma_a, pos_x_R):
+    B, Q, Qe, Z, R = getLDSmatricesFor1DKinematics_torch(dt, sigma_a,
+                                                         pos_R_std)
+    return B.numpy(), Q.numpy(), Qe.numpy(), Z.numpy(), R.numpy()
+
+def getLDSmatricesFor2DKinematics_np(dt, sigma_a, pos_x_R_std, pos_y_R_std):
+    B, Q, Qe, Z, R = getLDSmatricesFor2DKinematics_torch(dt, sigma_a,
+                                                         pos_x_R_std,
+                                                         pos_y_R_std)
     return B.numpy(), Q.numpy(), Qe.numpy(), Z.numpy(), R.numpy()
 
 def getNDSwithGaussianNoiseFunctionsForKinematicsAndHO_torch(
