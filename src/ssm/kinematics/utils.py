@@ -2,7 +2,7 @@ import math
 import torch
 
 
-def getLDSmatricesFor1DKinematics_torch(dt, sigma_a, pos_R_std):
+def getLDSmatricesFor1D_torch(dt, sigma_a, pos_R_std):
     # Taken from the book
     # barShalomEtAl01-estimationWithApplicationToTrackingAndNavigation.pdf
     # section 6.3.3
@@ -25,8 +25,8 @@ def getLDSmatricesFor1DKinematics_torch(dt, sigma_a, pos_R_std):
 
     return B, Q, Qe, Z, R
 
-def getLDSmatricesFor2DKinematics_torch(dt, sigma_a, pos_x_R_std, pos_y_R_std):
-    B_1D, _, Qt, _, _ = getLDSmatricesFor1DKinematics_torch(
+def getLDSmatricesFor2D_torch(dt, sigma_a, pos_x_R_std, pos_y_R_std):
+    B_1D, _, Qt, _, _ = getLDSmatricesFor1D_torch(
         dt=dt, sigma_a=sigma_a, pos_R_std=NaN)
     B = torch.zeros(size=(6, 6), dtype=torch.double)
     B[:3, :3] = B_1D
@@ -42,18 +42,18 @@ def getLDSmatricesFor2DKinematics_torch(dt, sigma_a, pos_x_R_std, pos_y_R_std):
 
     return B, Q, Qe, Z, R
 
-def getLDSmatricesFor1DKinematics_np(dt, sigma_a, pos_x_R):
-    B, Q, Qe, Z, R = getLDSmatricesFor1DKinematics_torch(dt, sigma_a,
+def getLDSmatricesFor1D_np(dt, sigma_a, pos_x_R):
+    B, Q, Qe, Z, R = getLDSmatricesFor1D_torch(dt, sigma_a,
                                                          pos_R_std)
     return B.numpy(), Q.numpy(), Qe.numpy(), Z.numpy(), R.numpy()
 
-def getLDSmatricesFor2DKinematics_np(dt, sigma_a, pos_x_R_std, pos_y_R_std):
-    B, Q, Qe, Z, R = getLDSmatricesFor2DKinematics_torch(dt, sigma_a,
+def getLDSmatricesFor2D_np(dt, sigma_a, pos_x_R_std, pos_y_R_std):
+    B, Q, Qe, Z, R = getLDSmatricesFor2D_torch(dt, sigma_a,
                                                          pos_x_R_std,
                                                          pos_y_R_std)
     return B.numpy(), Q.numpy(), Qe.numpy(), Z.numpy(), R.numpy()
 
-def getNDSwithGaussianNoiseFunctionsForKinematicsAndHO_torch(
+def getNDSwithGaussianNoiseFunctionsForTrackingWithHO_torch(
         dt, alpha, sigma_a,
         cos_theta_Q_std, sin_theta_Q_std,
         omega_Q_std,
