@@ -542,7 +542,7 @@ def torch_adam_optimize_SS_kinematics_diagV0(y, B, sigma_a0, Qe, Z,
         kf = inference.filterLDS_SS_withMissingValues_torch(y=y, B=B, Q=Q,
                                                             m0=m0, V0=V0, Z=Z,
                                                             R=R)
-        log_like = kf["logLike"]
+        log_like = kf["log_like"]
         return log_like
 
     optim_params = {"lr": lr, "eps": eps}
@@ -578,7 +578,7 @@ def torch_adam_optimize_SS_kinematics_diagV0(y, B, sigma_a0, Qe, Z,
         elapsed_time.append(time.time() - start_time)
         print("--------------------------------------------------------------------------------")
         print(f"iteration: {i} ({max_iter})")
-        print(f"logLike: {-curEval}")
+        print(f"log_like: {-curEval}")
         print("sigma_a: ")
         print(sigma_a)
         print("sqrt_diag_R: ")
@@ -633,7 +633,7 @@ def em_SS_kinematics(y, B, sigma_a0, Qe, Z, R_0, m0_0, V0_0,
         kf = inference.filterLDS_SS_withMissingValues_np(y=y, B=B,
                                                          Q=Q, m0=m0, V0=V0,
                                                          Z=Z, R=R)
-        print("LogLike[{:04d}]={:f}".format(iter, kf["logLike"].item()))
+        print("LogLike[{:04d}]={:f}".format(iter, kf["log_like"].item()))
         print("sigma_a={:f}".format(sigma_a))
         print("R:")
         print(R)
@@ -641,7 +641,7 @@ def em_SS_kinematics(y, B, sigma_a0, Qe, Z, R_0, m0_0, V0_0,
         print(m0)
         print("V0:")
         print(V0)
-        log_like.append(kf["logLike"].item())
+        log_like.append(kf["log_like"].item())
         if math.isnan(log_like[-1]) or iter > 0 and log_like[-1] < log_like[-2]:
             if math.isnan(log_like[-1]):
                 termination_info = "nan detected"
@@ -737,13 +737,13 @@ def em_SS_LDS(y, B0, Q0, Z0, R0, m0_0, V0_0, max_iter=50, tol=1e-4,
         kf = inference.filterLDS_SS_withMissingValues_np(y=y, B=B,
                                                          Q=Q, m0=m0, V0=V0,
                                                          Z=Z, R=R)
-        print("LogLike[{:04d}]={:f}".format(iter, kf["logLike"].item()))
-        log_like[iter] = kf["logLike"]
-        if kf["logLike"] < prev_log_like:
-            warnings.warn(f'Log likelihood decreased by {prev_log_like - kf["logLike"]}')
-        elif (kf["logLike"] - prev_log_like) < tol:
+        print("LogLike[{:04d}]={:f}".format(iter, kf["log_like"].item()))
+        log_like[iter] = kf["log_like"]
+        if kf["log_like"] < prev_log_like:
+            warnings.warn(f'Log likelihood decreased by {prev_log_like - kf["log_like"]}')
+        elif (kf["log_like"] - prev_log_like) < tol:
             break
-        prev_log_like = kf["logLike"]
+        prev_log_like = kf["log_like"]
         ks = inference.smoothLDS_SS(B=B, xnn=kf["xnn"], Pnn=kf["Pnn"],
                                     xnn1=kf["xnn1"], Pnn1=kf["Pnn1"],
                                     m0=m0, V0=V0)
@@ -814,18 +814,17 @@ def em_SS_LDS(y, u0, B0, Q0, a0, Z0, R0, m0_0, V0_0, max_iter=50, tol=1e-4,
     prev_log_like = -np.inf
     start_time = time.time()
     for iter in range(max_iter):
-        breakpoint()
         kf = inference.filterLDS_SS_withMissingValues_np(y=y, u=u, B=B,
                                                          Q=Q, m0=m0, V0=V0,
                                                          a=a, Z=Z, R=R)
-        print("LogLike[{:04d}]={:f}".format(iter, kf["logLike"].item()))
-        log_like[iter] = kf["logLike"]
+        print("LogLike[{:04d}]={:f}".format(iter, kf["log_like"].item()))
+        log_like[iter] = kf["log_like"]
         elapsed_time[iter] = time.time() - start_time
-        if kf["logLike"] < prev_log_like:
-            warnings.warn(f'Log likelihood decreased by {prev_log_like - kf["logLike"]}')
-        elif (kf["logLike"] - prev_log_like) < tol:
+        if kf["log_like"] < prev_log_like:
+            warnings.warn(f'Log likelihood decreased by {prev_log_like - kf["log_like"]}')
+        elif (kf["log_like"] - prev_log_like) < tol:
             break
-        prev_log_like = kf["logLike"]
+        prev_log_like = kf["log_like"]
         ks = inference.smoothLDS_SS(B=B, xnn=kf["xnn"], Pnn=kf["Pnn"],
                                     xnn1=kf["xnn1"], Pnn1=kf["Pnn1"],
                                     m0=m0, V0=V0)
