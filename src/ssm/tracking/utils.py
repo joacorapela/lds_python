@@ -42,9 +42,8 @@ def getLDSmatricesFor2D_torch(dt, sigma_a, pos_x_R_std, pos_y_R_std):
 
     return B, Q, Qe, Z, R
 
-def getLDSmatricesFor1D_np(dt, sigma_a, pos_x_R):
-    B, Q, Qe, Z, R = getLDSmatricesFor1D_torch(dt, sigma_a,
-                                                         pos_R_std)
+def getLDSmatricesFor1D_np(dt, sigma_a, pos_R_std):
+    B, Q, Qe, Z, R = getLDSmatricesFor1D_torch(dt, sigma_a, pos_R_std)
     return B.numpy(), Q.numpy(), Qe.numpy(), Z.numpy(), R.numpy()
 
 def getLDSmatricesFor2D_np(dt, sigma_a, pos_x_R_std, pos_y_R_std):
