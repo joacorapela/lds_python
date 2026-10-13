@@ -62,7 +62,7 @@ sigma_V0 = 0.1
 
 # estimation parameters
 # max_iter = 2000
-max_iter = 5
+max_iter = 2000
 tol = 1e-1
 vars_to_estimate = {"B": True, "Q": True, "Z": True, "R": True,
                     "m0": True, "V0": True, }

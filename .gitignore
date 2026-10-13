@@ -19,10 +19,10 @@ docs/lectures/neuroinformatics/2023/*
 !docs/lectures/neuroinformatics/2023/ldsForNeuro.tex
 !docs/lectures/neuroinformatics/2023/ldsForNeuro.pdf
 
-docs/sphinx/build/
+docs/sphinx/build/doctrees
+docs/sphinx/source/auto_examples/
 data/*
 **/old
-docs/sphinx/source/auto_examples/
 **/.mypy_cache/*
 dist/*
 *.egg-info

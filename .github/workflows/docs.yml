@@ -4,33 +4,12 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: conda-incubator/setup-miniconda@v2
-        with:
-          auto-activate-base: false
-          python-version: 3.9
-          channels: conda-forge,defaults
-          channel-priority: strict
-          activate-environment: docs-env
-
-      - name: Install dependencies
-        shell: bash -l {0}
-        run: |
-          conda install -y h5py
-          pip install -e .
-          pip install -r requirements.txt
-          pip install -r docs/sphinx/requirements.txt
-
-      - name: Sphinx build
-        shell: bash -l {0}
-        run: |
-          sphinx-build docs/sphinx/source/ docs/sphinx/build/
-
+      - uses: actions/checkout@v3
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
         with:
           publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/sphinx/build/
+          publish_dir: docs/sphinx/build/html
           force_orphan: true

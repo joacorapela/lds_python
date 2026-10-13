@@ -320,7 +320,7 @@ def filterLDS_SS_withMissingValues_torch(y, B, Q, m0, V0, Z, R):
     return answer
 
 
-def logLikeLDS_withMissingValues_torch(y, B, Q, m0, V0, Z, R):
+def logLikeLDS_withMissingValues_torch(y, u, B, Q, m0, V0, a, Z, R):
     """ Kalman filter implementation of the algorithm described in Shumway and
     Stoffer 2006.
 
@@ -332,6 +332,9 @@ def logLikeLDS_withMissingValues_torch(y, B, Q, m0, V0, Z, R):
 
     :param: y: time series to be smoothed
     :type: y: numpy array (NxT)
+
+    :param: u: state offset
+    :type: u: numpy array (Mx1)
 
     :param: B: state transition matrix
     :type: B: numpy matrix (MxM)
@@ -347,6 +350,9 @@ def logLikeLDS_withMissingValues_torch(y, B, Q, m0, V0, Z, R):
 
     :param: Z: state to observation matrix
     :type: Z: numpy matrix (NxM)
+
+    :param: a: observations offset
+    :type: a: numpy array (Mx1)
 
     :param: R: observations covariance matrix
     :type: R: numpy matrix (NxN)
@@ -375,7 +381,7 @@ def logLikeLDS_withMissingValues_torch(y, B, Q, m0, V0, Z, R):
     logLike = 0.0
     log2Pi = torch.log(torch.tensor(2.0 * torch.pi))
     for k in range(T):
-        xnn1 = B @ xnn
+        xnn1 = u + B @ xnn
         Pnn1 = B @ Pnn @ B.T + Q
         # print(Pnn1)
         # Pnn1.register_hook(print)  # This will print the gradient when it's computed.
@@ -388,7 +394,8 @@ def logLikeLDS_withMissingValues_torch(y, B, Q, m0, V0, Z, R):
             Sn = (Stmp + Stmp.T)/2
             Sinv = torch.linalg.inv(Sn)
             K = Pnn1 @ Z.T @ Sinv
-            innov = y[:, k] - (Z @ xnn1).squeeze()
+            pred_obs = a + (Z @ xnn1).squeeze()
+            innov = y[:, k] - pred_obs
             xnn = xnn1 + K @ innov
             Pnn = Pnn1 - K @ Z @ Pnn1
         logLike += -0.5 * (N * log2Pi + torch.logdet(Sn) +
@@ -398,7 +405,7 @@ def logLikeLDS_withMissingValues_torch(y, B, Q, m0, V0, Z, R):
     return logLike
 
 
-def lds_forecast(xnn, Pnn, B, Q, h):
+def lds_state_forecast(xnn, Pnn, u, B, Q, h):
     """
     Forecasts the mean and covariance of a Kalman filter state at horizon h.
 
@@ -418,15 +425,15 @@ def lds_forecast(xnn, Pnn, B, Q, h):
 
     for _ in range(h):
         P_pred = B @ P_pred @ B.T + Q
-        x_pred = B @ x_pred
+        x_pred = u + B @ x_pred
 
     return x_pred, P_pred
 
 
-def lds_forecast_batch(xnn, Pnn, B, Q, m0, V0, h):
+def lds_states_forecast(xnn, Pnn, u, B, Q, m0, V0, h):
     """
 
-	Forecasts the mean and covariance of a batch of Kalman filter states at horizon h. The first forecasted sample corresponds to sample time h-1 and the last forecasted sample correspond to sample time N+h-1; thus this function return N+1 samples.
+	Forecasts the mean and covariance of a batch of Kalman filter states at horizon h.
 
     :param: xnn: filtered state mean at time n
     :type: xnn: numpy array or torch tensor, shape (state_dim,)
@@ -448,20 +455,17 @@ def lds_forecast_batch(xnn, Pnn, B, Q, m0, V0, h):
     """
 
     N = xnn.shape[2]
-    x_pred = np.empty(shape=(xnn.shape[0], 1, xnn.shape[2]+1), dtype=np.double)
-    P_pred = np.empty(shape=(Pnn.shape[0], Pnn.shape[1], Pnn.shape[2]+1), dtype=np.double)
-    x = m0
-    P = V0
+    x_pred = np.empty(shape=(xnn.shape[0], 1, xnn.shape[2]), dtype=np.double)
+    P_pred = np.empty(shape=(Pnn.shape[0], Pnn.shape[1], Pnn.shape[2]), dtype=np.double)
     for n in range(N):
-        x_pred[:, 0, n], P_pred[:, :, n] = lds_forecast(
-            h=h, xnn=x, Pnn=P, B=B, Q=Q)
         x = xnn[:, 0, n]
         P = Pnn[:, :, n]
-    x_pred[:, 0, N], P_pred[:, :, N] = lds_forecast(h=h, xnn=x, Pnn=P, B=B, Q=Q)
+        x_pred[:, 0, n], P_pred[:, :, n] = lds_state_forecast(
+            h=h, xnn=x, Pnn=P, u=u, B=B, Q=Q)
     return x_pred, P_pred
 
 
-def log_like_observations_given_forecasts_lds(h, y, x_pred, P_pred, Z, R):
+def log_like_observations_given_lds_state_forecasts(h, y, x_pred, P_pred, Z, R):
     first_forecasted_sample = h-1
     T = y.shape[1]
     N = y.shape[0]
@@ -493,7 +497,7 @@ def log_like_observations_given_forecasts_lds(h, y, x_pred, P_pred, Z, R):
     return log_like
 
 
-def log_like_observations_given_forecasts_ekf(h, y, x_pred, P_pred, Z, Zdot, R):
+def log_like_observations_given_ekf_state_forecasts(h, y, x_pred, P_pred, Z, Zdot, R):
     first_forecasted_sample = h-1
     T = y.shape[1]
     N = y.shape[0]
@@ -524,6 +528,33 @@ def log_like_observations_given_forecasts_ekf(h, y, x_pred, P_pred, Z, Zdot, R):
     log_like /= -2 * num_terms
     return log_like
 
+
+def lds_observation_forecast(xnn, Pnn, u, B, Q, a, Z, R, h):
+    x_pred, P_pred = lds_state_forecast(xnn=xnn, Pnn=Pnn, u=u, B=B, Q=Q, h=h)
+    y_pred = a + Z @ x_pred
+    S_pred = Z @ P_pred @ Z.T + R
+    S_pred = 0.5 * (S_pred + S_pred.T)
+    return y_pred, S_pred
+
+#     y_hat = Z @ xnn1.squeeze() + a[:, None]
+#     if Pnn1.ndim < 3:
+#         # Handle the case where T=1 and Pnn1 is (N_state, N_state)
+#         Pnn1 = Pnn1[:, :, None]
+#     T = Pnn1.shape[2]
+#     N_obs = Z.shape[0]
+#     S = np.zeros((N_obs, N_obs, T))
+#     for k in range(T):
+#         S_k_unstable = Z @ Pnn1[:, :, k] @ Z.T + R
+#         S[:, :, k] = 0.5 * (S_k_unstable + S_k_unstable.T)
+#     return y_hat, S
+
+
+def lds_observations_forecast(xnn, Pnn, u, B, Q, m0, V0, a, Z, R, h):
+    x_pred, P_pred = lds_states_forecast(xnn=xnn, Pnn=Pnn, u=u, B=B, Q=Q, m0=m0, V0=V0, h=h)
+    y_pred = a[:, np.newaxis, np.newaxis] + np.einsum("ij, jkl -> ikl", Z, x_pred)
+    S_pred = np.einsum("ij,jkt,kl -> ilt", Z, P_pred, Z.T) + R[:, :, np.newaxis]
+    S_pred = 0.5 * (S_pred + S_pred.transpose(1, 0, 2))
+    return y_pred, S_pred
 
 def ekf_forecast(xnn, Pnn, B, Bdot, Q, h):
     """
@@ -567,7 +598,7 @@ def ekf_forecast(xnn, Pnn, B, Bdot, Q, h):
     return x_pred, P_pred
 
 
-def ekf_forecast_batch(xnn, Pnn, B, Bdot, Q, m0, V0, h):
+def ekf_states_forecast(xnn, Pnn, B, Bdot, Q, m0, V0, h):
     N = xnn.shape[2]
     x_pred = np.empty(shape=(xnn.shape[0], 1, xnn.shape[2]+1), dtype=np.double)
     P_pred = np.empty(shape=(Pnn.shape[0], Pnn.shape[1], Pnn.shape[2]+1), dtype=np.double)
@@ -762,12 +793,15 @@ def logLikeEKF_withMissingValues_torch(y, B, Bdot, Q, m0, V0, Z, Zdot, R,
     return logLike
 
 
-def filterLDS_SS_withMissingValues_np(y, B, Q, m0, V0, Z, R):
+def filterLDS_SS_withMissingValues_np(y, u, B, Q, m0, V0, a, Z, R):
     """ Kalman filter implementation of the algorithm described in Shumway and
     Stoffer 2006.
 
     :param: y: time series to be smoothed
     :type: y: numpy array (NxT)
+
+    :param: u: state offset
+    :type: u: numpy array (Mx1)
 
     :param: B: state transition matrix
     :type: B: numpy matrix (MxM)
@@ -781,13 +815,16 @@ def filterLDS_SS_withMissingValues_np(y, B, Q, m0, V0, Z, R):
     :param: V0: initial state covariance
     :type: V0: numpy matrix (MxM)
 
+    :param: a: observations offset
+    :type: a: numpy array (Nx1)
+
     :param: Z: state to observation matrix
     :type: Z: numpy matrix (NxM)
 
     :param: R: observations covariance matrix
     :type: R: numpy matrix (NxN)
 
-    :return:  {xnn1, Pnn1, xnn, Pnn, innov, K, Sn, logLike}: xnn1 and Pnn1 (predicted means, MxT, and covariances, MxMxT), xnn and Pnn (filtered means, MxT, and covariances, MxMxT), innov (innovations, NxT), K (Kalman gain matrices, MxNxT), Sn (innovations covariance matrices, NxNxT), logLike (data loglikelihood, float).
+    :return:  {xnn1, Pnn1, xnn, Pnn, innov, K, Sn, logLike}: xnn1 and Pnn1 (predicted means, Mx1xT, and covariances, MxMxT), xnn and Pnn (filtered means, Mx1xT, and covariances, MxMxT), innov (innovations, Nx1xT), K (Kalman gain matrices, MxNxT), Sn (innovations covariance matrices, NxNxT), logLike (data loglikelihood, float).
     :rtype: dictionary
 
     """
@@ -809,13 +846,14 @@ def filterLDS_SS_withMissingValues_np(y, B, Q, m0, V0, Z, R):
     Sn = np.empty(shape=[P, P, N])
 
     # k==0
-    xnn1[:, 0, 0] = B @ m0
+    xnn1[:, 0, 0] = u + B @ m0
     Pnn1[:, :, 0] = B @ V0 @ B.T + Q
     Stmp = Z @ Pnn1[:, :, 0] @ Z.T + R
     Sn[:, :, 0] = (Stmp + Stmp.T) / 2
     Sinv = np.linalg.inv(Sn[:, :, 0])
     K = Pnn1[:, :, 0] @ Z.T @ Sinv
-    innov[:, 0, 0] = y[:, 0] - (Z @  xnn1[:, :, 0]).squeeze()
+    pred_obs = a + (Z @  xnn1[:, :, 0]).squeeze()
+    innov[:, 0, 0] = y[:, 0] - pred_obs
     xnn[:, :, 0] = xnn1[:, :, 0] + K @ innov[:, :, 0]
     Pnn[:, :, 0] = Pnn1[:, :, 0] - K @ Z @ Pnn1[:, :, 0]
     logLike = -N*P*np.log(2*np.pi) - np.linalg.slogdet(Sn[:, :, 0])[1] - \
@@ -823,7 +861,7 @@ def filterLDS_SS_withMissingValues_np(y, B, Q, m0, V0, Z, R):
 
     # k>1
     for k in range(1, N):
-        xnn1[:, :, k] = B @ xnn[:, :, k-1]
+        xnn1[:, 0, k] = u + (B @ xnn[:, :, k-1]).squeeze()
         Pnn1[:, :, k] = B @ Pnn[:, :, k-1] @ B.T + Q
         if(np.any(np.isnan(y[:, k]))):
             xnn[:, :, k] = xnn1[:, :, k]
@@ -833,7 +871,8 @@ def filterLDS_SS_withMissingValues_np(y, B, Q, m0, V0, Z, R):
             Sn[:, :, k] = (Stmp + Stmp.T)/2
             Sinv = np.linalg.inv(Sn[:, :, k])
             K = Pnn1[:, :, k] @ Z.T @ Sinv
-            innov[:, 0, k] = y[:, k] - (Z @ xnn1[:, :, k]).squeeze()
+            pred_obs = a + (Z @  xnn1[:, :, k]).squeeze()
+            innov[:, 0, k] = y[:, k] - pred_obs
             xnn[:, :, k] = xnn1[:, :, k] + K @ innov[:, :, k]
             Pnn[:, :, k] = Pnn1[:, :, k] - K @ Z @ Pnn1[:, :, k]
         logLike = logLike-np.linalg.slogdet(Sn[:, :, k])[1] -\
@@ -851,13 +890,13 @@ def smoothLDS_SS(B, xnn, Pnn, xnn1, Pnn1, m0, V0):
     :type: B: numpy matrix (MxM)
 
     :param: xnn: filtered means (from Kalman filter)
-    :type: xnn: numpy array (MxT)
+    :type: xnn: numpy array (Mx1xT)
 
     :param: Pnn: filtered covariances (from Kalman filter)
     :type: Pnn: numpy array (MxMXT)
 
     :param: xnn1: predicted means (from Kalman filter)
-    :type: xnn1: numpy array (MxT)
+    :type: xnn1: numpy array (Mx1xT)
 
     :param: Pnn1: predicted covariances (from Kalman filter)
     :type: Pnn1: numpy array (MxMXT)
@@ -868,7 +907,7 @@ def smoothLDS_SS(B, xnn, Pnn, xnn1, Pnn1, m0, V0):
     :param: V0: initial state covariance
     :type: V0: numpy matrix (MxM)
 
-    :return:  {xnN, PnN, Jn, x0N, V0N, J0}: xnn1 and Pnn1 (smoothed means, MxT, and covariances, MxMxT), Jn (smoothing gain matrix, MxMxT), x0N and V0N (smoothed initial state mean, M, and covariance, MxM), J0 (initial smoothing gain matrix, MxN).
+    :return:  {xnN, PnN, Jn, x0N, V0N, J0}: xnn1 and Pnn1 (smoothed means, Mx1xT, and covariances, MxMxT), Jn (smoothing gain matrix, MxMxT), x0N and V0N (smoothed initial state mean, M, and covariance, MxM), J0 (initial smoothing gain matrix, MxN).
 
     """
     if m0.ndim != 1:
