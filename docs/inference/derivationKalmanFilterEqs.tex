@@ -14,9 +14,9 @@
         \hat{\mathbf{y}}_{n|n-1}&\triangleq E\{\mathbf{y}_n|\mathbf{y}_1,\ldots,\mathbf{y}_{n-1}\}=B_n\mathbf{x}_{n|n-1}&&\text{predicted observation}\label{eq:ytGtm1}\\
         \mathbf{z}_n&\triangleq\mathbf{y}_n-\hat{\mathbf{y}}_{n|n-1}&&\text{residual}\nonumber\\
         S_n&\triangleq \text{Cov}\{\mathbf{z}_n|\mathbf{y}_1,\ldots,\mathbf{y}_{n-1}\}=B_nP_{n|n-1}B_n^\intercal+R_n\quad&&\text{residual covariance}\label{eq:St}\\
-        \mathbf{K}_n&=P_{n|n-1}B_n^\intercal S_n^{-1}&&\text{Kalman gain}\label{eq:Kt}\\
+        K_n&=P_{n|n-1}B_n^\intercal S_n^{-1}&&\text{Kalman gain}\label{eq:Kt}\\
         \mathbf{x}_{n|n}&=\mathbf{x}_{n|n-1}+K_n\mathbf{z}_n&&\text{filtering mean}\label{eq:xtGt}\\
-        \mathbf{P}_{n|n}&=(I-K_nB_n)P_{n|n-1}&&\text{filtering covariance}\label{eq:PtGt}
+        P_{n|n}&=(I-K_nB_n)P_{n|n-1}&&\text{filtering covariance}\label{eq:PtGt}
     \end{alignat}
 
 \end{theorem}
@@ -36,7 +36,7 @@ The following proof adds details to that given in Section 4.3.1 of
 	This proves Eq.~\ref{eq:xtGtm1}.
 
     \begin{align}
-        \mathbf{P}_{n|n-1}&=\text{Cov}\{\mathbf{x}_n|Y_{n-1}\}=E\{(\mathbf{x}_n-\mathbf{x}_{n|n-1})(\mathbf{x}_n-\mathbf{x}_{n|n-1})^\intercal|Y_{n-1}\}\nonumber\\
+        P_{n|n-1}&=\text{Cov}\{\mathbf{x}_n|Y_{n-1}\}=E\{(\mathbf{x}_n-\mathbf{x}_{n|n-1})(\mathbf{x}_n-\mathbf{x}_{n|n-1})^\intercal|Y_{n-1}\}\nonumber\\
                           &=E\{\left(A_{n-1}\mathbf{x}_{n-1}+w_{n-1}-A_{n-1}\mathbf{x}_{n-1|n-1}\right)\left(A_{n-1}\mathbf{x}_{n-1}+w_{n-1}-A_{n-1}\mathbf{x}_{n-1|n-1}\right)^\intercal|Y_{n-1}\}\nonumber\\
                           &=E\{\left(A_{n-1}(\mathbf{x}_{n-1}-\mathbf{x}_{n-1|n-1})+w_{n-1}\right)\left(A_{n-1}(\mathbf{x}_{n-1}-\mathbf{x}_{n-1|n-1})+w_{n-1}\right)^\intercal|Y_{n-1}\}\nonumber\\
                           &=A_{n-1}E\{(\mathbf{x}_{n-1}-\mathbf{x}_{n-1|n-1})(\mathbf{x}_{n-1}-\mathbf{x}_{n-1|n-1})^\intercal|Y_{n-1}\}A_{n-1}^\intercal+\nonumber\\
@@ -75,27 +75,31 @@ The following proof adds details to that given in Section 4.3.1 of
     the first equality in Eq.~\ref{eq:ztProof}) we know $\mathbf{z}_n$.}.
 
     \begin{align}
-        \mathbf{x}_{n|n}&=E\{\mathbf{x}_n|Y_n\}=E\{\mathbf{x}_n|Y_{n-1},\mathbf{z}_n\}\footnotemark[5]\nonumber\\
-                        &=E\{\mathbf{x}_n|Y_{n-1}\}+\text{Cov}\left(\mathbf{x}_n,\mathbf{z}_n|Y_{n-1}\right)\text{Cov}\left(\mathbf{z}_n|Y_{n-1}\right)^{-1}\mathbf{z}_n\footnotemark[6]\label{eq:xtGtTmp}\\
+        \mathbf{x}_{n|n}&=E\{\mathbf{x}_n|Y_n\}=E\{\mathbf{x}_n|Y_{n-1},\mathbf{z}_n\}\nonumber\\
+                        &=E\{\mathbf{x}_n|Y_{n-1}\}+\text{Cov}\left(\mathbf{x}_n,\mathbf{z}_n|Y_{n-1}\right)\text{Cov}\left(\mathbf{z}_n|Y_{n-1}\right)^{-1}\mathbf{z}_n\footnotemark[5]\label{eq:xtGtTmp}\\
         \text{Cov}\left(\mathbf{x}_n,\mathbf{z}_n|Y_{n-1}\right)&=\text{Cov}\left(\mathbf{x}_n,B_n(\mathbf{x}_n-\mathbf{x}_{n|n-1})+\mathbf{v}_n|Y_{n-1}\right)\nonumber\\
                                                                 &=E\{(\mathbf{x}_n-\mathbf{x}_{n|n-1})(B_n(\mathbf{x}_n-\mathbf{x}_{n|n-1})+\mathbf{v}_n)^\intercal|Y_{n-1}\}\nonumber\\
                                                                 &=E\{(\mathbf{x}_n-\mathbf{x}_{n|n-1})(\mathbf{x}_n-\mathbf{x}_{n|n-1})^\intercal|Y_{n-1}\}B_n^\intercal\nonumber\\
                                                                 &\qquad +E\{(\mathbf{x}_n-\mathbf{x}_{n|n-1})\mathbf{v}_n^\intercal|Y_{n-1}\}\nonumber\\
-                                                                &=P_{n|n-1}B_n^\intercal\footnotemark[7]\label{eq:covXZ}\\
+                                                                &=P_{n|n-1}B_n^\intercal\footnotemark[6]\label{eq:covXZ}\\
         S_n=\text{Cov}\left(\mathbf{z}_n|Y_{n-1}\right)&=E\{\mathbf{z}_n\mathbf{z}_n^\intercal|Y_{n-1}\}\nonumber\\
-                                                       &=E\{\left(B_n(\mathbf{x}_n-\mathbf{x}_{n|n-1})+\mathbf{v}_n\right)\left(B_n(\mathbf{x}_n-\mathbf{x}_{n|n-1})+\mathbf{v}_n\right)^\intercal|Y_{n-1}\}\footnotemark[8]\nonumber\\
+                                                       &=E\{\left(B_n(\mathbf{x}_n-\mathbf{x}_{n|n-1})+\mathbf{v}_n\right)\left(B_n(\mathbf{x}_n-\mathbf{x}_{n|n-1})+\mathbf{v}_n\right)^\intercal|Y_{n-1}\}\footnotemark[7]\nonumber\\
                                                        &=B_nE\{\left(\mathbf{x}_n-\mathbf{x}_{n|n-1}\right)\left(\mathbf{x}_n-\mathbf{x}_{n|n-1}\right)^\intercal|Y_{n-1}\}B_n^\intercal+B_nE\{\left(\mathbf{x}_n-\mathbf{x}_{n|n-1}\right)\mathbf{v}_n^\intercal|Y_{n-1}\}\nonumber\\
                                                        &\qquad +E\{\mathbf{v}_n\left(\mathbf{x}_n-\mathbf{x}_{n|n-1}\right)^\intercal\}B_n^\intercal+E\{\mathbf{v}_n\mathbf{v_n}^\intercal|Y_{n-1}\}\nonumber\\
                                                        &=B_nE\{\left(\mathbf{x}_n-\mathbf{x}_{n|n-1}\right)\left(\mathbf{x}_n-\mathbf{x}_{n|n-1}\right)^\intercal|Y_{n-1}\}B_n^\intercal+\nonumber\\
-                                                       &\qquad +E\{\mathbf{v}_n\mathbf{v_n}^\intercal\}\footnotemark[7]\footnotemark[9]\nonumber\\
+                                                       &\qquad +E\{\mathbf{v}_n\mathbf{v_n}^\intercal\}\footnotemark[6]\footnotemark[8]\nonumber\\
                                                        &=B_nP_{n|n-1}B_n^\intercal+R_n\label{eq:covZ}
     \end{align}
-    \footnotetext[5]{The validity of the last equality follow from measure theory arguments (that I don't know).}
-    \footnotetext[6]{Refer to Eq.~\ref{eq:conditionalMean} in Lemma~\ref{lemma:conditionalGaussians}.}
-    \footnotetext[7]{$E\{(\mathbf{x}_n-\mathbf{x}_{n|n-1})\mathbf{v}_n^\intercal|Y_{n-1}\}=E\{\mathbf{x}_n-\mathbf{x}_{n|n-1}|Y_{n-1}\}E\{\mathbf{v}_n^\intercal|Y_{n-1}\}=(E\{\mathbf{x}_n|Y_{n-1}\}-\mathbf{x}_{n|n-1})E\{\mathbf{v}_n^\intercal|Y_{n-1}\}=(\mathbf{x}_{n|n-1}-\mathbf{x}_{n|n-1})E\{\mathbf{v}_n^\intercal|Y_{n-1}\}=0$
+    \footnotetext[5]{We used Eq.~\ref{eq:conditionalMean} in
+    Lemma~\ref{lemma:conditionalGaussians} with
+    $\mathbf{x}=\mathbf{x}_n|Y_{n-1}$ and $\mathbf{y}=\mathbf{z}_n|Y_{n-1}$.
+    Note that
+    % $E\{\mathbf{y}\right=E\left\{\mathbf{z}_n|Y_{n-1}\right\}=E\left\{\mathbf{y}_n-\hat{\mathbf{y}}_n|Y_{n-1}\right\}=$}
+    $E\left\{\mathbf{y}\right\}=E\left\{\mathbf{z}_n|Y_{n-1}\right\}=E\left\{\mathbf{y}_n-\hat{\mathbf{y}}_n|Y_{n-1}\right\}=E\left\{\mathbf{y}_n|Y_{n-1}\right\}-\hat{\mathbf{y}}_n=\hat{\mathbf{y}}_n-\hat{\mathbf{y}}_n=0$}
+    \footnotetext[6]{$E\{(\mathbf{x}_n-\mathbf{x}_{n|n-1})\mathbf{v}_n^\intercal|Y_{n-1}\}=E\{\mathbf{x}_n-\mathbf{x}_{n|n-1}|Y_{n-1}\}E\{\mathbf{v}_n^\intercal|Y_{n-1}\}=(E\{\mathbf{x}_n|Y_{n-1}\}-\mathbf{x}_{n|n-1})E\{\mathbf{v}_n^\intercal|Y_{n-1}\}=(\mathbf{x}_{n|n-1}-\mathbf{x}_{n|n-1})E\{\mathbf{v}_n^\intercal|Y_{n-1}\}=0$
     because $\mathbf{x}_n$ is independent of $\mathbf{v}_n$ given $Y_{n-1}$.}
-    \footnotetext[8]{Eq.~\ref{eq:ztProof}.}
-    \footnotetext[9]{$\mathbf{v}_n$ is independent from $Y_{n-1}$.}
+    \footnotetext[7]{Eq.~\ref{eq:ztProof}.}
+    \footnotetext[8]{$\mathbf{v}_n$ is independent from $Y_{n-1}$.}
 
 	This proves Eq.~\ref{eq:St}.
 
@@ -106,10 +110,10 @@ The following proof adds details to that given in Section 4.3.1 of
         S_n^{-1}\mathbf{z}_n\nonumber\\
                         &=\mathbf{x}_{n|n-1}+K_n\mathbf{z}_n\quad\text{with } K_n=P_{n|n-1}B_n^\intercal S_n^{-1}\nonumber\\
         P_{n|n}&=\text{Cov}(\mathbf{x}_n|Y_n)=\text{Cov}(\mathbf{x}_n|Y_{n-1},\mathbf{z}_n)=P_{n|n-1}-P_{n|n-1}B_n^\intercal
-        S_n^{-1}B_nP_{n|n-1}\footnotemark[10]\nonumber\\
+        S_n^{-1}B_nP_{n|n-1}\footnotemark[9]\nonumber\\
                &=\left(I-P_{n|n-1}B_n^\intercal S_n^{-1}B_n\right)P_{n|n-1}=\left(I-K_nB_n\right)P_{n|n-1}\nonumber
     \end{align}
-    \footnotetext[10]{Refer to Eq.~\ref{eq:conditionalCov} in Lemma~\ref{lemma:conditionalGaussians} with $\mathbf{x}=\mathbf{x}_n|Y_{n-1}$ and $\mathbf{y}=\mathbf{z}_n|Y_{n-1}$ giving
+    \footnotetext[9]{Refer to Eq.~\ref{eq:conditionalCov} in Lemma~\ref{lemma:conditionalGaussians} with $\mathbf{x}=\mathbf{x}_n|Y_{n-1}$ and $\mathbf{y}=\mathbf{z}_n|Y_{n-1}$ giving
 
 		\begin{align*}
 			\Sigma_{x|y}&=\Sigma_{\mathbf{x}_n|\mathbf{z}_n,Y_{n-1}}=\Sigma_{\mathbf{x}_n|Y_n}=P_{n|n}\\
@@ -122,21 +126,55 @@ The following proof adds details to that given in Section 4.3.1 of
     }
 	This proves Eqs.~\ref{eq:Kt}, \ref{eq:xtGt} and~\ref{eq:PtGt}.
 
-	Using Eqs.~\ref{eq:x0G0} and~\ref{eq:P0G0} in Eqs.~\ref{eq:xtGtm1} and~\ref{eq:PtGtm1} we obtain
+\begin{comment}
+	Finally, the initialization of the recursive filter requires defining the mean and covariance of $\mathbf{x}_0$ given no data ($Y_0 = \emptyset$). In accordance with the model's prior $p(\mathbf{x}_0) = \mathcal{N}(\mathbf{m}_0, V_0)$, we set:
+
+    \begin{align}
+        \mathbf{x}_{0|0}&=\mathbf{m}_0\label{eq:x0G0}\\
+        P_{0|0}&=V_0\label{eq:P0G0}
+    \end{align}
+
+    Substituting these base values into the prediction equations (Eqs.~\ref{eq:xtGtm1} and~\ref{eq:PtGtm1}) yields the prior predictive moments for the first time step:
 
     \begin{align*}
         \mathbf{x}_{1|0}&=A_0\mathbf{x}_{0|0}=A_0\mathbf{m}_0\\
         \mathbf{P}_{1|0}&=A_0P_{0|0}A_0^\intercal+Q_0=A_0V_0A_0^\intercal+Q_0
     \end{align*}
 
-	If Eqs.~\ref{eq:x0G0} and~\ref{eq:P0G0} are correct, then the density of $\mathbf{x}_1$ should be $p(\mathbf{x}_1)=\mathcal{N}(\mathbf{x}_1|\mathbf{x}_{1|0},P_{1|0})$. We now calculate this density using the linear dynamical system model in Theorem~\ref{thm:kalmanFilterEqs}.
+	Consistency of this recursion with the unconditional marginal distribution $p(\mathbf{x}_1)$ is established by integrating out $\mathbf{x}_0$:
+    \begin{align}
+		p(\mathbf{x}_1)&=\int p(\mathbf{x}_1,\mathbf{x}_0)d\mathbf{x}_0=\int p(\mathbf{x}_1|\mathbf{x}_0)p(\mathbf{x}_0)d\mathbf{x}_0\nonumber\\
+        &=\int\mathcal{N}(\mathbf{x}_1|A_0\mathbf{x}_0,Q_0)\mathcal{N}(\mathbf{x}_0|\mathbf{m}_0,V_0)d\mathbf{x}_0\nonumber\\
+        &=\mathcal{N}(\mathbf{x}_1|A_0\mathbf{m}_0,A_0V_0A_0^\intercal+Q_0)\footnotemark[10]=\mathcal{N}(\mathbf{x}_1|\mathbf{x}_{1|0},\mathbf{P}_{1|0})\nonumber
+    \end{align}
+    \footnotetext[10]{Lemma~\ref{lemma:linearModelGaussianLatents}.}
+\end{comment}
+
+
+	To complete the recursive formulation, we must specify the initialization
+of the filter at $n = 0$, as in Eqs.~\ref{eq:x0G0} and~\ref{eq:P0G0}. Using these
+initial conditions in the general prediction equations (Eqs.~\ref{eq:xtGtm1}
+and~\ref{eq:PtGtm1}) for $n=1$, we obtain the one-step-ahead prediction given
+the empty history $Y_0$:
+
+    \begin{align*}
+        \mathbf{x}_{1|0} &= A_0\mathbf{x}_{0|0} = A_0\mathbf{m}_0 \\
+        P_{1|0} &= A_0P_{0|0}A_0^\intercal + Q_0 = A_0V_0A_0^\intercal + Q_0
+    \end{align*}
+
+	To verify consistency with the joint latent model, we can marginalize out
+$\mathbf{x}_0$ from the joint distribution $p(\mathbf{x}_1, \mathbf{x}_0) =
+p(\mathbf{x}_1 | \mathbf{x}_0) p(\mathbf{x}_0)$:
 
     \begin{align}
-		p(\mathbf{x}_1)&=\int p(\mathbf{x}_1,\mathbf{x}_0)d\mathbf{x}_0=\int p(\mathbf{x}_1|\mathbf{x}_0)p(\mathbf{x}_0)d\mathbf{x}_0=\int\mathcal{N}(\mathbf{x}_1|A_0\mathbf{x}_0,Q_0)\mathcal{N}(\mathbf{x}_0|\mathbf{m}_0,V_0)d\mathbf{x}_0\nonumber\\
-                       &=\mathcal{N}(\mathbf{x}_1|A_0\mathbf{m}_0,A_0V_0A_0^\intercal+Q_0)\footnotemark[11]=\mathcal{N}(\mathbf{x}_1|\mathbf{x}_{1|0},\mathbf{P}_{1|0})\nonumber
+        p(\mathbf{x}_1) &= \int p(\mathbf{x}_1 | \mathbf{x}_0) p(\mathbf{x}_0) d\mathbf{x}_0 
+        = \int \mathcal{N}(\mathbf{x}_1 | A_0\mathbf{x}_0, Q_0) \mathcal{N}(\mathbf{x}_0 | \mathbf{m}_0, V_0) d\mathbf{x}_0 \nonumber\\
+        &= \mathcal{N}(\mathbf{x}_1 | A_0\mathbf{m}_0, A_0V_0A_0^\intercal + Q_0)\footnotemark[10] 
+        = \mathcal{N}(\mathbf{x}_1 | \mathbf{x}_{1|0}, \mathbf{P}_{1|0}) \nonumber
     \end{align}
-    \footnotetext[11]{Lemma~\ref{lemma:linearModelGaussianLatents}.}
-	This proves Eqs.~\ref{eq:x0G0} and~\ref{eq:P0G0}.
+
+    \footnotetext[10]{Lemma~\ref{lemma:linearModelGaussianLatents}.}
+    This confirms that Eqs.~\ref{eq:x0G0} and~\ref{eq:P0G0} are consistent with the model dynamics.
 
 \end{proof}
 
