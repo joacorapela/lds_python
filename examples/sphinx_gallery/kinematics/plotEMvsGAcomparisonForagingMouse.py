@@ -1,10 +1,10 @@
 
 """
-Comparison between EM and gradient ascent for tracking a foraging mouse
+Comparison between EM and gradient ascent for inference a foraging mouse
 =======================================================================
 
 The code below compares the expectation maximization (EM) and gradient ascent
-algorithm for tracking a foraging mouse.
+algorithm for inference a foraging mouse.
 
 
 """
@@ -83,7 +83,7 @@ dt = (date_times.iloc[1]-date_times.iloc[0]).total_seconds()
 # Build the matrices of the CWPA model
 # ------------------------------------
 
-B, _, Qe, Z, _ = ssm.tracking.utils.getLDSmatricesForKinematics_np(
+B, _, Qe, Z, _ = ssm.inference.utils.getLDSmatricesForKinematics_np(
     dt=dt, sigma_a=np.nan, pos_x_R_std=np.nan, pos_y_R_std=np.nan)
 m0 = np.array([pos_x0, vel_x0, ace_x0, pos_y0, vel_y0, ace_y0],
               dtype=np.double)
@@ -132,7 +132,7 @@ B_torch = torch.from_numpy(B.astype(np.double))
 Qe_regularized_ga_torch = torch.from_numpy(Qe_regularized_ga.astype(np.double))
 Z_torch = torch.from_numpy(Z.astype(np.double))
 
-optim_res_ga = ssm.learning.torch_lbfgs_optimize_SS_tracking_diagV0(
+optim_res_ga = ssm.learning.torch_lbfgs_optimize_SS_inference_diagV0(
     y=y_torch, B=B_torch, Qe=Qe_regularized_ga_torch, Z=Z_torch,
     sigma_a0=sigma_a0, pos_x_R_std0=sigma_x0, pos_y_R_std0=sigma_y0, m0_0=m0_torch,
     sqrt_diag_V0_0=sqrt_diag_V0_torch, max_iter=lbfgs_max_iter, lr=lbfgs_lr,
@@ -167,7 +167,7 @@ if Qe_reg_param_em is not None:
 else:
     Qe_regularized_em = Qe
 
-optim_res_em  = ssm.learning.em_SS_tracking(
+optim_res_em  = ssm.learning.em_SS_inference(
     y=y_interpolated, B=B, sigma_a0=sigma_a0,
     Qe=Qe_regularized_em, Z=Z, R_0=R_0, m0_0=m0_0, V0_0=V0_0,
     vars_to_estimate=vars_to_estimate,

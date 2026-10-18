@@ -29,7 +29,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
-import ssm.tracking.utils
+import ssm.inference.utils
 import ssm.inference
 
 #%%
@@ -67,12 +67,12 @@ sigma_y = 1e2
 sqrt_diag_V0_value = 1e-3
 
 #%%
-# Build the Kalman filter matrices for tracking
+# Build the Kalman filter matrices for inference
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 date_times = pd.to_datetime(data["time"])
 dt = (date_times.iloc[1]-date_times.iloc[0]).total_seconds()
-B, Q, Qe, Z, R = ssm.tracking.utils.getLDSmatricesForKinematics_np(
+B, Q, Qe, Z, R = ssm.inference.utils.getLDSmatricesForKinematics_np(
     dt=dt, sigma_a=sigma_a, pos_x_R_std=sigma_x, pos_y_R_std=sigma_y)
 m0 = np.array([[y[0, 0], 0, 0, y[1, 0], 0, 0]], dtype=np.double).T
 V0 = np.diag(np.ones(len(m0))*sqrt_diag_V0_value**2)
