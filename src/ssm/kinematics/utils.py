@@ -1,5 +1,28 @@
 import math
-import torch
+
+
+def getLDSmatricesFor1DKinematics_torch(dt, sigma_a, pos_R_std):
+    # Taken from the book
+    # barShalomEtAl01-estimationWithApplicationToTrackingAndNavigation.pdf
+    # section 6.3.3
+
+    # Eq. 6.3.3-2
+    import torch
+    B = torch.tensor([[1, dt, .5*dt**2],
+                     [0, 1, dt],
+                     [0, 0, 1]],
+                     dtype=torch.double)
+    Z = torch.tensor([[1, 0, 0]],
+                     dtype=torch.double)
+    # Eq. 6.3.3-4
+    Qe = torch.tensor([[dt**4/4, dt**3/2, dt**2/2],
+                      [dt**3/2, dt**2,   dt],
+                      [dt**2/2, dt,      1]],
+                      dtype=torch.double)
+    Q = sigma_a**2 * Qe
+    R = torch.diag(torch.tensor([pos_R_std**2]))
+
+    return B, Q, Qe, Z, R
 
 
 def getLDSmatricesForKinematics_torch(dt, sigma_a, pos_x_R_std, pos_y_R_std):
@@ -15,15 +38,15 @@ def getLDSmatricesForKinematics_torch(dt, sigma_a, pos_x_R_std, pos_y_R_std):
                      [0, 0, 0, 1, dt, .5*dt**2],
                      [0, 0, 0, 0, 1, dt],
                      [0, 0, 0, 0, 0, 1]],
-                    dtype=torch.double)
+                     dtype=torch.double)
     Z = torch.tensor([[1, 0, 0, 0, 0, 0],
                      [0, 0, 0, 1, 0, 0]],
-                    dtype=torch.double)
+                     dtype=torch.double)
     # Eq. 6.3.3-4
     Qt = torch.tensor([[dt**4/4, dt**3/2, dt**2/2],
                       [dt**3/2, dt**2,   dt],
                       [dt**2/2, dt,      1]],
-                     dtype=torch.double)
+                      dtype=torch.double)
     Qe = torch.zeros(size=(6, 6), dtype=torch.double)
     Qe[:3, :3] = Qt
     Qe[3:6, 3:6] = Qt
@@ -32,9 +55,19 @@ def getLDSmatricesForKinematics_torch(dt, sigma_a, pos_x_R_std, pos_y_R_std):
 
     return B, Q, Qe, Z, R
 
-def getLDSmatricesForKinematics_np(dt, sigma_a, pos_x_R_std, pos_y_R_std):
-    B, Q, Qe, Z, R = getLDSmatricesForKinematics_torch(dt, sigma_a, pos_x_R_std, pos_y_R_std)
+
+def getLDSmatricesFor1DKinematics_np(dt, sigma_a, pos_R_std):
+    B, Q, Qe, Z, R = getLDSmatricesFor1DKinematics_torch(dt, sigma_a,
+                                                         pos_R_std)
     return B.numpy(), Q.numpy(), Qe.numpy(), Z.numpy(), R.numpy()
+
+
+def getLDSmatricesForKinematics_np(dt, sigma_a, pos_x_R_std, pos_y_R_std):
+    B, Q, Qe, Z, R = getLDSmatricesForKinematics_torch(dt, sigma_a,
+                                                       pos_x_R_std,
+                                                       pos_y_R_std)
+    return B.numpy(), Q.numpy(), Qe.numpy(), Z.numpy(), R.numpy()
+
 
 def getNDSwithGaussianNoiseFunctionsForKinematicsAndHO_torch(
         dt, alpha, sigma_a,
@@ -64,7 +97,8 @@ def getNDSwithGaussianNoiseFunctionsForKinematicsAndHO_torch(
 
             pAWRTxdot = -alpha * dt * cos_theta * vel_x / v + alpha * dt
             pBWRTxdot = -alpha * dt * sin_theta * vel_x / v
-            pSpeedWRTxdot = (A * pAWRTxdot + B * pBWRTxdot) / math.sqrt(A**2 + B**2)
+            pSpeedWRTxdot = (A * pAWRTxdot + B * pBWRTxdot) / math.sqrt(A**2 +
+                                                                        B**2)
             pCosWRTxdot = (pAWRTxdot * math.sqrt(A**2 + B**2) -
                            A * pSpeedWRTxdot) / (A**2 + B**2)
             pSinWRTxdot = (pBWRTxdot * math.sqrt(A**2 + B**2) -
@@ -72,7 +106,8 @@ def getNDSwithGaussianNoiseFunctionsForKinematicsAndHO_torch(
 
             pAWRTydot = -alpha * dt * cos_theta * vel_y / v
             pBWRTydot = -alpha * dt * sin_theta * vel_y / v + alpha * dt
-            pSpeedWRTydot = (A * pAWRTydot + B * pBWRTydot) / math.sqrt(A**2 + B**2)
+            pSpeedWRTydot = (A * pAWRTydot + B * pBWRTydot) / math.sqrt(A**2 +
+                                                                        B**2)
             pCosWRTydot = (pAWRTydot * math.sqrt(A**2 + B**2) -
                            A * pSpeedWRTydot) / (A**2 + B**2)
             pSinWRTydot = (pBWRTydot * math.sqrt(A**2 + B**2) -
@@ -80,7 +115,8 @@ def getNDSwithGaussianNoiseFunctionsForKinematicsAndHO_torch(
 
             pAWRTcosTheta = 1 - alpha * v * dt
             pBWRTcosTheta = omega * dt
-            pSpeedWRTcosTheta = (A * pAWRTcosTheta + B * pBWRTcosTheta) / math.sqrt(A**2 + B**2)
+            pSpeedWRTcosTheta = (A * pAWRTcosTheta +
+                                 B * pBWRTcosTheta) / math.sqrt(A**2 + B**2)
             pCosWRTcosTheta = (pAWRTcosTheta * math.sqrt(A**2 + B**2) -
                                A * pSpeedWRTcosTheta) / (A**2 + B**2)
             pSinWRTcosTheta = (pBWRTcosTheta * math.sqrt(A**2 + B**2) -
@@ -88,7 +124,8 @@ def getNDSwithGaussianNoiseFunctionsForKinematicsAndHO_torch(
 
             pAWRTsinTheta = -omega * dt
             pBWRTsinTheta = 1 - alpha * v * dt
-            pSpeedWRTsinTheta = (A * pAWRTsinTheta + B * pBWRTsinTheta) / math.sqrt(A**2 + B**2)
+            pSpeedWRTsinTheta = (A * pAWRTsinTheta +
+                                 B * pBWRTsinTheta) / math.sqrt(A**2 + B**2)
             pCosWRTsinTheta = (pAWRTsinTheta * math.sqrt(A**2 + B**2) -
                                A * pSpeedWRTsinTheta) / (A**2 + B**2)
             pSinWRTsinTheta = (pBWRTsinTheta * math.sqrt(A**2 + B**2) -
@@ -96,7 +133,8 @@ def getNDSwithGaussianNoiseFunctionsForKinematicsAndHO_torch(
 
             pAWRTomega = -dt * sin_theta
             pBWRTomega = dt * cos_theta
-            pSpeedWRTomega = (A * pAWRTomega + B * pBWRTomega) / math.sqrt(A**2 + B**2)
+            pSpeedWRTomega = (A * pAWRTomega +
+                              B * pBWRTomega) / math.sqrt(A**2 + B**2)
             pCosWRTomega = (pAWRTomega * math.sqrt(A**2 + B**2) -
                             A * pSpeedWRTomega) / (A**2 + B**2)
             pSinWRTomega = (pBWRTomega * math.sqrt(A**2 + B**2) -
