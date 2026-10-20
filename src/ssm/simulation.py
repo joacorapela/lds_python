@@ -45,10 +45,10 @@ def simulateLDS(T, u, B, Q, m0, V0, a, Z, R):
     x = np.empty(shape=(M, T))
     y = np.empty(shape=(P, T))
     x0 = np.random.multivariate_normal(m0, V0, 1).flatten()
-    x[:, 0] = u + B @ x0 + w[:, 0]
+    x[:, 0] = np.squeeze(u) + B @ x0 + w[:, 0]
     for n in range(1, T):
-        x[:, n] = u + B @ x[:, n-1] + w[:, n]
-    y = a[:, np.newaxis] + Z @ x + v
+        x[:, n] = np.squeeze(u) + B @ x[:, n-1] + w[:, n]
+    y = np.squeeze(a) + Z @ x + v
     return x0, x, y
 
 
