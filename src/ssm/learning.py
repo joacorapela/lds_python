@@ -6,12 +6,12 @@ import scipy.optimize
 import warnings
 
 from . import inference
-from .tracking import utils
+from .kinematics import utils
 
 iteration = 0
 
 
-def scipy_optimize_SS_tracking_fullV0(y, B, sigma_a0, Qe, Z, diag_R_0,
+def scipy_optimize_SS_kinematics_fullV0(y, B, sigma_a0, Qe, Z, diag_R_0,
                                       m0_0, V0_0, max_iter, disp=True):
     iL_V0 = np.tril_indices(V0_0.shape[0])
 
@@ -77,7 +77,7 @@ def scipy_optimize_SS_tracking_fullV0(y, B, sigma_a0, Qe, Z, diag_R_0,
                                       callback=callback, options=options)
 
 
-def torch_lbfgs_optimize_trackingHO_logLikeEKF_diagV0(
+def torch_lbfgs_optimize_kinematicsHO_logLikeEKF_diagV0(
     dt, y, sigma_a0,
     cos_theta_Q_std0,
     sin_theta_Q_std0,
@@ -87,9 +87,9 @@ def torch_lbfgs_optimize_trackingHO_logLikeEKF_diagV0(
     cos_theta_R_std0,
     sin_theta_R_std0,
     alpha0,
-    m0_tracking_0,
+    m0_kinematics_0,
     m0_HO_0,
-    sqrt_diag_V0_tracking_0,
+    sqrt_diag_V0_kinematics_0,
     sqrt_diag_V0_HO_0,
     max_iter=20, lr=1.0,
     tolerance_grad=1e-7,
@@ -106,9 +106,9 @@ def torch_lbfgs_optimize_trackingHO_logLikeEKF_diagV0(
         "sqrt_cos_theta_R_std": True,
         "sqrt_sin_theta_R_std": True,
         "alpha": True,
-        "m0_tracking": False,
+        "m0_kinematics": False,
         "m0_HO": True,
-        "sqrt_diag_V0_tracking": False,
+        "sqrt_diag_V0_kinematics": False,
         "sqrt_diag_V0_HO": True,
     },
     disp=True):
@@ -134,8 +134,8 @@ def torch_lbfgs_optimize_trackingHO_logLikeEKF_diagV0(
                     "tolerance_grad": tolerance_grad,
                     "tolerance_change": tolerance_change,
                     "line_search_fn": line_search_fn}
-    m0 = torch.cat([m0_tracking_0, m0_HO_0])
-    sqrt_diag_V0 = torch.cat([sqrt_diag_V0_tracking_0, sqrt_diag_V0_HO_0])
+    m0 = torch.cat([m0_kinematics_0, m0_HO_0])
+    sqrt_diag_V0 = torch.cat([sqrt_diag_V0_kinematics_0, sqrt_diag_V0_HO_0])
     sigma_a = torch.tensor([sigma_a0], dtype=torch.double)
     cos_theta_Q_std = torch.tensor([cos_theta_Q_std0], dtype=torch.double)
     sin_theta_Q_std = torch.tensor([sin_theta_Q_std0], dtype=torch.double)
@@ -167,9 +167,9 @@ def torch_lbfgs_optimize_trackingHO_logLikeEKF_diagV0(
         x.append(sin_theta_R_std)
     if vars_to_estimate["alpha"]:
         x.append(alpha)
-    if vars_to_estimate["m0_tracking"] or vars_to_estimate["m0_HO"]:
+    if vars_to_estimate["m0_kinematics"] or vars_to_estimate["m0_HO"]:
         x.append(m0)
-    if vars_to_estimate["sqrt_diag_V0_tracking"] or vars_to_estimate["sqrt_diag_V0_HO"]:
+    if vars_to_estimate["sqrt_diag_V0_kinematics"] or vars_to_estimate["sqrt_diag_V0_HO"]:
         x.append(sqrt_diag_V0)
     if len(x) == 0:
         raise RuntimeError("No variable to estimate. Please set one element "
@@ -201,13 +201,13 @@ def torch_lbfgs_optimize_trackingHO_logLikeEKF_diagV0(
             print_string += f", sin_theta_R_std={sin_theta_R_std.item()}"
         if vars_to_estimate["alpha"]:
             print_string += f", alpha={alpha.item()}"
-        if vars_to_estimate["m0_tracking"]:
+        if vars_to_estimate["m0_kinematics"]:
             m0.grad[6:] = 0.0
             print_string += f", m0={m0.tolist()}"
         if vars_to_estimate["m0_HO"]:
             m0.grad[:6] = 0.0
             print_string += f", m0={m0.tolist()}"
-        if vars_to_estimate["sqrt_diag_V0_tracking"]:
+        if vars_to_estimate["sqrt_diag_V0_kinematics"]:
             sqrt_diag_V0.grad[6:] = 0.0
             print_string += f", sqrt_diag_V0={sqrt_diag_V0.tolist()}"
         if vars_to_estimate["sqrt_diag_V0_HO"]:
@@ -262,10 +262,10 @@ def torch_lbfgs_optimize_trackingHO_logLikeEKF_diagV0(
         if vars_to_estimate["alpha"]:
             print("alpha: ")
             print(alpha.item())
-        if vars_to_estimate["m0_tracking"] or vars_to_estimate["m0_HO"]:
+        if vars_to_estimate["m0_kinematics"] or vars_to_estimate["m0_HO"]:
             print("m0: ")
             print(m0)
-        if vars_to_estimate["sqrt_diag_V0_tracking"] or vars_to_estimate["sqrt_diag_V0_HO"]:
+        if vars_to_estimate["sqrt_diag_V0_kinematics"] or vars_to_estimate["sqrt_diag_V0_HO"]:
             print("sqrt_diag_V0: ")
             print(sqrt_diag_V0)
         if epoch > 0 and log_like[-1] - log_like[-2] < tol:
@@ -293,9 +293,9 @@ def torch_lbfgs_optimize_trackingHO_logLikeEKF_diagV0(
         estimates["sin_theta_R_std"] = sin_theta_R_std
     if vars_to_estimate["alpha"]:
         estimates["alpha"] = alpha
-    if vars_to_estimate["m0_tracking"] or vars_to_estimate["m0_HO"]:
+    if vars_to_estimate["m0_kinematics"] or vars_to_estimate["m0_HO"]:
         estimates["m0"] = m0
-    if vars_to_estimate["sqrt_diag_V0_tracking"] or vars_to_estimate["sqrt_diag_V0_HO"]:
+    if vars_to_estimate["sqrt_diag_V0_kinematics"] or vars_to_estimate["sqrt_diag_V0_HO"]:
         estimates["sqrt_diag_V0"] = sqrt_diag_V0
     answer = {"estimates": estimates,
               "log_like": log_like,
@@ -304,7 +304,7 @@ def torch_lbfgs_optimize_trackingHO_logLikeEKF_diagV0(
     return answer
 
 
-def scipy_optimize_SS_tracking_diagV0(y, B, sigma_ax0, sigma_ay0, Qe, Z,
+def scipy_optimize_SS_kinematics_diagV0(y, B, sigma_ax0, sigma_ay0, Qe, Z,
                                       sqrt_diag_R_0, m0_0, sqrt_diag_V0_0,
                                       max_iter=50, disp=True):
 
@@ -388,7 +388,7 @@ def scipy_optimize_SS_tracking_diagV0(y, B, sigma_ax0, sigma_ay0, Qe, Z,
     return answer
 
 
-def torch_lbfgs_optimize_SS_tracking_diagV0(y, B, Qe, Z,
+def torch_lbfgs_optimize_SS_kinematics_diagV0(y, u, B, Qe, a, Z,
                                             sigma_a0, pos_x_R_std0,
                                             pos_y_R_std0,
                                             m0_0, sqrt_diag_V0_0,
@@ -413,7 +413,7 @@ def torch_lbfgs_optimize_SS_tracking_diagV0(y, B, Qe, Z,
              pos_y_R_std**2 * torch.outer(e2, e2))
         Q = Qe * sigma_a**2
         log_like = inference.logLikeLDS_withMissingValues_torch(
-            y=y, B=B, Q=Q, m0=m0, V0=V0, Z=Z, R=R)
+            y=y, u=u, B=B, Q=Q, m0=m0, V0=V0, a=a, Z=Z, R=R)
         return log_like
 
     optim_params = {"max_iter": max_iter, "lr": lr,
@@ -525,7 +525,7 @@ def torch_lbfgs_optimize_SS_tracking_diagV0(y, B, Qe, Z,
     return answer
 
 
-def torch_adam_optimize_SS_tracking_diagV0(y, B, sigma_a0, Qe, Z,
+def torch_adam_optimize_SS_kinematics_diagV0(y, B, sigma_a0, Qe, Z,
                                            sqrt_diag_R_0, m0_0, sqrt_diag_V0_0,
                                            max_iter=50, lr=1e-3, eps=1e-8,
                                            vars_to_estimate={
@@ -611,7 +611,7 @@ def torch_adam_optimize_SS_tracking_diagV0(y, B, sigma_a0, Qe, Z,
     return answer
 
 
-def em_SS_tracking(y, u, B, sigma_a0, Qe, Z, a, R_0, m0_0, V0_0,
+def em_SS_kinematics(y, u, B, sigma_a0, Qe, Z, a, R_0, m0_0, V0_0,
                    vars_to_estimate={"sigma_a": True, "R": True,
                                      "m0": True, "V0": True},
                    max_iter=50, tolerance_change=1e-9):
@@ -683,11 +683,11 @@ def em_SS_tracking(y, u, B, sigma_a0, Qe, Z, a, R_0, m0_0, V0_0,
         # R
         if vars_to_estimate["R"]:
             R_prev = R
-            u = y[:, 0] - (Z @ ks["xnN"][:, :, 0]).squeeze()
-            R = np.outer(u, u) + Z @ ks["PnN"][:, :, 0] @ Z.T
+            v = y[:, 0] - (Z @ ks["xnN"][:, :, 0]).squeeze()
+            R = np.outer(v, v) + Z @ ks["PnN"][:, :, 0] @ Z.T
             for i in range(1, N):
-                u = y[:, i] - (Z @ ks["xnN"][:, :, i]).squeeze()
-                R = R + np.outer(u, u) + Z @ ks["PnN"][:, :, i] @ Z.T
+                v = y[:, i] - (Z @ ks["xnN"][:, :, i]).squeeze()
+                R = R + np.outer(v, v) + Z @ ks["PnN"][:, :, i] @ Z.T
             R = R/N
 
         # m0, V0
