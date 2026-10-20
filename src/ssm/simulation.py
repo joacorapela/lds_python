@@ -48,7 +48,7 @@ def simulateLDS(T, u, B, Q, m0, V0, a, Z, R):
     x[:, 0] = np.squeeze(u) + B @ x0 + w[:, 0]
     for n in range(1, T):
         x[:, n] = np.squeeze(u) + B @ x[:, n-1] + w[:, n]
-    y = np.squeeze(a) + Z @ x + v
+    y = a + Z @ x + v
     return x0, x, y
 
 
