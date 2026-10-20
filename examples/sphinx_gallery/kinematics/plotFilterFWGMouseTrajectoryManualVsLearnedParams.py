@@ -31,7 +31,7 @@ import pandas as pd
 import torch
 import plotly.graph_objects as go
 
-import ssm.tracking.utils
+import ssm.inference.utils
 import ssm.inference
 import ssm.learning
 
@@ -55,12 +55,12 @@ data = data.iloc[start_position:start_position+number_positions,:]
 y = np.transpose(data[["x", "y"]].to_numpy())
 
 #%%
-# Kalman filter matrices for tracking
+# Kalman filter matrices for inference
 # -----------------------------------
 
 date_times = pd.to_datetime(data["time"])
 dt = (date_times.iloc[1]-date_times.iloc[0]).total_seconds()
-B, _, Qe,  Z, _ = ssm.tracking.utils.getLDSmatricesForKinematics_np(
+B, _, Qe,  Z, _ = ssm.inference.utils.getLDSmatricesForKinematics_np(
     dt=dt, sigma_a=np.nan, pos_x_R_std=np.nan, pos_y_R_std=np.nan)
 
 #%%
@@ -155,7 +155,7 @@ else:
     vars_to_estimate["sqrt_diag_V0"] = True
     vars_to_estimate["V0"] = True
 
-optim_res_learned = ssm.learning.torch_lbfgs_optimize_SS_tracking_diagV0(
+optim_res_learned = ssm.learning.torch_lbfgs_optimize_SS_inference_diagV0(
     y=y_torch, B=B_torch, sigma_a0=sigma_a_manual,
     Qe=Qe_regularized_learned_torch, Z=Z_torch, pos_x_R_std0=pos_x_R_std0_torch,
     pos_y_R_std0=pos_y_R_std0_torch, m0_0=m0_torch,

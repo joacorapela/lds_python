@@ -15,7 +15,7 @@ trajectory.
 import numpy as np
 import plotly.graph_objects as go
 
-import ssm.tracking.utils
+import ssm.inference.utils
 import ssm.simulation
 import ssm.inference
 
@@ -40,7 +40,7 @@ sqrt_diag_V0_value = 1e-03
 # Set LDS parameters
 # ~~~~~~~~~~~~~~~~~~
 
-B, Q, Qe, Z, R = ssm.tracking.utils.getLDSmatricesForKinematics_np(
+B, Q, Qe, Z, R = ssm.inference.utils.getLDSmatricesForKinematics_np(
     dt=dt, sigma_a=sigma_a, pos_x_R_std=sigma_x, pos_y_R_std=sigma_y)
 m0 = np.array([pos_x0, vel_x0, ace_x0, pos_y0, vel_y0, ace_y0],
               dtype=np.double)
