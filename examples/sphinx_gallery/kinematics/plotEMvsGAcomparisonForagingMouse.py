@@ -1,10 +1,10 @@
 
 """
-Comparison between EM and gradient ascent for inference a foraging mouse
-=======================================================================
+Comparison between EM and gradient ascent for inferring kinematics of a foraging mouse
+======================================================================================
 
 The code below compares the expectation maximization (EM) and gradient ascent
-algorithm for inference a foraging mouse.
+algorithm for inferring the kinematics of a foraging mouse.
 
 
 """
@@ -83,10 +83,14 @@ dt = (date_times.iloc[1]-date_times.iloc[0]).total_seconds()
 # Build the matrices of the CWPA model
 # ------------------------------------
 
-B, _, Qe, Z, _ = ssm.inference.utils.getLDSmatricesForKinematics_np(
+B, _, Qe, Z, _ = ssm.kinematics.utils.getLDSmatricesForKinematics_np(
     dt=dt, sigma_a=np.nan, pos_x_R_std=np.nan, pos_y_R_std=np.nan)
 m0 = np.array([pos_x0, vel_x0, ace_x0, pos_y0, vel_y0, ace_y0],
               dtype=np.double)
+M = B.shape[0]
+N = Z.shape[0]
+u = np.zeros(shape=(M, 1), dtype=np.double)
+a = np.zeros(shape=(N, 1), dtype=np.double)
 
 vars_to_estimate = {}
 if skip_estimation_sigma_a:
@@ -128,14 +132,18 @@ if Qe_reg_param_ga is not None:
 else:
     Qe_regularized_ga = Qe
 y_torch = torch.from_numpy(y.astype(np.double))
+u_torch = torch.from_numpy(u.astype(np.double))
 B_torch = torch.from_numpy(B.astype(np.double))
 Qe_regularized_ga_torch = torch.from_numpy(Qe_regularized_ga.astype(np.double))
+a_torch = torch.from_numpy(a.astype(np.double))
 Z_torch = torch.from_numpy(Z.astype(np.double))
 
-optim_res_ga = ssm.learning.torch_lbfgs_optimize_SS_inference_diagV0(
-    y=y_torch, B=B_torch, Qe=Qe_regularized_ga_torch, Z=Z_torch,
-    sigma_a0=sigma_a0, pos_x_R_std0=sigma_x0, pos_y_R_std0=sigma_y0, m0_0=m0_torch,
-    sqrt_diag_V0_0=sqrt_diag_V0_torch, max_iter=lbfgs_max_iter, lr=lbfgs_lr,
+optim_res_ga = ssm.learning.torch_lbfgs_optimize_SS_kinematics_diagV0(
+    y=y_torch, u=u_torch, B=B_torch, Qe=Qe_regularized_ga_torch,
+    a=a_torch, Z=Z_torch,
+    sigma_a0=sigma_a0, pos_x_R_std0=sigma_x0, pos_y_R_std0=sigma_y0,
+    m0_0=m0_torch, sqrt_diag_V0_0=sqrt_diag_V0_torch,
+    max_iter=lbfgs_max_iter, lr=lbfgs_lr,
     vars_to_estimate=vars_to_estimate, tolerance_grad=lbfgs_tolerance_grad,
     tolerance_change=lbfgs_tolerance_change, n_epochs=lbfgs_n_epochs,
     tol=lbfgs_tol)
@@ -159,7 +167,7 @@ not_nan_indices = np.array(sorted(not_nan_indices_y0.union(not_nan_indices_y1)))
 y_no_nan = y[:, not_nan_indices]
 t_no_nan = times[not_nan_indices]
 y_interpolated = np.empty_like(y)
-tck, u = scipy.interpolate.splprep([y_no_nan[0, :], y_no_nan[1, :]], s=0, u=t_no_nan)
+tck, _ = scipy.interpolate.splprep([y_no_nan[0, :], y_no_nan[1, :]], s=0, u=t_no_nan)
 y_interpolated[0, :], y_interpolated[1, :] = scipy.interpolate.splev(times, tck)
 
 if Qe_reg_param_em is not None:
@@ -167,9 +175,9 @@ if Qe_reg_param_em is not None:
 else:
     Qe_regularized_em = Qe
 
-optim_res_em  = ssm.learning.em_SS_inference(
-    y=y_interpolated, B=B, sigma_a0=sigma_a0,
-    Qe=Qe_regularized_em, Z=Z, R_0=R_0, m0_0=m0_0, V0_0=V0_0,
+optim_res_em  = ssm.learning.em_SS_kinematics(
+    y=y_interpolated, u=u, B=B, sigma_a0=sigma_a0,
+    Qe=Qe_regularized_em, a=a, Z=Z, R_0=R_0, m0_0=m0_0, V0_0=V0_0,
     vars_to_estimate=vars_to_estimate,
     max_iter=em_max_iter)
 
@@ -211,7 +219,7 @@ R_ga = np.diag([optim_res_ga["estimates"]["pos_x_R_std"].item()**2,
                 optim_res_ga["estimates"]["pos_y_R_std"].item()**2])
 
 filterRes_ga = ssm.inference.filterLDS_SS_withMissingValues_np(
-    y=y, B=B, Q=Q_ga, m0=m0_ga, V0=V0_ga, Z=Z, R=R_ga)
+    y=y, u=u, B=B, Q=Q_ga, m0=m0_ga, V0=V0_ga, a=a, Z=Z, R=R_ga)
 
 #%%
 # Perform batch smoothing
@@ -239,7 +247,7 @@ V0_em = optim_res_em["estimates"]["V0"]
 R_em = optim_res_em["estimates"]["R"]
 
 filterRes_em = ssm.inference.filterLDS_SS_withMissingValues_np(
-    y=y, B=B, Q=Q_em, m0=m0_em, V0=V0_em, Z=Z, R=R_em)
+    y=y, u=u, B=B, Q=Q_em, m0=m0_em, V0=V0_em, a=a, Z=Z, R=R_em)
 
 #%%
 # Perform batch smoothing
