@@ -17,7 +17,7 @@ import plotly.graph_objs as go
 
 import ssm.simulation
 import ssm.learning
-import ssm.tracking.plotting
+import ssm.kinematics.plotting
 
 #%%
 # Define variables for simulation
@@ -25,19 +25,21 @@ import ssm.tracking.plotting
 
 m0 = np.array([0.0, 0.0], dtype=np.double)
 V0 = np.array([[1e-3,0], [0,1e-3]], dtype=np.double)
-u = np.array([0.0, 0.0], dtype=np.double)
 B = np.array([[0.9872,-0.0272], [0.0080,1.0128]], dtype=np.double)
 Q = np.array([[1e-3,0], [0,1e-3]], dtype=np.double)
-a = np.array([0.0, 0.0], dtype=np.double)
 Z = np.array([[1,0], [0,1]], dtype=np.double)
 R = np.array([[.08,0], [0,.08]], dtype=np.double)
+
+M = B.shape[0]
+N = Z.shape[0]
+u = np.zeros(shape=(M, 1), dtype=np.double)
+a = np.zeros(shape=(N, 1), dtype=np.double)
 num_pos = 2000
 
 #%%
 # Perform simulation
 # ~~~~~~~~~~~~~~~~~~
 
-u = np.array([0.0, 0.0], dtype=np.double)
 x0, x, y = ssm.simulation.simulateLDS(T=num_pos, u=u, B=B, Q=Q, m0=m0, V0=V0,
                                       a=a, Z=Z, R=R)
 simulation_step = np.arange(x.shape[1])
@@ -65,12 +67,15 @@ fig
 
 m0_0 =y[:,0]
 V0_0 = np.array([[1e-2,0], [0,1e-2]], np.double)
-u0 = np.array([0.0, 0.0], dtype=np.double)
 B0 = np.array([[1.0,-0.1], [0.0080,1.5]], np.double)
 Q0 = np.array([[1e-4,0], [0,1e-2]], np.double)
-a0 = np.array([0.0, 0.0], dtype=np.double)
 Z0 = np.array([[1.0,0.1], [-0.1,1.0]], np.double)
 R0 = np.array([[0.1,0], [0,0.1]], np.double)
+
+M0 = B0.shape[0]
+N0 = Z0.shape[0]
+u0 = np.zeros(shape=(M0, 1), dtype=np.double)
+a0 = np.zeros(shape=(N0, 1), dtype=np.double)
 
 # True Values
 # V0_0 = np.array([[1e-3,0], [0,1e-3]], np.double)
@@ -113,8 +118,8 @@ fig
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 filter_res = ssm.inference.filterLDS_SS_withMissingValues_np(
-    y=y, B=optim_res["B"], Q=optim_res["Q"], m0=optim_res["m0"],
-    V0=optim_res["V0"], Z=optim_res["Z"], R=optim_res["R"])
+    y=y, u=optim_res["u"], B=optim_res["B"], Q=optim_res["Q"], m0=optim_res["m0"],
+    V0=optim_res["V0"], a=optim_res["a"], Z=optim_res["Z"], R=optim_res["R"])
 
 #%%
 # Plot true and filtered states
@@ -123,14 +128,14 @@ filter_res = ssm.inference.filterLDS_SS_withMissingValues_np(
 true_values = x[(0, 1), :]
 filtered_means = filter_res["xnn"][(0, 1), 0, :]
 filtered_stds = np.sqrt(np.diagonal(a=filter_res["Pnn"], axis1=0, axis2=1)[:, (0, 1)].T)
-fig = ssm.tracking.plotting.get_x_and_y_time_series_vs_time_fig(
+fig = ssm.kinematics.plotting.get_x_and_y_time_series_vs_time_fig(
     time=simulation_step,
     ylabel="State",
     xlabel="Simulation Step",
     true_values=true_values,
     filtered_means=filtered_means,
     filtered_stds=filtered_stds)
-fig.update_layout(title=f'Log-Likelihood: {filter_res["logLike"].squeeze()}')
+fig.update_layout(title=f'Log-Likelihood: {filter_res["log_like"].squeeze()}')
 fig
 
 #%%
@@ -149,7 +154,7 @@ one_step_ahead_var = np.diagonal(aux_covs, axis1=0, axis2=1).T
 # Plot measurements and one-step ahead forecasts
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-fig = ssm.tracking.plotting.get_x_and_y_time_series_vs_time_fig(
+fig = ssm.kinematics.plotting.get_x_and_y_time_series_vs_time_fig(
     time=simulation_step,
     ylabel="One-Step Ahead Forecasts",
     xlabel="Simulation Step",
