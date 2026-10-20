@@ -7,7 +7,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   ssm.tracking
+   ssm.kinematics
 
 Submodules
 ----------
@@ -28,10 +28,26 @@ ssm.learning module
    :undoc-members:
    :show-inheritance:
 
+ssm.plotting module
+-------------------
+
+.. automodule:: ssm.plotting
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 ssm.simulation module
 ---------------------
 
 .. automodule:: ssm.simulation
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+ssm.utils module
+----------------
+
+.. automodule:: ssm.utils
    :members:
    :undoc-members:
    :show-inheritance:
