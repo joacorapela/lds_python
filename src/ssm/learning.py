@@ -669,7 +669,8 @@ def em_SS_tracking(y, u, B, sigma_a0, Qe, Z, a, R_0, m0_0, V0_0,
         # M step
         if vars_to_estimate["sigma_a"]:
             sigma_a_prev = sigma_a
-            S11, S10, S00 = posteriorCorrelationMatrices(Z=Z, B=B, KN=kf["KN"],
+            S11, S10, S00 = posteriorCorrelationMatrices(Z=Z, B=B,
+                                                         KN=kf["K"][:,:,-1],
                                                          Pnn=kf["Pnn"], xnN=ks["xnN"],
                                                          PnN=ks["PnN"], x0N=ks["x0N"],
                                                          V0N=ks["V0N"], Jn=ks["Jn"],
@@ -715,85 +716,6 @@ def em_SS_tracking(y, u, B, sigma_a0, Qe, Z, a, R_0, m0_0, V0_0,
     return optim_res
 
 
-'''
-def em_SS_LDS(y, B0, Q0, Z0, R0, m0_0, V0_0, max_iter=50, tol=1e-4,
-              vars_to_estimate=dict(m0=True, V0=True, B=True, Q=True, Z=True,
-                                    diag_R=True, R=False)):
-    if vars_to_estimate["diag_R"] and vars_to_estimate["R"]:
-        raise ValueError('vars_to_estimate["diag_R"] and vars_to_estimate["R"]'
-                         ' cannot be both True')
-    B  = B0
-    Q  = Q0
-    Z  = Z0
-    R  = R0
-    m0 = m0_0
-    V0 = V0_0
-
-    M = B0.shape[0]
-    N = y.shape[1]
-    log_like = np.empty(max_iter)
-    prev_log_like = -np.inf
-    for iter in range(max_iter):
-        kf = inference.filterLDS_SS_withMissingValues_np(y=y, B=B,
-                                                         Q=Q, m0=m0, V0=V0,
-                                                         Z=Z, R=R)
-        print("LogLike[{:04d}]={:f}".format(iter, kf["log_like"].item()))
-        log_like[iter] = kf["log_like"]
-        if kf["log_like"] < prev_log_like:
-            warnings.warn(f'Log likelihood decreased by {prev_log_like - kf["log_like"]}')
-        elif (kf["log_like"] - prev_log_like) < tol:
-            break
-        prev_log_like = kf["log_like"]
-        ks = inference.smoothLDS_SS(B=B, xnn=kf["xnn"], Pnn=kf["Pnn"],
-                                    xnn1=kf["xnn1"], Pnn1=kf["Pnn1"],
-                                    m0=m0, V0=V0)
-
-        S11, S10, S00 = posteriorCorrelationMatrices(Z=Z, B=B, KN=kf["KN"],
-                                                     Pnn=kf["Pnn"], xnN=ks["xnN"],
-                                                     PnN=ks["PnN"], x0N=ks["x0N"],
-                                                     V0N=ks["V0N"], Jn=ks["Jn"],
-                                                     J0=ks["J0"])
-        if vars_to_estimate["Z"]:
-            Z = np.outer(y[:,0], ks["xnN"][:, :, 0])
-            for i in range(1, N):
-                Z = Z + np.outer(y[:, i], ks["xnN"][:, :, i])
-            Z = Z @ np.linalg.inv(S11)
-
-        if vars_to_estimate["B"]:
-            B = S10 @ np.linalg.inv(S00)
-
-        if vars_to_estimate["Q"]:
-            Q = (S11 - S10 @ np.linalg.inv(S00) @ S10.T)/N
-            Q = (Q.T + Q)/2
-
-        # Now that Z is estimated, lets estimate R, if requested
-        if vars_to_estimate["R"]:
-            u = y[:, 0] - (Z @ ks["xnN"][:, :, 0]).squeeze()
-            R = np.outer(u, u) + Z @ ks["PnN"][:, :, 0] @ Z.T
-            for i in range(1, N):
-                u = y[:, i] - (Z @ ks["xnN"][:, :, i]).squeeze()
-                R = R + np.outer(u, u) + Z @ ks["PnN"][:, :, i] @ Z.T
-            R = R/N
-
-        if vars_to_estimate["diag_R"]:
-            diag_R = (y[:, 0]**2 - 2 * y[:, 0] * (Z @ ks["xnN"][:, :, 0]).squeeze() + np.diag(Z @ ks["PnN"][:, :, 0] @ Z.T))
-            for i in range(1, N):
-                Si = ks["PnN"][:, :, i] + np.outer(ks["xnN"][:, :, i], ks["xnN"][:, :, i])
-                diag_R = diag_R + (y[:, i]**2 - 2 * y[:, i] * (Z @ ks["xnN"][:, :, i]).squeeze() + np.diag(Z @ Si @ Z.T))
-            diag_R = diag_R/N
-            R = np.diag(diag_R)
-
-        if vars_to_estimate["m0"]:
-            m0 = ks["x0N"].squeeze()
-
-        if vars_to_estimate["V0"]:
-            V0 = ks["V0N"]
-
-    answer = dict(B=B, Q=Q, Z=Z, R=R, m0=m0, V0=V0, log_like=log_like[:(iter+1)],
-                  niter=iter)
-    return answer
-'''
-
 def em_SS_LDS(y, u0, B0, Q0, a0, Z0, R0, m0_0, V0_0, max_iter=50, tol=1e-4,
               vars_to_estimate=dict(m0=True, V0=True, u=True, B=True, Q=True,
                                     a=True, Z=True, R=True),
@@ -830,7 +752,7 @@ def em_SS_LDS(y, u0, B0, Q0, a0, Z0, R0, m0_0, V0_0, max_iter=50, tol=1e-4,
                                     m0=m0, V0=V0)
 
         Sxx11, Sxx10, Sxx00, Tx1, Tx0, Ty1, Tyx11, Tyy11 =  \
-            getSummaryStatsForEM(Z=Z, B=B, KN=kf["KN"], Pnn=kf["Pnn"],
+            getSummaryStatsForEM(Z=Z, B=B, KN=kf["K"][:,:,-1], Pnn=kf["Pnn"],
                                  xnN=ks["xnN"], PnN=ks["PnN"], x0N=ks["x0N"],
                                  V0N=ks["V0N"], Jn=ks["Jn"], J0=ks["J0"], y=y)
         if vars_to_estimate["B"]:
