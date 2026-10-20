@@ -21,6 +21,12 @@ docs/lectures/neuroinformatics/2023/*
 
 docs/sphinx/build/doctrees
 docs/sphinx/source/auto_examples/
+
+docs/sphinx/source/*.rst
+!docs/sphinx/source/index.rst
+!docs/sphinx/source/introduction.rst
+
+data/*
 data/*
 **/old
 **/.mypy_cache/*
