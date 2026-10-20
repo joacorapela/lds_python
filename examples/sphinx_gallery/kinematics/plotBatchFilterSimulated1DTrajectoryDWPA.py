@@ -179,7 +179,7 @@ fig = get_fig_kinematics_vs_time(
 fig_filename_pattern = "../../../figures/filtered_pos.{:s}"
 fig.write_image(fig_filename_pattern.format("png"))
 fig.write_html(fig_filename_pattern.format("html"))
-# fig
+fig
 
 #%%
 # Plot true and filtered velocities (with 95% confidence band)
@@ -210,7 +210,7 @@ fig = get_fig_kinematics_vs_time(
 fig_filename_pattern = "../../../figures/filtered_vel.{:s}"
 fig.write_image(fig_filename_pattern.format("png"))
 fig.write_html(fig_filename_pattern.format("html"))
-# fig
+fig
 
 #%%
 # Plot true and filtered accelerations (with 95% confidence band)
@@ -241,5 +241,5 @@ fig = get_fig_kinematics_vs_time(
 fig_filename_pattern = "../../../figures/filtered_acc.{:s}"
 fig.write_image(fig_filename_pattern.format("png"))
 fig.write_html(fig_filename_pattern.format("html"))
-# fig
+fig
 
