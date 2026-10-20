@@ -31,7 +31,7 @@ import pandas as pd
 import torch
 import plotly.graph_objects as go
 
-import ssm.inference.utils
+import ssm.kinematics.utils
 import ssm.inference
 import ssm.learning
 
@@ -56,11 +56,11 @@ y = np.transpose(data[["x", "y"]].to_numpy())
 
 #%%
 # Kalman filter matrices for inference
-# -----------------------------------
+# ------------------------------------
 
 date_times = pd.to_datetime(data["time"])
 dt = (date_times.iloc[1]-date_times.iloc[0]).total_seconds()
-B, _, Qe,  Z, _ = ssm.inference.utils.getLDSmatricesForKinematics_np(
+B, _, Qe,  Z, _ = ssm.kinematics.utils.getLDSmatricesForKinematics_np(
     dt=dt, sigma_a=np.nan, pos_x_R_std=np.nan, pos_y_R_std=np.nan)
 
 #%%
@@ -84,8 +84,12 @@ R_manual = np.diag([sigma_x_manual**2, sigma_y_manual**2])
 V0_manual = np.diag(np.ones(len(m0_manual))*sqrt_diag_V0_value_manual**2)
 Q_manual = Qe*sigma_a_manual
 
+M = B.shape[0]
+N = Z.shape[0]
+u = np.zeros(shape=(M, 1), dtype=np.double)
+a = np.zeros(shape=(N, 1), dtype=np.double)
 filterRes_manual = ssm.inference.filterLDS_SS_withMissingValues_np(
-    y=y, B=B, Q=Q_manual, m0=m0_manual, V0=V0_manual, Z=Z, R=R_manual)
+    y=y, u=u, B=B, Q=Q_manual, m0=m0_manual, V0=V0_manual, a=a, Z=Z, R=R_manual)
 
 smoothRes_manual = ssm.inference.smoothLDS_SS(
     B=B, xnn=filterRes_manual["xnn"], Pnn=filterRes_manual["Pnn"],
@@ -122,8 +126,10 @@ if Qe_reg_param_learned is not None:
 else:
     Qe_regularized_learned = Qe
 y_torch = torch.from_numpy(y.astype(np.double))
+u_torch = torch.from_numpy(u.astype(np.double))
 B_torch = torch.from_numpy(B.astype(np.double))
 Qe_regularized_learned_torch = torch.from_numpy(Qe_regularized_learned.astype(np.double))
+a_torch = torch.from_numpy(a.astype(np.double))
 Z_torch = torch.from_numpy(Z.astype(np.double))
 
 vars_to_estimate = {}
@@ -155,9 +161,9 @@ else:
     vars_to_estimate["sqrt_diag_V0"] = True
     vars_to_estimate["V0"] = True
 
-optim_res_learned = ssm.learning.torch_lbfgs_optimize_SS_inference_diagV0(
-    y=y_torch, B=B_torch, sigma_a0=sigma_a_manual,
-    Qe=Qe_regularized_learned_torch, Z=Z_torch, pos_x_R_std0=pos_x_R_std0_torch,
+optim_res_learned = ssm.learning.torch_lbfgs_optimize_SS_kinematics_diagV0(
+    y=y_torch, u=u_torch, B=B_torch, sigma_a0=sigma_a_manual,
+    Qe=Qe_regularized_learned_torch, a=a_torch, Z=Z_torch, pos_x_R_std0=pos_x_R_std0_torch,
     pos_y_R_std0=pos_y_R_std0_torch, m0_0=m0_torch,
     sqrt_diag_V0_0=sqrt_diag_V0_torch, max_iter=lbfgs_max_iter, lr=lbfgs_lr,
     vars_to_estimate=vars_to_estimate, tolerance_grad=lbfgs_tolerance_grad,
@@ -175,7 +181,7 @@ R_learned = np.diag([optim_res_learned["estimates"]["pos_x_R_std"].item()**2,
                      optim_res_learned["estimates"]["pos_y_R_std"].item()**2])
 
 filterRes_learned = ssm.inference.filterLDS_SS_withMissingValues_np(
-    y=y, B=B, Q=Q_learned, m0=m0_learned, V0=V0_learned, Z=Z, R=R_learned)
+    y=y, u=u, B=B, Q=Q_learned, m0=m0_learned, V0=V0_learned, a=a, Z=Z, R=R_learned)
 
 smoothRes_learned = ssm.inference.smoothLDS_SS(
     B=B, xnn=filterRes_learned["xnn"], Pnn=filterRes_learned["Pnn"],
