@@ -6,8 +6,9 @@ def getLDSmatricesFor1DKinematics_torch(dt, sigma_a, pos_R_std):
     # barShalomEtAl01-estimationWithApplicationToTrackingAndNavigation.pdf
     # section 6.3.3
 
-    # Eq. 6.3.3-2
     import torch
+
+    # Eq. 6.3.3-2
     B = torch.tensor([[1, dt, .5*dt**2],
                      [0, 1, dt],
                      [0, 0, 1]],
@@ -30,8 +31,9 @@ def getLDSmatricesForKinematics_torch(dt, sigma_a, pos_x_R_std, pos_y_R_std):
     # barShalomEtAl01-estimationWithApplicationToTrackingAndNavigation.pdf
     # section 6.3.3
 
-    # Eq. 6.3.3-2
     import torch
+
+    # Eq. 6.3.3-2
     B = torch.tensor([[1, dt, .5*dt**2, 0, 0, 0],
                      [0, 1, dt, 0, 0, 0],
                      [0, 0, 1, 0, 0, 0],
@@ -57,16 +59,60 @@ def getLDSmatricesForKinematics_torch(dt, sigma_a, pos_x_R_std, pos_y_R_std):
 
 
 def getLDSmatricesFor1DKinematics_np(dt, sigma_a, pos_R_std):
-    B, Q, Qe, Z, R = getLDSmatricesFor1DKinematics_torch(dt, sigma_a,
-                                                         pos_R_std)
-    return B.numpy(), Q.numpy(), Qe.numpy(), Z.numpy(), R.numpy()
+    # Taken from the book
+    # barShalomEtAl01-estimationWithApplicationToTrackingAndNavigation.pdf
+    # section 6.3.3
+
+    import numpy as np
+
+    # Eq. 6.3.3-2
+    B = np.array([[1, dt, .5*dt**2],
+                  [0, 1, dt],
+                  [0, 0, 1]],
+                  dtype=np.double)
+    Z = np.array([[1, 0, 0]],
+                 dtype=np.double)
+    # Eq. 6.3.3-4
+    Qe = np.array([[dt**4/4, dt**3/2, dt**2/2],
+                   [dt**3/2, dt**2,   dt],
+                   [dt**2/2, dt,      1]],
+                   dtype=np.double)
+    Q = sigma_a**2 * Qe
+    R = np.diag(np.array([pos_R_std**2]))
+
+    return B, Q, Qe, Z, R
 
 
 def getLDSmatricesForKinematics_np(dt, sigma_a, pos_x_R_std, pos_y_R_std):
-    B, Q, Qe, Z, R = getLDSmatricesForKinematics_torch(dt, sigma_a,
-                                                       pos_x_R_std,
-                                                       pos_y_R_std)
-    return B.numpy(), Q.numpy(), Qe.numpy(), Z.numpy(), R.numpy()
+    # Taken from the book
+    # barShalomEtAl01-estimationWithApplicationToTrackingAndNavigation.pdf
+    # section 6.3.3
+
+    import numpy as np
+
+    # Eq. 6.3.3-2
+    B = np.array([[1, dt, .5*dt**2, 0, 0, 0],
+                  [0, 1, dt, 0, 0, 0],
+                  [0, 0, 1, 0, 0, 0],
+                  [0, 0, 0, 1, dt, .5*dt**2],
+                  [0, 0, 0, 0, 1, dt],
+                  [0, 0, 0, 0, 0, 1]],
+                  dtype=np.double)
+    Z = np.array([[1, 0, 0, 0, 0, 0],
+                  [0, 0, 0, 1, 0, 0]],
+                  dtype=np.double)
+    # Eq. 6.3.3-4
+    Qt = np.array([[dt**4/4, dt**3/2, dt**2/2],
+                      [dt**3/2, dt**2,   dt],
+                      [dt**2/2, dt,      1]],
+                      dtype=np.double)
+    Qe = np.zeros(shape=(6, 6), dtype=np.double)
+    Qe[:3, :3] = Qt
+    Qe[3:6, 3:6] = Qt
+    Q = sigma_a**2 * Qe
+    R = np.diag(np.array([pos_x_R_std**2, pos_y_R_std**2]))
+
+    return B, Q, Qe, Z, R
 
 
 def getNDSwithGaussianNoiseFunctionsForKinematicsAndHO_torch(
@@ -75,6 +121,7 @@ def getNDSwithGaussianNoiseFunctionsForKinematicsAndHO_torch(
         omega_Q_std,
         pos_x_R_std, pos_y_R_std,
         cos_theta_R_std, sin_theta_R_std):
+
     import torch
 
     def getBdot(dt, alpha, epsilon=1e-10):
