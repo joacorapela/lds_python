@@ -13,6 +13,7 @@
 \usepackage{siunitx}
 \sisetup{output-exponent-marker=\ensuremath{\mathrm{e}}}
 \usepackage{tikz}
+\usepackage{verbatim}
 \usepackage{subcaption}
 % \usepackage{endfloat}
 
@@ -20,6 +21,7 @@
 
 \newtheorem{lemma}{Lemma}
 \newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
 
 \title{Inference in Linear Dynamical Systems}
 \author{Joaquin Rapela\thanks{j.rapela@ucl.ac.uk}}
@@ -89,7 +91,7 @@ the last state, as shown in the next figure.
 \end{center}
 \end{figure}
 
-\section{Derivation of Kalman filter equations}
+\section{Derivation of the Kalman filter equations}
 
 \input{derivationKalmanFilterEqs}
 
@@ -115,7 +117,7 @@ the last state, as shown in the next figure.
     P(\mathbf{x}_0, \mathbf{x}_1, \ldots, \mathbf{x}_n, \mathbf{y}_1, \ldots,
     \mathbf{y}_n)$  is a quadratic function of the components of
     $\{\mathbf{x}_0, \mathbf{x}_1, \ldots, \mathbf{x}_n, \mathbf{y}_1, \ldots,
-    \mathbf{y}_n\}$'' holds for any positive integer n. We show this by
+    \mathbf{y}_n\}$'' holds for any positive integer n. We prove this by
     induction.
 
     \begin{description}
@@ -152,9 +154,9 @@ the last state, as shown in the next figure.
 
 \end{proof}
 
-\section{Kalman Smoother}
+\section{Kalman Rauch-Tung-Striebel (RTS) Smoother}
 
-The Kalman smoother algorithm addresses the smoothing (Eq.~\ref{eq:smoothing})
+The Kalman RTS smoother algorithm addresses the smoothing (Eq.~\ref{eq:smoothing})
 inference problem.
 
 \begin{alignat*}{2}
@@ -168,6 +170,118 @@ $x_{T|T}, P_{T|T}\rightarrow x_{T-1|T}, P_{T-1|T}\rightarrow x_{T-2|T},
 P_{T-2|T}\rightarrow\ldots\rightarrow  x_{1|T}, P_{1|T}$. The initial mean and
 covariances (i.e., $x_{T|T}, P_{T|T}$) are initialized from the last step of
 the Kalman filter.
+
+\section{Missing observations}
+
+What are the filtered values for the missing observations?
+
+\begin{proposition}
+
+    For the linear dynamical system in Section~\ref{sec:ldsModel}, if observations
+    $\{\mathcolor{red}{\mathbf{y}_{\tau+1},\ldots,\mathbf{y}_{\tau+K}}\}$ are
+    missing in a sequence of observations
+    $\{\mathbf{y}_1,\ldots,\mathbf{y}_{\tau},\allowbreak\mathcolor{red}{\mathbf{y}_{\tau+1},\ldots,\mathbf{y}_{\tau+K}}\}$
+    then for $1\le k\le K$:
+
+    \begin{align*}
+        P(\mathbf{x}_{\tau+k}|\mathbf{y}_1,\ldots,\mathbf{y}_{\tau+k-1})&=N(\mathbf{x}_{\tau+k}|\mathbf{x}_{\tau+k|\tau+k-1},P_{\tau+k|\tau+k-1})\\
+        \mathbf{x}_{\tau+k|\tau+k-1}&=A\ \mathbf{x}_{\tau+k-1|\tau+k-1}\\
+        P_{\tau+k|\tau+k-1}&=A\ P_{\tau+k-1|\tau+k-1}A^\intercal+Q\\
+        P(\mathbf{x}_{\tau+k}|\mathbf{y}_1,\ldots,\mathbf{y}_{\tau+k})&=N(\mathbf{x}_{\tau+k}|\mathbf{x}_{\tau+k|\tau+k},P_{\tau+k|\tau+k})\\
+        \mathbf{x}_{\tau+k|\tau+k}&=\mathbf{x}_{\tau+k|\tau+k-1}\\
+        P_{\tau+k|\tau+k}&=P_{\tau+k|\tau+k-1}
+    \end{align*}
+
+\end{proposition}
+
+\begin{proof}
+    We prove this by induction on $k$.
+
+    \begin{description}
+        \item[$P_1$]:
+
+            Because $\mathbf{y}_1,\ldots,\mathbf{y}_{\tau}$ are not missing, from Eq.~\ref{eq:prediction}:
+
+            \begin{align*}
+                P(\mathbf{x}_{\tau+1}|\mathbf{y}_1,\ldots,\mathbf{y}_{\tau})&=N(\mathbf{x}_{\tau+1}|\mathbf{x}_{\tau+1|\tau},P_{\tau+1|\tau})\quad\text{with}\quad\mathbf{x}_{\tau+1|\tau}=A\mathbf{x}_{\tau|\tau}\quad\text{and}\quad P_{\tau+1|\tau}=AP_{\tau|\tau}A^\intercal+Q
+            \end{align*}
+
+            Next,
+
+            \begin{align}
+                P(\mathbf{x}_{\tau+1}|\mathbf{y}_1,\ldots,\mathbf{y}_{\tau+1})&=N(\mathbf{x}_{\tau+1}|\mathbf{x}_{\tau+1|\tau+1},P_{\tau+1|\tau+1})=P(\mathbf{x}_{\tau+1}|\mathbf{y}_1,\ldots,\mathbf{y}_\tau)\label{eq:p1eq2}\\
+                                                                              &=N(\mathbf{x}_{\tau+1}|\mathbf{x}_{\tau+1|\tau},P_{\tau+1|\tau})\nonumber
+            \end{align}
+
+            Thus, $\mathbf{x}_{\tau+1|\tau+1}=\mathbf{x}_{\tau+1|\tau}$ and
+            $P_{\tau+1|\tau+1}=P_{\tau+1|\tau}$.
+
+            Note:
+
+            \begin{enumerate}
+
+                \item The second equality in the Eq.~\ref{eq:p1eq2} holds because $\mathbf{y}_{\tau+1}$ is missing.
+
+            \end{enumerate}
+
+        \item[$P_k\rightarrow P_{k+1}$]:
+
+            \begin{align}
+                P(\mathbf{x}_{\tau+k+1}|\mathbf{y}_1,\ldots,\mathbf{y}_{\tau+k+1})&=N(\mathbf{x}_{\tau+k+1}|\mathbf{x}_{\tau+k+1|\tau+k+1},P_{\tau+k+1|\tau+k+1})\nonumber\\
+                                                                                  &=P(\mathbf{x}_{\tau+k+1}|\mathbf{y}_1,\ldots,\mathbf{y}_{\tau+k})\label{eq:pkeq2}\\
+                                                                                  &=N(\mathbf{x}_{\tau+k+1}|\mathbf{x}_{\tau+k+1|\tau+k},P_{\tau+k+1|\tau+k})\nonumber
+            \end{align}
+
+            Thus, $\mathbf{x}_{\tau+k+1|\tau+k+1}=\mathbf{x}_{\tau+k+1|\tau+k}$ and
+            $P_{\tau+k+1|\tau+k+1}=P_{\tau+k+1|\tau+k}$.
+
+            Note:
+
+            \begin{enumerate}
+
+                \item Eq.~\ref{eq:pkeq2} holds because
+                    $\mathbf{y}_{\tau+k+1}$ is missing.
+
+            \end{enumerate}
+
+            \begin{align*}
+                P(\mathbf{x}_{\tau+k+1}|\mathbf{y}_1,\ldots,\mathbf{y}_{\tau+k})&=N(\mathbf{x}_{\tau+k+1}|\mathbf{x}_{\tau+k+1|\tau+k},P_{\tau+k+1|\tau+k})\\
+                                                                              &=\int_{-\infty}^\infty
+                                                                              P(\mathbf{x}_{\tau+k+1},\mathbf{x}_{\tau+k}|\mathbf{y}_1,\ldots,\mathbf{y}_{\tau+k})d\mathbf{x}_{\tau+k}\\
+                                                                              &=\int_{-\infty}^\infty
+                                                                              P(\mathbf{x}_{\tau+k+1}|\mathbf{x}_{\tau+k},\mathbf{y}_1,\ldots,\mathbf{y}_{\tau+k})P(\mathbf{x}_{\tau+k}|\mathbf{y}_1,\ldots,\mathbf{y}_{\tau+k})d\mathbf{x}_{\tau+k}\\
+                                                                              &=\int_{-\infty}^\infty P(\mathbf{x}_{\tau+k+1}|\mathbf{x}_{\tau+k})P(\mathbf{x}_{\tau+k}|\mathbf{y}_1,\ldots,\mathbf{y}_{\tau+k})d\mathbf{x}_{\tau+k}\\
+                                                                              &=\int_{-\infty}^\infty
+                                                                              N(\mathbf{x}_{\tau+k+1}|A\mathbf{x}_{\tau+k},Q)N(\mathbf{x}_{\tau+k}|\mathbf{x}_{\tau+k|\tau+k},P_{\tau+k|\tau+k})d\mathbf{x}_{\tau+k}\\
+                                                                              &=N(\mathbf{x}_{\tau+k+1}|A\mathbf{x}_{\tau+k|\tau+k},A P_{\tau+k|\tau+k}A^\intercal+Q)
+            \end{align*}
+
+            Thus $\mathbf{x}_{\tau+k+1|\tau+k}=A\mathbf{x}_{\tau+k|\tau+k}$ and
+            $P_{\tau+k+1|\tau+k}=A P_{\tau+k|\tau+k}A^\intercal+Q$.
+
+            \begin{enumerate}
+
+                \item The second line holds by marginalisation.
+
+                \item The third line follows from Bayes rule.
+
+                \item The fourth lines uses the fact
+                    that $\mathbf{x}_{\tau+k+1}$ is independent from
+                    $\mathbf{y}_1,\ldots,\mathbf{y}_{\tau+k}$ given
+                    $\mathbf{x}_{\tau+k}$.
+
+                \item The fifth line follows from the definition of the LDS
+                    model in Section~\ref{sec:ldsModel} and the prediction
+                    distribution in Eq.~\ref{eq:prediction}.
+
+                \item The last line uses
+                    Lemma~\ref{lemma:linearModelGaussianLatents}.
+
+            \end{enumerate}
+
+    \end{description}
+
+\end{proof}
 
 \section{Evaluation}
 
