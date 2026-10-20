@@ -1,9 +1,9 @@
 """
-Comparison between EM and gradient ascent for tracking a simulated mouse
+Comparison between EM and gradient ascent for inference a simulated mouse
 ========================================================================
 
 The code below compares the expectation maximization (EM) and gradient ascent
-algorithm for tracking a simulated mouse.
+algorithm for inference a simulated mouse.
 
 
 """
@@ -12,14 +12,14 @@ import numpy as np
 import torch
 import plotly.graph_objs as go
 
-import ssm.tracking.utils
+import ssm.inference.utils
 import ssm.simulation
 import ssm.learning
 
 #%%
 # Simulation
 # ----------
-# We will simulate a linear dynamical system for tracking.
+# We will simulate a linear dynamical system for inference.
 # The parameters of this model are highlighted in red.
 #
 # .. math::
@@ -52,7 +52,7 @@ sigma_x = 5e-0
 sigma_y = 5e-0
 sqrt_diag_V0_value = 1e-3
 
-B, _, Qe, Z, R = ssm.tracking.utils.getLDSmatricesForKinematics_np(
+B, _, Qe, Z, R = ssm.inference.utils.getLDSmatricesForKinematics_np(
     dt=dt, sigma_a=np.nan, pos_x_R_std=sigma_x, pos_y_R_std=sigma_y)
 Q_true = Qe*sigma_a_true**2
 sqrt_diag_R = np.array([sigma_x, sigma_y])
@@ -128,8 +128,8 @@ print(f"max log likelihood: {gs_max_ll}, "
 #%%
 # Gradient acent
 # ^^^^^^^^^^^^^^
-# Code for `ssm.learning.torch_lbfgs_optimize_SS_tracking_diagV0
-# <https://joacorapela.github.io/ssm/_modules/ssm/learning.html#torch_lbfgs_optimize_SS_tracking_diagV0>`_
+# Code for `ssm.learning.torch_lbfgs_optimize_SS_inference_diagV0
+# <https://joacorapela.github.io/ssm/_modules/ssm/learning.html#torch_lbfgs_optimize_SS_inference_diagV0>`_
 
 m0_torch = torch.from_numpy(m0)
 sqrt_diag_V0_torch = torch.DoubleTensor([sqrt_diag_V0_value
@@ -138,7 +138,7 @@ y_torch = torch.from_numpy(y.astype(np.double))
 B_torch = torch.from_numpy(B.astype(np.double))
 Qe_torch = torch.from_numpy(Qe.astype(np.double))
 Z_torch = torch.from_numpy(Z.astype(np.double))
-optim_res_ga = ssm.learning.torch_lbfgs_optimize_SS_tracking_diagV0(
+optim_res_ga = ssm.learning.torch_lbfgs_optimize_SS_inference_diagV0(
     y=y_torch, B=B_torch, sigma_a0=sigma_a0,
     Qe=Qe_torch, Z=Z_torch, pos_x_R_std0=sigma_x, pos_y_R_std0=sigma_y, m0_0=m0_torch,
     sqrt_diag_V0_0=sqrt_diag_V0_torch, max_iter=lbfgs_max_iter,
@@ -149,11 +149,11 @@ optim_res_ga = ssm.learning.torch_lbfgs_optimize_SS_tracking_diagV0(
 #%%
 # EM
 # ^^
-# Code for `ssm.learning.em_SS_tracking
-# <https://joacorapela.github.io/ssm/_modules/ssm/learning.html#em_SS_tracking>`_
+# Code for `ssm.learning.em_SS_inference
+# <https://joacorapela.github.io/ssm/_modules/ssm/learning.html#em_SS_inference>`_
 Qe_reg_param = 1e-5
 Qe_regularized = Qe + Qe_reg_param*np.eye(Qe.shape[0])
-optim_res_em = ssm.learning.em_SS_tracking(
+optim_res_em = ssm.learning.em_SS_inference(
     y=y, B=B, sigma_a0=sigma_a0,
     Qe=Qe_regularized, Z=Z, R_0=R, m0_0=m0, V0_0=V0,
     vars_to_estimate=em_vars_to_estimate, max_iter=em_max_iter)
@@ -224,8 +224,8 @@ sqrt_diag_R_0 = np.array([sigma_x_0, sigma_y_0])
 #%%
 # Gradient acent
 # ^^^^^^^^^^^^^^
-# Code for `ssm.learning.torch_lbfgs_optimize_SS_tracking_diagV0
-# <https://joacorapela.github.io/ssm/_modules/ssm/learning.html#torch_lbfgs_optimize_SS_tracking_diagV0>`_
+# Code for `ssm.learning.torch_lbfgs_optimize_SS_inference_diagV0
+# <https://joacorapela.github.io/ssm/_modules/ssm/learning.html#torch_lbfgs_optimize_SS_inference_diagV0>`_
 
 m0_0_torch = torch.from_numpy(m0_0)
 sqrt_diag_V0_0_torch = torch.from_numpy(sqrt_diag_V0_0)
@@ -235,7 +235,7 @@ y_torch = torch.from_numpy(y.astype(np.double))
 B_torch = torch.from_numpy(B.astype(np.double))
 Qe_torch = torch.from_numpy(Qe.astype(np.double))
 Z_torch = torch.from_numpy(Z.astype(np.double))
-optim_res_ga = ssm.learning.torch_lbfgs_optimize_SS_tracking_diagV0(
+optim_res_ga = ssm.learning.torch_lbfgs_optimize_SS_inference_diagV0(
     y=y_torch, B=B_torch, sigma_a0=sigma_a0,
     Qe=Qe_torch, Z=Z_torch, pos_x_R_std0=sqrt_diag_R_0[0],
     pos_y_R_std0=sqrt_diag_R_0[1], m0_0=m0_0_torch,
@@ -247,13 +247,13 @@ optim_res_ga = ssm.learning.torch_lbfgs_optimize_SS_tracking_diagV0(
 #%%
 # EM
 # ^^
-# Code for `ssm.learning.em_SS_tracking
-# <https://joacorapela.github.io/ssm/_modules/ssm/learning.html#em_SS_tracking>`_
+# Code for `ssm.learning.em_SS_inference
+# <https://joacorapela.github.io/ssm/_modules/ssm/learning.html#em_SS_inference>`_
 V0_0 = np.diag(sqrt_diag_V0_0**2)
 R0 = np.diag(sqrt_diag_R_0)
 Qe_reg_param = 1e-5
 Qe_regularized = Qe + Qe_reg_param*np.eye(Qe.shape[0])
-optim_res_em = ssm.learning.em_SS_tracking(
+optim_res_em = ssm.learning.em_SS_inference(
     y=y, B=B, sigma_a0=sigma_a0,
     Qe=Qe_regularized, Z=Z, R_0=R0, m0_0=m0_0, V0_0=V0_0,
     vars_to_estimate=em_vars_to_estimate, max_iter=em_max_iter)

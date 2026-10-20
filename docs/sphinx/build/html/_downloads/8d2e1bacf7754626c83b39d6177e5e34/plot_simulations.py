@@ -25,8 +25,10 @@ import ssm.tracking.plotting
 
 m0 = np.array([0.0, 0.0], dtype=np.double)
 V0 = np.array([[1e-3,0], [0,1e-3]], dtype=np.double)
+u = np.array([0.0, 0.0], dtype=np.double)
 B = np.array([[0.9872,-0.0272], [0.0080,1.0128]], dtype=np.double)
 Q = np.array([[1e-3,0], [0,1e-3]], dtype=np.double)
+a = np.array([0.0, 0.0], dtype=np.double)
 Z = np.array([[1,0], [0,1]], dtype=np.double)
 R = np.array([[.08,0], [0,.08]], dtype=np.double)
 num_pos = 2000
@@ -35,8 +37,9 @@ num_pos = 2000
 # Perform simulation
 # ~~~~~~~~~~~~~~~~~~
 
-x0, x, y = ssm.simulation.simulateLDS(T=num_pos, B=B, Q=Q, Z=Z, R=R, m0=m0,
-                                      V0=V0)
+u = np.array([0.0, 0.0], dtype=np.double)
+x0, x, y = ssm.simulation.simulateLDS(T=num_pos, u=u, B=B, Q=Q, m0=m0, V0=V0,
+                                      a=a, Z=Z, R=R)
 simulation_step = np.arange(x.shape[1])
 
 #%%
@@ -62,8 +65,10 @@ fig
 
 m0_0 =y[:,0]
 V0_0 = np.array([[1e-2,0], [0,1e-2]], np.double)
+u0 = np.array([0.0, 0.0], dtype=np.double)
 B0 = np.array([[1.0,-0.1], [0.0080,1.5]], np.double)
 Q0 = np.array([[1e-4,0], [0,1e-2]], np.double)
+a0 = np.array([0.0, 0.0], dtype=np.double)
 Z0 = np.array([[1.0,0.1], [-0.1,1.0]], np.double)
 R0 = np.array([[0.1,0], [0,0.1]], np.double)
 
@@ -76,7 +81,7 @@ R0 = np.array([[0.1,0], [0,0.1]], np.double)
 
 max_iter = 50
 tol = 1e-6
-vars_to_estimate = {"B": True, "Q": True, "Z": True, "R": True,
+vars_to_estimate = {"u": False, "B": True, "Q": True, "a": False, "Z": True, "R": True,
                     "m0": True, "V0": True}
 
 #%%
@@ -84,7 +89,7 @@ vars_to_estimate = {"B": True, "Q": True, "Z": True, "R": True,
 # ~~~~~~
 
 optim_res = ssm.learning.em_SS_LDS(
-    y=y, B0=B0, Q0=Q0, Z0=Z0, R0=R0, m0_0=m0_0, V0_0=V0_0,
+    y=y, u0=u0, B0=B0, Q0=Q0, a0=a0, Z0=Z0, R0=R0, m0_0=m0_0, V0_0=V0_0,
     max_iter=max_iter, tol=tol, vars_to_estimate=vars_to_estimate,
 )
 

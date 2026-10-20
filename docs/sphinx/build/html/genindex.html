@@ -109,13 +109,9 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ssm.html#ssm.inference.ekf_forecast">ekf_forecast() (in module ssm.inference)</a>
 </li>
-      <li><a href="ssm.html#ssm.inference.ekf_forecast_batch">ekf_forecast_batch() (in module ssm.inference)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="ssm.html#ssm.learning.em_SS_LDS">em_SS_LDS() (in module ssm.learning)</a>
-</li>
-      <li><a href="ssm.html#ssm.learning.em_SS_tracking">em_SS_tracking() (in module ssm.learning)</a>
+      <li><a href="ssm.html#ssm.inference.ekf_states_forecast">ekf_states_forecast() (in module ssm.inference)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -139,17 +135,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ssm.tracking.html#ssm.tracking.plotting.get_positions_x_vs_y_fig">get_positions_x_vs_y_fig() (in module ssm.tracking.plotting)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ssm.tracking.html#ssm.tracking.plotting.get_x_and_y_time_series_vs_time_fig">get_x_and_y_time_series_vs_time_fig() (in module ssm.tracking.plotting)</a>
 </li>
       <li><a href="ssm.tracking.html#ssm.tracking.plotting.get_x_time_series_vs_time_fig">get_x_time_series_vs_time_fig() (in module ssm.tracking.plotting)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="ssm.tracking.html#ssm.tracking.utils.getLDSmatricesForKinematics_np">getLDSmatricesForKinematics_np() (in module ssm.tracking.utils)</a>
-</li>
-      <li><a href="ssm.tracking.html#ssm.tracking.utils.getLDSmatricesForKinematics_torch">getLDSmatricesForKinematics_torch() (in module ssm.tracking.utils)</a>
-</li>
-      <li><a href="ssm.tracking.html#ssm.tracking.utils.getNDSwithGaussianNoiseFunctionsForKinematicsAndHO_torch">getNDSwithGaussianNoiseFunctionsForKinematicsAndHO_torch() (in module ssm.tracking.utils)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -157,17 +147,19 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="ssm.html#ssm.learning.lag1CovSmootherLDS_SS">lag1CovSmootherLDS_SS() (in module ssm.learning)</a>
+      <li><a href="ssm.html#ssm.inference.lds_observation_forecast">lds_observation_forecast() (in module ssm.inference)</a>
 </li>
-      <li><a href="ssm.html#ssm.inference.lds_forecast">lds_forecast() (in module ssm.inference)</a>
+      <li><a href="ssm.html#ssm.inference.lds_observations_forecast">lds_observations_forecast() (in module ssm.inference)</a>
 </li>
-      <li><a href="ssm.html#ssm.inference.lds_forecast_batch">lds_forecast_batch() (in module ssm.inference)</a>
+      <li><a href="ssm.html#ssm.inference.lds_state_forecast">lds_state_forecast() (in module ssm.inference)</a>
+</li>
+      <li><a href="ssm.html#ssm.inference.lds_states_forecast">lds_states_forecast() (in module ssm.inference)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="ssm.html#ssm.inference.log_like_observations_given_forecasts_ekf">log_like_observations_given_forecasts_ekf() (in module ssm.inference)</a>
+      <li><a href="ssm.html#ssm.inference.log_like_observations_given_ekf_state_forecasts">log_like_observations_given_ekf_state_forecasts() (in module ssm.inference)</a>
 </li>
-      <li><a href="ssm.html#ssm.inference.log_like_observations_given_forecasts_lds">log_like_observations_given_forecasts_lds() (in module ssm.inference)</a>
+      <li><a href="ssm.html#ssm.inference.log_like_observations_given_lds_state_forecasts">log_like_observations_given_lds_state_forecasts() (in module ssm.inference)</a>
 </li>
       <li><a href="ssm.html#ssm.inference.logLikeEKF_withMissingValues_torch">logLikeEKF_withMissingValues_torch() (in module ssm.inference)</a>
 </li>
@@ -189,15 +181,11 @@
 </li>
         <li><a href="ssm.html#module-ssm.inference">ssm.inference</a>
 </li>
-        <li><a href="ssm.html#module-ssm.learning">ssm.learning</a>
-</li>
         <li><a href="ssm.html#module-ssm.simulation">ssm.simulation</a>
 </li>
         <li><a href="ssm.tracking.html#module-ssm.tracking">ssm.tracking</a>
 </li>
         <li><a href="ssm.tracking.html#module-ssm.tracking.plotting">ssm.tracking.plotting</a>
-</li>
-        <li><a href="ssm.tracking.html#module-ssm.tracking.utils">ssm.tracking.utils</a>
 </li>
       </ul></li>
   </ul></td>
@@ -215,8 +203,6 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ssm.html#ssm.inference.OnlineKalmanFilter.P">P (ssm.inference.OnlineKalmanFilter property)</a>
-</li>
-      <li><a href="ssm.html#ssm.learning.posteriorCorrelationMatrices">posteriorCorrelationMatrices() (in module ssm.learning)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -248,10 +234,6 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="ssm.html#ssm.learning.scipy_optimize_SS_tracking_diagV0">scipy_optimize_SS_tracking_diagV0() (in module ssm.learning)</a>
-</li>
-      <li><a href="ssm.html#ssm.learning.scipy_optimize_SS_tracking_fullV0">scipy_optimize_SS_tracking_fullV0() (in module ssm.learning)</a>
-</li>
       <li><a href="ssm.html#ssm.simulation.simulateLDS">simulateLDS() (in module ssm.simulation)</a>
 </li>
       <li><a href="ssm.html#ssm.simulation.simulateNDSgaussianNoise">simulateNDSgaussianNoise() (in module ssm.simulation)</a>
@@ -275,13 +257,6 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li>
-    ssm.learning
-
-      <ul>
-        <li><a href="ssm.html#module-ssm.learning">module</a>
-</li>
-      </ul></li>
-      <li>
     ssm.simulation
 
       <ul>
@@ -302,13 +277,6 @@
         <li><a href="ssm.tracking.html#module-ssm.tracking.plotting">module</a>
 </li>
       </ul></li>
-      <li>
-    ssm.tracking.utils
-
-      <ul>
-        <li><a href="ssm.tracking.html#module-ssm.tracking.utils">module</a>
-</li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -316,14 +284,6 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ssm.html#ssm.inference.TimeVaryingOnlineKalmanFilter">TimeVaryingOnlineKalmanFilter (class in ssm.inference)</a>
-</li>
-      <li><a href="ssm.html#ssm.learning.torch_adam_optimize_SS_tracking_diagV0">torch_adam_optimize_SS_tracking_diagV0() (in module ssm.learning)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="ssm.html#ssm.learning.torch_lbfgs_optimize_kinematicsHO_logLikeEKF_diagV0">torch_lbfgs_optimize_kinematicsHO_logLikeEKF_diagV0() (in module ssm.learning)</a>
-</li>
-      <li><a href="ssm.html#ssm.learning.torch_lbfgs_optimize_SS_tracking_diagV0">torch_lbfgs_optimize_SS_tracking_diagV0() (in module ssm.learning)</a>
 </li>
   </ul></td>
 </tr></table>

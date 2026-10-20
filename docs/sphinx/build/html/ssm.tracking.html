@@ -20,7 +20,8 @@
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="ssm package" href="ssm.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -47,6 +48,24 @@
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Demo scripts</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Code:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">ssm</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ssm.html">ssm package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="ssm.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">ssm.tracking package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#module-ssm.inference">ssm.inference module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm-learning-module">ssm.learning module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#module-ssm.simulation">ssm.simulation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#module-ssm">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 
         </div>
       </div>
@@ -62,6 +81,8 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">ssm</a></li>
+          <li class="breadcrumb-item"><a href="ssm.html">ssm package</a></li>
       <li class="breadcrumb-item active">ssm.tracking package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/ssm.tracking.rst.txt" rel="nofollow"> View page source</a>
@@ -103,23 +124,8 @@ positions, velocities or accelerations) plotted against time.</p>
 </dd></dl>
 
 </section>
-<section id="module-ssm.tracking.utils">
-<span id="ssm-tracking-utils-module"></span><h2>ssm.tracking.utils module<a class="headerlink" href="#module-ssm.tracking.utils" title="Permalink to this heading"></a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="ssm.tracking.utils.getLDSmatricesForKinematics_np">
-<span class="sig-prename descclassname"><span class="pre">ssm.tracking.utils.</span></span><span class="sig-name descname"><span class="pre">getLDSmatricesForKinematics_np</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_x_R_std</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_y_R_std</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssm/tracking/utils.html#getLDSmatricesForKinematics_np"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssm.tracking.utils.getLDSmatricesForKinematics_np" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="ssm.tracking.utils.getLDSmatricesForKinematics_torch">
-<span class="sig-prename descclassname"><span class="pre">ssm.tracking.utils.</span></span><span class="sig-name descname"><span class="pre">getLDSmatricesForKinematics_torch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_x_R_std</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_y_R_std</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssm/tracking/utils.html#getLDSmatricesForKinematics_torch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssm.tracking.utils.getLDSmatricesForKinematics_torch" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="ssm.tracking.utils.getNDSwithGaussianNoiseFunctionsForKinematicsAndHO_torch">
-<span class="sig-prename descclassname"><span class="pre">ssm.tracking.utils.</span></span><span class="sig-name descname"><span class="pre">getNDSwithGaussianNoiseFunctionsForKinematicsAndHO_torch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cos_theta_Q_std</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sin_theta_Q_std</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega_Q_std</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_x_R_std</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_y_R_std</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cos_theta_R_std</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sin_theta_R_std</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssm/tracking/utils.html#getNDSwithGaussianNoiseFunctionsForKinematicsAndHO_torch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssm.tracking.utils.getNDSwithGaussianNoiseFunctionsForKinematicsAndHO_torch" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
+<section id="ssm-tracking-utils-module">
+<h2>ssm.tracking.utils module<a class="headerlink" href="#ssm-tracking-utils-module" title="Permalink to this heading"></a></h2>
 </section>
 <section id="module-ssm.tracking">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ssm.tracking" title="Permalink to this heading"></a></h2>
@@ -129,7 +135,9 @@ positions, velocities or accelerations) plotted against time.</p>
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ssm.html" class="btn btn-neutral float-left" title="ssm package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
 
   <hr/>
 

@@ -20,7 +20,9 @@
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ssm package" href="ssm.html" />
+    <link rel="prev" title="Simulated data" href="auto_examples/onlineBayesianLinearRegression/plotOnlineBayesianLinearRegressionSimulatedData.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -46,6 +48,13 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Demo scripts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ssm</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ssm.html">ssm package</a></li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -81,7 +90,7 @@
 <li class="toctree-l3"><a class="reference internal" href="ssm.tracking.html">ssm.tracking package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="ssm.tracking.html#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ssm.tracking.html#module-ssm.tracking.plotting">ssm.tracking.plotting module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ssm.tracking.html#module-ssm.tracking.utils">ssm.tracking.utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssm.tracking.html#ssm-tracking-utils-module">ssm.tracking.utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ssm.tracking.html#module-ssm.tracking">Module contents</a></li>
 </ul>
 </li>
@@ -108,31 +117,22 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.inference.ekf_forecast"><code class="docutils literal notranslate"><span class="pre">ekf_forecast()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.inference.ekf_forecast_batch"><code class="docutils literal notranslate"><span class="pre">ekf_forecast_batch()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.inference.ekf_states_forecast"><code class="docutils literal notranslate"><span class="pre">ekf_states_forecast()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.inference.filterEKF_withMissingValues_torch"><code class="docutils literal notranslate"><span class="pre">filterEKF_withMissingValues_torch()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.inference.filterLDS_SS_withMissingValues_np"><code class="docutils literal notranslate"><span class="pre">filterLDS_SS_withMissingValues_np()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.inference.filterLDS_SS_withMissingValues_torch"><code class="docutils literal notranslate"><span class="pre">filterLDS_SS_withMissingValues_torch()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.inference.lds_forecast"><code class="docutils literal notranslate"><span class="pre">lds_forecast()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.inference.lds_forecast_batch"><code class="docutils literal notranslate"><span class="pre">lds_forecast_batch()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.inference.lds_observation_forecast"><code class="docutils literal notranslate"><span class="pre">lds_observation_forecast()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.inference.lds_observations_forecast"><code class="docutils literal notranslate"><span class="pre">lds_observations_forecast()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.inference.lds_state_forecast"><code class="docutils literal notranslate"><span class="pre">lds_state_forecast()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.inference.lds_states_forecast"><code class="docutils literal notranslate"><span class="pre">lds_states_forecast()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.inference.logLikeEKF_withMissingValues_torch"><code class="docutils literal notranslate"><span class="pre">logLikeEKF_withMissingValues_torch()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.inference.logLikeLDS_withMissingValues_torch"><code class="docutils literal notranslate"><span class="pre">logLikeLDS_withMissingValues_torch()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.inference.log_like_observations_given_forecasts_ekf"><code class="docutils literal notranslate"><span class="pre">log_like_observations_given_forecasts_ekf()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.inference.log_like_observations_given_forecasts_lds"><code class="docutils literal notranslate"><span class="pre">log_like_observations_given_forecasts_lds()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.inference.log_like_observations_given_ekf_state_forecasts"><code class="docutils literal notranslate"><span class="pre">log_like_observations_given_ekf_state_forecasts()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.inference.log_like_observations_given_lds_state_forecasts"><code class="docutils literal notranslate"><span class="pre">log_like_observations_given_lds_state_forecasts()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.inference.smoothLDS_SS"><code class="docutils literal notranslate"><span class="pre">smoothLDS_SS()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="ssm.html#module-ssm.learning">ssm.learning module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.learning.em_SS_LDS"><code class="docutils literal notranslate"><span class="pre">em_SS_LDS()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.learning.em_SS_tracking"><code class="docutils literal notranslate"><span class="pre">em_SS_tracking()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.learning.lag1CovSmootherLDS_SS"><code class="docutils literal notranslate"><span class="pre">lag1CovSmootherLDS_SS()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.learning.posteriorCorrelationMatrices"><code class="docutils literal notranslate"><span class="pre">posteriorCorrelationMatrices()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.learning.scipy_optimize_SS_tracking_diagV0"><code class="docutils literal notranslate"><span class="pre">scipy_optimize_SS_tracking_diagV0()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.learning.scipy_optimize_SS_tracking_fullV0"><code class="docutils literal notranslate"><span class="pre">scipy_optimize_SS_tracking_fullV0()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.learning.torch_adam_optimize_SS_tracking_diagV0"><code class="docutils literal notranslate"><span class="pre">torch_adam_optimize_SS_tracking_diagV0()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.learning.torch_lbfgs_optimize_SS_tracking_diagV0"><code class="docutils literal notranslate"><span class="pre">torch_lbfgs_optimize_SS_tracking_diagV0()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.learning.torch_lbfgs_optimize_kinematicsHO_logLikeEKF_diagV0"><code class="docutils literal notranslate"><span class="pre">torch_lbfgs_optimize_kinematicsHO_logLikeEKF_diagV0()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="ssm.html#ssm-learning-module">ssm.learning module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ssm.html#module-ssm.simulation">ssm.simulation module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.simulation.simulateLDS"><code class="docutils literal notranslate"><span class="pre">simulateLDS()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.simulation.simulateNDSgaussianNoise"><code class="docutils literal notranslate"><span class="pre">simulateNDSgaussianNoise()</span></code></a></li>
@@ -148,7 +148,10 @@
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="auto_examples/onlineBayesianLinearRegression/plotOnlineBayesianLinearRegressionSimulatedData.html" class="btn btn-neutral float-left" title="Simulated data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ssm.html" class="btn btn-neutral float-right" title="ssm package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 
