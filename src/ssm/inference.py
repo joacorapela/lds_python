@@ -343,7 +343,7 @@ def logLikeLDS_withMissingValues_torch(y, u, B, Q, m0, V0, a, Z, R):
     :type: Q: numpy matrix (MxM)
 
     :param: m0: initial state mean
-    :type: m0: one-dimensional numpy array (M)
+    :type: m0: numpy array (Mx1)
 
     :param: V0: initial state covariance
     :type: V0: numpy matrix (MxM)
@@ -366,8 +366,8 @@ def logLikeLDS_withMissingValues_torch(y, u, B, Q, m0, V0, a, Z, R):
     if torch.any(torch.isnan(y[:, 0])) or torch.any(torch.isnan(y[:, -1])):
         raise ValueError("The first or last observation cannot contain nan")
 
-    if m0.ndim != 1:
-        raise ValueError("mean must be 1 dimensional")
+    # if m0.ndim != 1:
+    #     raise ValueError("mean must be 1 dimensional")
 
     # T: number of observations
     # M: dim state space
@@ -376,7 +376,7 @@ def logLikeLDS_withMissingValues_torch(y, u, B, Q, m0, V0, a, Z, R):
     T = y.shape[1]
     N = y.shape[0]
 
-    xnn = m0
+    xnn = m0.unsqueeze(-1)
     Pnn = V0
     log_like = 0.0
     log2Pi = torch.log(torch.tensor(2.0 * torch.pi))
@@ -394,8 +394,8 @@ def logLikeLDS_withMissingValues_torch(y, u, B, Q, m0, V0, a, Z, R):
             Sn = (Stmp + Stmp.T)/2
             Sinv = torch.linalg.inv(Sn)
             K = Pnn1 @ Z.T @ Sinv
-            pred_obs = a + (Z @ xnn1).squeeze()
-            innov = y[:, k] - pred_obs
+            pred_obs = a + Z @ xnn1
+            innov = y[:, [k]] - pred_obs
             xnn = xnn1 + K @ innov
             Pnn = Pnn1 - K @ Z @ Pnn1
         log_like += -0.5 * (N * log2Pi + torch.logdet(Sn) +
@@ -853,7 +853,7 @@ def filterLDS_SS_withMissingValues_np(y, u, B, Q, m0, V0, a, Z, R):
     valid_obs_count = 0
 
     # k == 0
-    xnn1[:, 0, 0] = u + B @ m0
+    xnn1[:, 0, 0] = np.squeeze(u) + B @ m0
     Pnn1[:, :, 0] = B @ V0 @ B.T + Q
 
     if np.any(np.isnan(y[:, 0])):
@@ -867,8 +867,8 @@ def filterLDS_SS_withMissingValues_np(y, u, B, Q, m0, V0, a, Z, R):
         Sn[:, :, 0] = (Stmp + Stmp.T) / 2
         Sinv = np.linalg.inv(Sn[:, :, 0])
         K[:, :, 0] = Pnn1[:, :, 0] @ Z.T @ Sinv
-        pred_obs = a + (Z @ xnn1[:, :, 0]).squeeze()
-        innov[:, 0, 0] = y[:, 0] - pred_obs
+        pred_obs = a + Z @ xnn1[:, :, 0]
+        innov[:, 0, 0] = y[:, 0] - pred_obs[:, 0]
         xnn[:, :, 0] = xnn1[:, :, 0] + K[:, :, 0] @ innov[:, :, 0]
         Pnn[:, :, 0] = Pnn1[:, :, 0] - K[:, :, 0] @ Z @ Pnn1[:, :, 0]
 
@@ -878,7 +878,7 @@ def filterLDS_SS_withMissingValues_np(y, u, B, Q, m0, V0, a, Z, R):
 
     # k > 0
     for k in range(1, N):
-        xnn1[:, 0, k] = u + (B @ xnn[:, :, k-1]).squeeze()
+        xnn1[:, :, k] = u + B @ xnn[:, :, k-1]
         Pnn1[:, :, k] = B @ Pnn[:, :, k-1] @ B.T + Q
         if np.any(np.isnan(y[:, k])):
             xnn[:, :, k] = xnn1[:, :, k]
@@ -891,8 +891,8 @@ def filterLDS_SS_withMissingValues_np(y, u, B, Q, m0, V0, a, Z, R):
             Sn[:, :, k] = (Stmp + Stmp.T) / 2
             Sinv = np.linalg.inv(Sn[:, :, k])
             K[:, :, k] = Pnn1[:, :, k] @ Z.T @ Sinv
-            pred_obs = a + (Z @ xnn1[:, :, k]).squeeze()
-            innov[:, 0, k] = y[:, k] - pred_obs
+            pred_obs = a + Z @ xnn1[:, :, k]
+            innov[:, :, k] = np.expand_dims(y[:, k],-1) - pred_obs
             xnn[:, :, k] = xnn1[:, :, k] + K[:, :, k] @ innov[:, :, k]
             Pnn[:, :, k] = Pnn1[:, :, k] - K[:, :, k] @ Z @ Pnn1[:, :, k]
             log_like -= (np.linalg.slogdet(Sn[:, :, k])[1] +\
