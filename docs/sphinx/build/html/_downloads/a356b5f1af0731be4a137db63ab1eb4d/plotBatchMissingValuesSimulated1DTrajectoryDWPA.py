@@ -52,8 +52,8 @@ V0 = np.diag(np.ones(len(m0))*sqrt_diag_V0_value**2)
 
 M = B.shape[0]
 N = Z.shape[0]
-u = np.zeros(shape=(M, 1))
-a = np.zeros(shape=(N, 1))
+u = np.zeros(shape=(M, 1), dtype=np.double)
+a = np.zeros(shape=(N, 1), dtype=np.double)
 x0, x, y = ssm.simulation.simulateLDS(T=num_pos, u=u, B=B, Q=Q, m0=m0, V0=V0,
                                       a=a, Z=Z, R=R)
 missing_indices = first_missing_pos + np.arange(num_missing_pos)
@@ -74,7 +74,7 @@ acc_est_fd = np.diff(vel_est_fd) / dt
 
 Q = sigma_a*Qe
 filterRes = ssm.inference.filterLDS_SS_withMissingValues_np(
-    y=y, u=np.squeeze(u), B=B, Q=Q, m0=m0, V0=V0, a=np.squeeze(a), Z=Z, R=R)
+    y=y, u=u, B=B, Q=Q, m0=m0, V0=V0, a=a, Z=Z, R=R)
 
 #%%
 # Set variables for plotting

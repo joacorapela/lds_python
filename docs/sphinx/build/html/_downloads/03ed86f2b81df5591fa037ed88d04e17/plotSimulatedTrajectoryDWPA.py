@@ -15,7 +15,7 @@ model.
 import numpy as np
 import plotly.graph_objs as go
 
-import ssm.inference.utils
+import ssm.kinematics.utils
 import ssm.simulation
 
 
@@ -40,7 +40,7 @@ sqrt_diag_V0_value = 1e-03
 # Set LDS parameters
 # ~~~~~~~~~~~~~~~~~~
 
-B, Q, Qe, Z, R = ssm.inference.utils.getLDSmatricesForKinematics_np(
+B, Q, Qe, Z, R = ssm.kinematics.utils.getLDSmatricesForKinematics_np(
     dt=dt, sigma_a=sigma_a, pos_x_R_std=sigma_x, pos_y_R_std=sigma_y)
 R = np.diag([sigma_x**2, sigma_y**2])
 m0 = np.array([pos_x0, vel_x0, ace_x0, pos_y0, vel_y0, ace_y0],
@@ -53,7 +53,11 @@ V0 = np.diag(np.ones(len(m0))*sqrt_diag_V0_value**2)
 # View source code of `ssm.simulation.simulateLDS
 # <https://joacorapela.github.io/ssm/_modules/ssm/simulation.html#simulateLDS>`_
 
-x0, x, y = ssm.simulation.simulateLDS(T=num_pos, B=B, Q=Q, Z=Z, R=R, m0=m0,
+M = B.shape[0]
+N = Z.shape[0]
+u = np.zeros(shape=(M, 1), dtype=np.double)
+a = np.zeros(shape=(N, 1), dtype=np.double)
+x0, x, y = ssm.simulation.simulateLDS(T=num_pos, u=u, B=B, Q=Q, a=a, Z=Z, R=R, m0=m0,
                                       V0=V0)
 
 #%%

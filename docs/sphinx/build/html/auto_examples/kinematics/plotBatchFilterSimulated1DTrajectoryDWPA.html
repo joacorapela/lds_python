@@ -46,7 +46,6 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Overview</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Demo scripts</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../index.html#instantaneous-frequency-inference">Instantaneous Frequency Inference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#kinematics-inference">Kinematics Inference</a></li>
@@ -61,8 +60,8 @@
 <li class="toctree-l4"><a class="reference internal" href="plotBatchMissingValuesSimulated1DTrajectoryDWPA.html">Offline filtering of a simulated mouse 1D trajectory</a></li>
 <li class="toctree-l4"><a class="reference internal" href="plotBatchFilterSimulatedTrajectoryDWPA.html">Offline filtering of a simulated mouse trajectory</a></li>
 <li class="toctree-l4"><a class="reference internal" href="plotBatchSmoothSimulatedTrajectoryDWPA.html">Offline smoothing of a simulated mouse trajectory</a></li>
-<li class="toctree-l4"><a class="reference internal" href="plotEMvsGAcomparisonSimulated.html">Comparison between EM and gradient ascent for inference a simulated mouse</a></li>
-<li class="toctree-l4"><a class="reference internal" href="plotEMvsGAcomparisonForagingMouse.html">Comparison between EM and gradient ascent for inference a foraging mouse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plotEMvsGAcomparisonSimulated.html">Comparison between EM and gradient ascent for inferring kinematics of a simulated mouse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plotEMvsGAcomparisonForagingMouse.html">Comparison between EM and gradient ascent for inferring kinematics of a foraging mouse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="plotFilterFWGMouseTrajectoryManualVsLearnedParams.html">Filtering of a foraging mouse trajectory with manual vs learned parameters</a></li>
 </ul>
 </li>
@@ -123,12 +122,6 @@ trajectory.</p>
 <span class="kn">import</span> <span class="nn">ssm.inference</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-pytb notranslate"><div class="highlight"><pre><span></span><span class="gt">Traceback (most recent call last):</span>
-  File <span class="nb">&quot;/nfs/ghome/live/rapela/dev/work/ucl/gatsby-swc/gatsby/code/ssm_rapela/repos/ssm/examples/sphinx_gallery/kinematics/plotBatchFilterSimulated1DTrajectoryDWPA.py&quot;</span>, line <span class="m">18</span>, in <span class="n">&lt;module&gt;</span>
-<span class="w">    </span><span class="kn">import</span> <span class="nn">ssm.kinematics.utils</span>
-<span class="gr">ModuleNotFoundError</span>: <span class="n">No module named &#39;ssm.kinematics&#39;</span>
-</pre></div>
-</div>
 </section>
 <section id="set-initial-conditions-and-parameters">
 <h2>Set initial conditions and parameters<a class="headerlink" href="#set-initial-conditions-and-parameters" title="Permalink to this heading"></a></h2>
@@ -158,8 +151,8 @@ trajectory.</p>
 <p>View source code of <a class="reference external" href="https://joacorapela.github.io/ssm/_modules/ssm/simulation.html#simulateLDS">ssm.simulation.simulateLDS</a></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">M</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">N</span> <span class="o">=</span> <span class="n">Z</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
 <span class="n">x0</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">ssm</span><span class="o">.</span><span class="n">simulation</span><span class="o">.</span><span class="n">simulateLDS</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="n">num_pos</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="n">u</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="n">Q</span><span class="p">,</span> <span class="n">m0</span><span class="o">=</span><span class="n">m0</span><span class="p">,</span> <span class="n">V0</span><span class="o">=</span><span class="n">V0</span><span class="p">,</span>
                                       <span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">Z</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">)</span>
 </pre></div>
@@ -177,7 +170,7 @@ trajectory.</p>
 <p>View source code of <a class="reference external" href="https://joacorapela.github.io/ssm/_modules/ssm/inference.html#filterLDS_SS_withMissingValues_np">ssm.inference.filterLDS_SS_withMissingValues_np</a></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Q</span> <span class="o">=</span> <span class="n">sigma_a</span><span class="o">*</span><span class="n">Qe</span>
 <span class="n">filterRes</span> <span class="o">=</span> <span class="n">ssm</span><span class="o">.</span><span class="n">inference</span><span class="o">.</span><span class="n">filterLDS_SS_withMissingValues_np</span><span class="p">(</span>
-    <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="n">Q</span><span class="p">,</span> <span class="n">m0</span><span class="o">=</span><span class="n">m0</span><span class="p">,</span> <span class="n">V0</span><span class="o">=</span><span class="n">V0</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">Z</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">)</span>
+    <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="n">u</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="n">Q</span><span class="p">,</span> <span class="n">m0</span><span class="o">=</span><span class="n">m0</span><span class="p">,</span> <span class="n">V0</span><span class="o">=</span><span class="n">V0</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">Z</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -351,10 +344,10 @@ trajectory.</p>
 <span class="c1"># fig</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.001 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  2.380 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-kinematics-plotbatchfiltersimulated1dtrajectorydwpa-py">
 <div class="binder-badge docutils container">
-<a class="reference external image-reference" href="https://mybinder.org/v2/gh/joacorapela/lds_python/gh-pages?filepath=notebooks/auto_examples/kinematics/plotBatchFilterSimulated1DTrajectoryDWPA.ipynb"><img alt="Launch binder" src="../../_images/binder_badge_logo.svg" width="150px" /></a>
+<a class="reference external image-reference" href="https://mybinder.org/v2/gh/joacorapela/lds_python/gh-pages?filepath=notebooks/auto_examples/kinematics/plotBatchFilterSimulated1DTrajectoryDWPA.ipynb"><img alt="Launch binder" src="../../_images/binder_badge_logo1.svg" width="150px" /></a>
 </div>
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/a4e9df2d13d091e0c8b0aa5f374cccc6/plotBatchFilterSimulated1DTrajectoryDWPA.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plotBatchFilterSimulated1DTrajectoryDWPA.py</span></code></a></p>

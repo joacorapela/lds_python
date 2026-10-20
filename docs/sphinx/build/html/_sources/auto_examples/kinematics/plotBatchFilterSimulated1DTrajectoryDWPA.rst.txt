@@ -43,14 +43,7 @@ Import packages
 
 
 
-.. rst-class:: sphx-glr-script-out
 
-.. code-block:: pytb
-
-    Traceback (most recent call last):
-      File "/nfs/ghome/live/rapela/dev/work/ucl/gatsby-swc/gatsby/code/ssm_rapela/repos/ssm/examples/sphinx_gallery/kinematics/plotBatchFilterSimulated1DTrajectoryDWPA.py", line 18, in <module>
-        import ssm.kinematics.utils
-    ModuleNotFoundError: No module named 'ssm.kinematics'
 
 
 
@@ -75,6 +68,12 @@ Set initial conditions and parameters
     sqrt_diag_V0_value = 1e-03
 
 
+
+
+
+
+
+
 .. GENERATED FROM PYTHON SOURCE LINES 36-38
 
 Set LDS parameters
@@ -92,6 +91,12 @@ Set LDS parameters
     V0 = np.diag(np.ones(len(m0))*sqrt_diag_V0_value**2)
 
 
+
+
+
+
+
+
 .. GENERATED FROM PYTHON SOURCE LINES 46-50
 
 Sample from the LDS
@@ -106,10 +111,16 @@ View source code of `ssm.simulation.simulateLDS
 
     M = B.shape[0]
     N = Z.shape[0]
-    u = np.zeros(shape=(M, 1))
-    a = np.zeros(shape=(N, 1))
+    u = np.zeros(shape=(M, 1), dtype=np.double)
+    a = np.zeros(shape=(N, 1), dtype=np.double)
     x0, x, y = ssm.simulation.simulateLDS(T=num_pos, u=u, B=B, Q=Q, m0=m0, V0=V0,
                                           a=a, Z=Z, R=R)
+
+
+
+
+
+
 
 
 .. GENERATED FROM PYTHON SOURCE LINES 59-61
@@ -126,6 +137,12 @@ Estimate velocities and accelerations using finite differences
     acc_est_fd = np.diff(vel_est_fd) / dt
 
 
+
+
+
+
+
+
 .. GENERATED FROM PYTHON SOURCE LINES 66-70
 
 Perform batch filtering
@@ -140,7 +157,13 @@ View source code of `ssm.inference.filterLDS_SS_withMissingValues_np
 
     Q = sigma_a*Qe
     filterRes = ssm.inference.filterLDS_SS_withMissingValues_np(
-        y=y, u=np.squeeze(u), B=B, Q=Q, m0=m0, V0=V0, a=np.squeeze(a), Z=Z, R=R)
+        y=y, u=u, B=B, Q=Q, m0=m0, V0=V0, a=a, Z=Z, R=R)
+
+
+
+
+
+
 
 
 .. GENERATED FROM PYTHON SOURCE LINES 76-78
@@ -162,6 +185,12 @@ Set variables for plotting
     color_other = "black"
     color_filtered_pattern = "rgba(255,0,0,{:f})"
     cb_alpha = 0.3
+
+
+
+
+
+
 
 
 .. GENERATED FROM PYTHON SOURCE LINES 90-92
@@ -236,6 +265,12 @@ Define function for plotting
         return fig
 
 
+
+
+
+
+
+
 .. GENERATED FROM PYTHON SOURCE LINES 155-157
 
 Plot true, measured and filtered positions (with 95% confidence band)
@@ -271,6 +306,12 @@ Plot true, measured and filtered positions (with 95% confidence band)
     fig.write_image(fig_filename_pattern.format("png"))
     fig.write_html(fig_filename_pattern.format("html"))
     # fig
+
+
+
+
+
+
 
 
 .. GENERATED FROM PYTHON SOURCE LINES 185-187
@@ -309,6 +350,12 @@ Plot true and filtered velocities (with 95% confidence band)
     fig.write_image(fig_filename_pattern.format("png"))
     fig.write_html(fig_filename_pattern.format("html"))
     # fig
+
+
+
+
+
+
 
 
 .. GENERATED FROM PYTHON SOURCE LINES 216-218
@@ -350,9 +397,15 @@ Plot true and filtered accelerations (with 95% confidence band)
 
 
 
+
+
+
+
+
+
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.001 seconds)
+   **Total running time of the script:** ( 0 minutes  2.380 seconds)
 
 
 .. _sphx_glr_download_auto_examples_kinematics_plotBatchFilterSimulated1DTrajectoryDWPA.py:

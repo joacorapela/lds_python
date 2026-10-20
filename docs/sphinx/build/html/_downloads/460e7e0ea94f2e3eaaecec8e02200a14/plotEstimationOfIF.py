@@ -16,7 +16,7 @@ import numpy as np
 import plotly.graph_objs as go
 
 import ssm.inference
-import ssm.tracking.utils
+import ssm.kinematics.utils
 
 
 #%%
@@ -41,7 +41,7 @@ vel_x0 = 0.0 # initial value for velocity
 ace_x0 = 0.0 # initial value for acceleration
 sqrt_diag_V0_value = 1e-03 # square root of diagonal elements of the initial state covariance matrix
 dt = 1e-3 # sampling interval
-sigma_a = 1.0 # standard deviation of the state acceleration in the discrete Wiener process acceleration model https://github.com/joacorapela/ssm/blob/master/docs/tracking/tracking.pdf
+sigma_a = 1.0 # standard deviation of the state acceleration in the discrete Wiener process acceleration model https://github.com/joacorapela/ssm/blob/master/docs/kinematics/kinematics.pdf
 sigma_x = 1.0 # standard deviation of the measurement position
 
 #%%
@@ -70,13 +70,14 @@ fig.update_xaxes(title="Time (sec)")
 fig.update_yaxes(title="Phase")
 fig.update_layout(title=title)
 
-fig.show()
+fig
+
 
 #%%
 # Set LDS parameters
 # ~~~~~~~~~~~~~~~~~~
 
-B, Q, Qe, Z, R = ssm.tracking.utils.getLDSmatricesFor1D_np(
+B, Q, Qe, Z, R = ssm.kinematics.utils.getLDSmatricesFor1DKinematics_np(
     dt=dt, sigma_a=sigma_a, pos_R_std=sigma_x)
 m0 = np.array([pos_x0, vel_x0, ace_x0], dtype=np.double)
 V0 = np.diag(np.ones(len(m0))*sqrt_diag_V0_value**2)
@@ -139,5 +140,5 @@ fig.update_xaxes(title="Time (sec)")
 fig.update_yaxes(title="Instantaneous Frequency")
 fig.update_layout(title=title)
 
-fig.show()
-breakpoint()
+fig
+

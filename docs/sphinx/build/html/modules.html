@@ -87,11 +87,11 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="ssm.html">ssm package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ssm.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="ssm.tracking.html">ssm.tracking package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="ssm.tracking.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ssm.tracking.html#module-ssm.tracking.plotting">ssm.tracking.plotting module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ssm.tracking.html#ssm-tracking-utils-module">ssm.tracking.utils module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ssm.tracking.html#module-ssm.tracking">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.kinematics.html">ssm.kinematics package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ssm.kinematics.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssm.kinematics.html#module-ssm.kinematics.plotting">ssm.kinematics.plotting module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssm.kinematics.html#module-ssm.kinematics.utils">ssm.kinematics.utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssm.kinematics.html#module-ssm.kinematics">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -132,10 +132,34 @@
 <li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.inference.smoothLDS_SS"><code class="docutils literal notranslate"><span class="pre">smoothLDS_SS()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="ssm.html#ssm-learning-module">ssm.learning module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssm.html#module-ssm.learning">ssm.learning module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.learning.em_SS_LDS"><code class="docutils literal notranslate"><span class="pre">em_SS_LDS()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.learning.em_SS_kinematics"><code class="docutils literal notranslate"><span class="pre">em_SS_kinematics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.learning.getSummaryStatsForEM"><code class="docutils literal notranslate"><span class="pre">getSummaryStatsForEM()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.learning.lag1CovSmootherLDS_SS"><code class="docutils literal notranslate"><span class="pre">lag1CovSmootherLDS_SS()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.learning.posteriorCorrelationMatrices"><code class="docutils literal notranslate"><span class="pre">posteriorCorrelationMatrices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.learning.scipy_optimize_SS_kinematics_diagV0"><code class="docutils literal notranslate"><span class="pre">scipy_optimize_SS_kinematics_diagV0()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.learning.scipy_optimize_SS_kinematics_fullV0"><code class="docutils literal notranslate"><span class="pre">scipy_optimize_SS_kinematics_fullV0()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.learning.torch_adam_optimize_SS_kinematics_diagV0"><code class="docutils literal notranslate"><span class="pre">torch_adam_optimize_SS_kinematics_diagV0()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.learning.torch_lbfgs_optimize_SS_LDS"><code class="docutils literal notranslate"><span class="pre">torch_lbfgs_optimize_SS_LDS()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.learning.torch_lbfgs_optimize_SS_kinematics_diagV0"><code class="docutils literal notranslate"><span class="pre">torch_lbfgs_optimize_SS_kinematics_diagV0()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.learning.torch_lbfgs_optimize_kinematicsHO_logLikeEKF_diagV0"><code class="docutils literal notranslate"><span class="pre">torch_lbfgs_optimize_kinematicsHO_logLikeEKF_diagV0()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ssm.html#module-ssm.plotting">ssm.plotting module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.plotting.add_events_vlines"><code class="docutils literal notranslate"><span class="pre">add_events_vlines()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="ssm.html#module-ssm.simulation">ssm.simulation module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.simulation.simulateLDS"><code class="docutils literal notranslate"><span class="pre">simulateLDS()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.simulation.simulateNDSgaussianNoise"><code class="docutils literal notranslate"><span class="pre">simulateNDSgaussianNoise()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ssm.html#module-ssm.utils">ssm.utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.utils.array1d_to_string"><code class="docutils literal notranslate"><span class="pre">array1d_to_string()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.utils.matrix_to_string"><code class="docutils literal notranslate"><span class="pre">matrix_to_string()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.utils.string_to_array1d"><code class="docutils literal notranslate"><span class="pre">string_to_array1d()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssm.html#ssm.utils.string_to_matrix"><code class="docutils literal notranslate"><span class="pre">string_to_matrix()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ssm.html#module-ssm">Module contents</a></li>

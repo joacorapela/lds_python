@@ -6,8 +6,8 @@
 
 Computation times
 =================
-**00:00.246** total execution time for **auto_examples_instantaneousFrequency** files:
+**00:01.792** total execution time for **auto_examples_instantaneousFrequency** files:
 
 +--------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_instantaneousFrequency_plotEstimationOfIF.py` (``plotEstimationOfIF.py``) | 00:00.246 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_instantaneousFrequency_plotEstimationOfIF.py` (``plotEstimationOfIF.py``) | 00:01.792 | 0.0 MB |
 +--------------------------------------------------------------------------------------------------------+-----------+--------+
