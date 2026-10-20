@@ -797,37 +797,40 @@ def filterLDS_SS_withMissingValues_np(y, u, B, Q, m0, V0, a, Z, R):
     """ Kalman filter implementation of the algorithm described in Shumway and
     Stoffer 2006.
 
-    :param: y: time series to be smoothed
-    :type: y: numpy array (NxT)
+    :param y: time series to be smoothed
+    :type y: numpy array (NxT)
 
-    :param: u: state offset
-    :type: u: numpy array (Mx1)
+    :param u: state offset
+    :type u: numpy array (Mx1)
 
-    :param: B: state transition matrix
-    :type: B: numpy matrix (MxM)
+    :param B: state transition matrix
+    :type B: numpy matrix (MxM)
 
-    :param: Q: state noise covariance matrix
-    :type: Q: numpy matrix (MxM)
+    :param Q: state noise covariance matrix
+    :type Q: numpy matrix (MxM)
 
-    :param: m0: initial state mean
-    :type: m0: one-dimensional numpy array (M)
+    :param m0: initial state mean
+    :type m0: one-dimensional numpy array (M)
 
-    :param: V0: initial state covariance
-    :type: V0: numpy matrix (MxM)
+    :param V0: initial state covariance
+    :type V0: numpy matrix (MxM)
 
-    :param: a: observations offset
-    :type: a: numpy array (Nx1)
+    :param a: observations offset
+    :type a: numpy array (Nx1)
 
-    :param: Z: state to observation matrix
-    :type: Z: numpy matrix (NxM)
+    :param Z: state to observation matrix
+    :type Z: numpy matrix (NxM)
 
-    :param: R: observations covariance matrix
-    :type: R: numpy matrix (NxN)
+    :param R: observations covariance matrix
+    :type R: numpy matrix (NxN)
 
     :return:  {xnn1, Pnn1, xnn, Pnn, innov, K, Sn, log_like}: xnn1 and Pnn1 (predicted means, Mx1xT, and covariances, MxMxT), xnn and Pnn (filtered means, Mx1xT, and covariances, MxMxT), innov (innovations, Nx1xT), K (Kalman gain matrices, MxNxT), Sn (innovations covariance matrices, NxNxT), log_like (data loglikelihood, float).
     :rtype: dictionary
 
     """
+
+    if np.any(np.isnan(m0)) or np.any(np.isnan(V0)):
+        raise ValueError("m0 and V0 cannot contain nan")
 
     if m0.ndim != 1:
         raise ValueError("mean must be 1 dimensional")
@@ -844,44 +847,205 @@ def filterLDS_SS_withMissingValues_np(y, u, B, Q, m0, V0, a, Z, R):
     Pnn = np.empty(shape=[M, M, N])
     innov = np.empty(shape=[P, 1, N])
     Sn = np.empty(shape=[P, P, N])
+    K = np.empty(shape=[M, P, N])
 
-    # k==0
+    log_like = 0.0
+    valid_obs_count = 0
+
+    # k == 0
     xnn1[:, 0, 0] = u + B @ m0
     Pnn1[:, :, 0] = B @ V0 @ B.T + Q
-    Stmp = Z @ Pnn1[:, :, 0] @ Z.T + R
-    Sn[:, :, 0] = (Stmp + Stmp.T) / 2
-    Sinv = np.linalg.inv(Sn[:, :, 0])
-    K = Pnn1[:, :, 0] @ Z.T @ Sinv
-    pred_obs = a + (Z @  xnn1[:, :, 0]).squeeze()
-    innov[:, 0, 0] = y[:, 0] - pred_obs
-    xnn[:, :, 0] = xnn1[:, :, 0] + K @ innov[:, :, 0]
-    Pnn[:, :, 0] = Pnn1[:, :, 0] - K @ Z @ Pnn1[:, :, 0]
-    log_like = -N*P*np.log(2*np.pi) - np.linalg.slogdet(Sn[:, :, 0])[1] - \
-        innov[:, :, 0].T @ Sinv @ innov[:, :, 0]
 
-    # k>1
+    if np.any(np.isnan(y[:, 0])):
+        xnn[:, :, 0] = xnn1[:, :, 0]
+        Pnn[:, :, 0] = Pnn1[:, :, 0]
+        innov[:, :, 0] = np.nan
+        Sn[:, :, 0] = np.nan
+        K[:, :, 0] = np.nan
+    else:
+        Stmp = Z @ Pnn1[:, :, 0] @ Z.T + R
+        Sn[:, :, 0] = (Stmp + Stmp.T) / 2
+        Sinv = np.linalg.inv(Sn[:, :, 0])
+        K[:, :, 0] = Pnn1[:, :, 0] @ Z.T @ Sinv
+        pred_obs = a + (Z @ xnn1[:, :, 0]).squeeze()
+        innov[:, 0, 0] = y[:, 0] - pred_obs
+        xnn[:, :, 0] = xnn1[:, :, 0] + K[:, :, 0] @ innov[:, :, 0]
+        Pnn[:, :, 0] = Pnn1[:, :, 0] - K[:, :, 0] @ Z @ Pnn1[:, :, 0]
+
+        log_like -= (np.linalg.slogdet(Sn[:, :, 0])[1] +
+                     (innov[:, :, 0].T @ Sinv @ innov[:, :, 0]).item())
+        valid_obs_count += P
+
+    # k > 0
     for k in range(1, N):
         xnn1[:, 0, k] = u + (B @ xnn[:, :, k-1]).squeeze()
         Pnn1[:, :, k] = B @ Pnn[:, :, k-1] @ B.T + Q
-        if(np.any(np.isnan(y[:, k]))):
+        if np.any(np.isnan(y[:, k])):
             xnn[:, :, k] = xnn1[:, :, k]
             Pnn[:, :, k] = Pnn1[:, :, k]
+            innov[:, :, k] = np.nan
+            Sn[:, :, k] = np.nan
+            K[:, :, k] = np.nan
         else:
             Stmp = Z @ Pnn1[:, :, k] @ Z.T + R
-            Sn[:, :, k] = (Stmp + Stmp.T)/2
+            Sn[:, :, k] = (Stmp + Stmp.T) / 2
             Sinv = np.linalg.inv(Sn[:, :, k])
-            K = Pnn1[:, :, k] @ Z.T @ Sinv
-            pred_obs = a + (Z @  xnn1[:, :, k]).squeeze()
+            K[:, :, k] = Pnn1[:, :, k] @ Z.T @ Sinv
+            pred_obs = a + (Z @ xnn1[:, :, k]).squeeze()
             innov[:, 0, k] = y[:, k] - pred_obs
-            xnn[:, :, k] = xnn1[:, :, k] + K @ innov[:, :, k]
-            Pnn[:, :, k] = Pnn1[:, :, k] - K @ Z @ Pnn1[:, :, k]
-        log_like = log_like-np.linalg.slogdet(Sn[:, :, k])[1] -\
-            innov[:, :, k].T @ Sinv @ innov[:, :, k]
-    log_like = 0.5 * log_like
+            xnn[:, :, k] = xnn1[:, :, k] + K[:, :, k] @ innov[:, :, k]
+            Pnn[:, :, k] = Pnn1[:, :, k] - K[:, :, k] @ Z @ Pnn1[:, :, k]
+            log_like -= (np.linalg.slogdet(Sn[:, :, k])[1] +\
+                         (innov[:, :, k].T @ Sinv @ innov[:, :, k]).item())
+            valid_obs_count += P
+
+    log_like = -0.5 * (valid_obs_count * np.log(2 * np.pi) - log_like)
     answer = {"xnn1": xnn1, "Pnn1": Pnn1, "xnn": xnn, "Pnn": Pnn,
-              "innov": innov, "KN": K, "Sn": Sn, "log_like": log_like}
+              "innov": innov, "K": K, "Sn": Sn, "log_like": log_like}
     return answer
 
+# def filterLDS_SS_withMissingValues_np(y, u, B, Q, m0, V0, a, Z, R):
+#     """ Kalman filter implementation of the algorithm described in Shumway and
+#     Stoffer 2006.
+# 
+#     :param: y: time series to be smoothed
+#     :type: y: numpy array (NxT)
+# 
+#     :param: u: state offset
+#     :type: u: numpy array (Mx1)
+# 
+#     :param: B: state transition matrix
+#     :type: B: numpy matrix (MxM)
+# 
+#     :param: Q: state noise covariance matrix
+#     :type: Q: numpy matrix (MxM)
+# 
+#     :param: m0: initial state mean
+#     :type: m0: one-dimensional numpy array (M)
+# 
+#     :param: V0: initial state covariance
+#     :type: V0: numpy matrix (MxM)
+# 
+#     :param: a: observations offset
+#     :type: a: numpy array (Nx1)
+# 
+#     :param: Z: state to observation matrix
+#     :type: Z: numpy matrix (NxM)
+# 
+#     :param: R: observations covariance matrix
+#     :type: R: numpy matrix (NxN)
+# 
+#     :return:  {xnn1, Pnn1, xnn, Pnn, innov, K, Sn, log_like}: xnn1 and Pnn1 (predicted means, Mx1xT, and covariances, MxMxT), xnn and Pnn (filtered means, Mx1xT, and covariances, MxMxT), innov (innovations, Nx1xT), K (Kalman gain matrices, MxNxT), Sn (innovations covariance matrices, NxNxT), log_like (data loglikelihood, float).
+#     :rtype: dictionary
+# 
+#     """
+# 
+#     if m0.ndim != 1:
+#         raise ValueError("mean must be 1 dimensional")
+# 
+#     # N: number of observations
+#     # M: dim state space
+#     # P: dim observations
+#     M = B.shape[0]
+#     N = y.shape[1]
+#     P = y.shape[0]
+#     xnn1 = np.empty(shape=[M, 1, N])
+#     Pnn1 = np.empty(shape=[M, M, N])
+#     xnn = np.empty(shape=[M, 1, N])
+#     Pnn = np.empty(shape=[M, M, N])
+#     innov = np.empty(shape=[P, 1, N])
+#     Sn = np.empty(shape=[P, P, N])
+# 
+#     # k==0
+#     xnn1[:, 0, 0] = u + B @ m0
+#     Pnn1[:, :, 0] = B @ V0 @ B.T + Q
+#     Stmp = Z @ Pnn1[:, :, 0] @ Z.T + R
+#     Sn[:, :, 0] = (Stmp + Stmp.T) / 2
+#     Sinv = np.linalg.inv(Sn[:, :, 0])
+#     K = Pnn1[:, :, 0] @ Z.T @ Sinv
+#     pred_obs = a + (Z @  xnn1[:, :, 0]).squeeze()
+#     innov[:, 0, 0] = y[:, 0] - pred_obs
+#     xnn[:, :, 0] = xnn1[:, :, 0] + K @ innov[:, :, 0]
+#     Pnn[:, :, 0] = Pnn1[:, :, 0] - K @ Z @ Pnn1[:, :, 0]
+#     log_like = -N*P*np.log(2*np.pi) - np.linalg.slogdet(Sn[:, :, 0])[1] - \
+#         innov[:, :, 0].T @ Sinv @ innov[:, :, 0]
+# 
+#     # k>1
+#     for k in range(1, N):
+#         xnn1[:, 0, k] = u + (B @ xnn[:, :, k-1]).squeeze()
+#         Pnn1[:, :, k] = B @ Pnn[:, :, k-1] @ B.T + Q
+#         if(np.any(np.isnan(y[:, k]))):
+#             xnn[:, :, k] = xnn1[:, :, k]
+#             Pnn[:, :, k] = Pnn1[:, :, k]
+#         else:
+#             Stmp = Z @ Pnn1[:, :, k] @ Z.T + R
+#             Sn[:, :, k] = (Stmp + Stmp.T)/2
+#             Sinv = np.linalg.inv(Sn[:, :, k])
+#             K = Pnn1[:, :, k] @ Z.T @ Sinv
+#             pred_obs = a + (Z @  xnn1[:, :, k]).squeeze()
+#             innov[:, 0, k] = y[:, k] - pred_obs
+#             xnn[:, :, k] = xnn1[:, :, k] + K @ innov[:, :, k]
+#             Pnn[:, :, k] = Pnn1[:, :, k] - K @ Z @ Pnn1[:, :, k]
+#         log_like = log_like-np.linalg.slogdet(Sn[:, :, k])[1] -\
+#             innov[:, :, k].T @ Sinv @ innov[:, :, k]
+#     log_like = 0.5 * log_like
+#     answer = {"xnn1": xnn1, "Pnn1": Pnn1, "xnn": xnn, "Pnn": Pnn,
+#               "innov": innov, "KN": K, "Sn": Sn, "log_like": log_like}
+#     return answer
+
+
+# def smoothLDS_SS(B, xnn, Pnn, xnn1, Pnn1, m0, V0):
+#     """ Kalman smoother implementation
+# 
+#     :param: B: state transition matrix
+#     :type: B: numpy matrix (MxM)
+# 
+#     :param: xnn: filtered means (from Kalman filter)
+#     :type: xnn: numpy array (Mx1xT)
+# 
+#     :param: Pnn: filtered covariances (from Kalman filter)
+#     :type: Pnn: numpy array (MxMXT)
+# 
+#     :param: xnn1: predicted means (from Kalman filter)
+#     :type: xnn1: numpy array (Mx1xT)
+# 
+#     :param: Pnn1: predicted covariances (from Kalman filter)
+#     :type: Pnn1: numpy array (MxMXT)
+# 
+#     :param: m0: initial state mean
+#     :type: m0: one-dimensional numpy array (M)
+# 
+#     :param: V0: initial state covariance
+#     :type: V0: numpy matrix (MxM)
+# 
+#     :return:  {xnN, PnN, Jn, x0N, V0N, J0}: xnn1 and Pnn1 (smoothed means, Mx1xT, and covariances, MxMxT), Jn (smoothing gain matrix, MxMxT), x0N and V0N (smoothed initial state mean, M, and covariance, MxM), J0 (initial smoothing gain matrix, MxN).
+# 
+#     """
+#     if m0.ndim != 1:
+#         raise ValueError("mean must be 1 dimensional")
+# 
+#     N = xnn.shape[2]
+#     M = B.shape[0]
+#     xnN = np.empty(shape=[M, 1, N])
+#     PnN = np.empty(shape=[M, M, N])
+#     Jn = np.empty(shape=[M, M, N])
+# 
+#     xnN[:, :, -1] = xnn[:, :, -1]
+#     PnN[:, :, -1] = Pnn[:, :, -1]
+#     for n in reversed(range(1, N)):
+#         Jn[:, :, n-1] = Pnn[:, :, n-1] @ B.T @ np.linalg.inv(Pnn1[:, :, n])
+#         xnN[:, :, n-1] = xnn[:, :, n-1] + \
+#             Jn[:, :, n-1] @ (xnN[:, :, n]-xnn1[:, :, n])
+#         PnN[:, :, n-1] = Pnn[:, :, n-1] + \
+#             Jn[:, :, n-1] @ (PnN[:, :, n]-Pnn1[:, :, n]) @ Jn[:, :, n-1].T
+#     # initial state x00 and V00
+#     # return the smooth estimates of the state at time 0: x0N and V0N
+#     J0 = V0 @ B.T @ np.linalg.inv(Pnn1[:, :, 0])
+#     x0N = np.expand_dims(m0, 1) + J0 @ (xnN[:, :, 0] - xnn1[:, :, 0])
+#     V0N = V0 + J0 @ (PnN[:, :, 0] - Pnn1[:, :, 0]) @ J0.T
+#     answer = {"xnN": xnN, "PnN": PnN, "Jn": Jn, "x0N": x0N, "V0N": V0N,
+#               "J0": J0}
+#     return answer
 
 def smoothLDS_SS(B, xnn, Pnn, xnn1, Pnn1, m0, V0):
     """ Kalman smoother implementation
