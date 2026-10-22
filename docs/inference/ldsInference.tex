@@ -171,39 +171,33 @@ P_{T-2|T}\rightarrow\ldots\rightarrow  x_{1|T}, P_{1|T}$. The initial mean and
 covariances (i.e., $x_{T|T}, P_{T|T}$) are initialized from the last step of
 the Kalman filter.
 
-\section{Missing observations}
-
-What are the filtered values for the missing observations?
+\section{Forecasting}
 
 \begin{proposition}
 
-    For the linear dynamical system in Section~\ref{sec:ldsModel}, if observations
-    $\{\mathcolor{red}{\mathbf{y}_{\tau+1},\ldots,\mathbf{y}_{\tau+K}}\}$ are
-    missing in a sequence of observations
-    $\{\mathbf{y}_1,\ldots,\mathbf{y}_{\tau},\allowbreak\mathcolor{red}{\mathbf{y}_{\tau+1},\ldots,\mathbf{y}_{\tau+K}}\}$
-    then for $1\le k\le K$:
+    For $m\ge 2$:
 
     \begin{align*}
-        P(\mathbf{x}_{\tau+k}|\mathbf{y}_1,\ldots,\mathbf{y}_{\tau+k-1})&=N(\mathbf{x}_{\tau+k}|\mathbf{x}_{\tau+k|\tau+k-1},P_{\tau+k|\tau+k-1})\\
-        \mathbf{x}_{\tau+k|\tau+k-1}&=A\ \mathbf{x}_{\tau+k-1|\tau+k-1}\\
-        P_{\tau+k|\tau+k-1}&=A\ P_{\tau+k-1|\tau+k-1}A^\intercal+Q\\
-        P(\mathbf{x}_{\tau+k}|\mathbf{y}_1,\ldots,\mathbf{y}_{\tau+k})&=N(\mathbf{x}_{\tau+k}|\mathbf{x}_{\tau+k|\tau+k},P_{\tau+k|\tau+k})\\
-        \mathbf{x}_{\tau+k|\tau+k}&=\mathbf{x}_{\tau+k|\tau+k-1}\\
-        P_{\tau+k|\tau+k}&=P_{\tau+k|\tau+k-1}
+        P(\mathbf{x}_{n+m}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})&=N(\mathbf{x}_{n+m}|\mathbf{x}_{n+m|n},P_{n+m|n})\\
+        \mathbf{x}_{n+m|n}&=A\ \mathbf{x}_{n+m-1|n}\\
+        P_{n+m|n}&=A\ P_{n+m-1|n}A^\intercal+Q\\
     \end{align*}
 
 \end{proposition}
 
 \begin{proof}
-    We prove this by induction on $k$.
+    We prove this by induction on $m$.
 
     \begin{description}
-        \item[$P_1$]:
-
-            Because $\mathbf{y}_1,\ldots,\mathbf{y}_{\tau}$ are not missing, from Eq.~\ref{eq:prediction}:
+        \item[$m=2$]:
 
             \begin{align*}
-                P(\mathbf{x}_{\tau+1}|\mathbf{y}_1,\ldots,\mathbf{y}_{\tau})&=N(\mathbf{x}_{\tau+1}|\mathbf{x}_{\tau+1|\tau},P_{\tau+1|\tau})\quad\text{with}\quad\mathbf{x}_{\tau+1|\tau}=A\mathbf{x}_{\tau|\tau}\quad\text{and}\quad P_{\tau+1|\tau}=AP_{\tau|\tau}A^\intercal+Q
+                P(\mathbf{x}_{n+2}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})&=N(\mathbf{x}_{n+2}|\mathbf{x}_{n+2|n}, P_{n+2|n})\\
+                                                                      &=\int_{-\infty}^\infty P(\mathbf{x}_{n+2},\mathbf{x}_{n+1}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})d\mathbf{x}_{n+1}\\
+                                                                      &=\int_{-\infty}^\infty P(\mathbf{x}_{n+2}|\mathbf{x}_{n+1},\mathbf{y}_1,\ldots,\mathbf{y}_{n})P(\mathbf{x}_{n+1}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})d\mathbf{x}_{n+1}\\
+                                                                      &=\int_{-\infty}^\infty P(\mathbf{x}_{n+2}|\mathbf{x}_{n+1})P(\mathbf{x}_{n+1}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})d\mathbf{x}_{n+1}\\
+                                                                      &=\int_{-\infty}^\infty N(\mathbf{x}_{n+2}|A\mathbf{x}_{n+1},Q)N(\mathbf{x}_{n+1}|\mathbf{x}_{n+1|n},P_{n+1|n})d\mathbf{x}_{n+1}\\
+                                                                      &=N(\mathbf{x}_{n+2}|A\mathbf{x}_{n+1|n},A P_{n+1|n}A^\intercal+Q)
             \end{align*}
 
             Next,
