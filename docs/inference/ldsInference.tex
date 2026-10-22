@@ -192,66 +192,18 @@ the Kalman filter.
         \item[$m=2$]:
 
             \begin{align*}
-                P(\mathbf{x}_{n+2}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})&=N(\mathbf{x}_{n+2}|\mathbf{x}_{n+2|n}, P_{n+2|n})\\
+                P(\mathbf{x}_{n+2}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})&=N(\mathbf{x}_{n+2}|\mathbf{x}_{n+2|n},P_{n+2|n})\\
                                                                       &=\int_{-\infty}^\infty P(\mathbf{x}_{n+2},\mathbf{x}_{n+1}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})d\mathbf{x}_{n+1}\\
                                                                       &=\int_{-\infty}^\infty P(\mathbf{x}_{n+2}|\mathbf{x}_{n+1},\mathbf{y}_1,\ldots,\mathbf{y}_{n})P(\mathbf{x}_{n+1}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})d\mathbf{x}_{n+1}\\
                                                                       &=\int_{-\infty}^\infty P(\mathbf{x}_{n+2}|\mathbf{x}_{n+1})P(\mathbf{x}_{n+1}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})d\mathbf{x}_{n+1}\\
                                                                       &=\int_{-\infty}^\infty N(\mathbf{x}_{n+2}|A\mathbf{x}_{n+1},Q)N(\mathbf{x}_{n+1}|\mathbf{x}_{n+1|n},P_{n+1|n})d\mathbf{x}_{n+1}\\
-                                                                      &=N(\mathbf{x}_{n+2}|A\mathbf{x}_{n+1|n},A P_{n+1|n}A^\intercal+Q)
+                                                                      &=N(\mathbf{x}_{n+2}|A\mathbf{x}_{n+1|n},AP_{n+1|n}A^\intercal+Q)
             \end{align*}
 
-            Next,
+            Then $\mathbf{x}_{n+2|n}=A\mathbf{x}_{n+1|n}$ and
+            $P_{n+2|n}=AP_{n+1|n}A^\intercal+Q$.
 
-            \begin{align}
-                P(\mathbf{x}_{\tau+1}|\mathbf{y}_1,\ldots,\mathbf{y}_{\tau+1})&=N(\mathbf{x}_{\tau+1}|\mathbf{x}_{\tau+1|\tau+1},P_{\tau+1|\tau+1})=P(\mathbf{x}_{\tau+1}|\mathbf{y}_1,\ldots,\mathbf{y}_\tau)\label{eq:p1eq2}\\
-                                                                              &=N(\mathbf{x}_{\tau+1}|\mathbf{x}_{\tau+1|\tau},P_{\tau+1|\tau})\nonumber
-            \end{align}
-
-            Thus, $\mathbf{x}_{\tau+1|\tau+1}=\mathbf{x}_{\tau+1|\tau}$ and
-            $P_{\tau+1|\tau+1}=P_{\tau+1|\tau}$.
-
-            Note:
-
-            \begin{enumerate}
-
-                \item The second equality in the Eq.~\ref{eq:p1eq2} holds because $\mathbf{y}_{\tau+1}$ is missing.
-
-            \end{enumerate}
-
-        \item[$P_k\rightarrow P_{k+1}$]:
-
-            \begin{align}
-                P(\mathbf{x}_{\tau+k+1}|\mathbf{y}_1,\ldots,\mathbf{y}_{\tau+k+1})&=N(\mathbf{x}_{\tau+k+1}|\mathbf{x}_{\tau+k+1|\tau+k+1},P_{\tau+k+1|\tau+k+1})\nonumber\\
-                                                                                  &=P(\mathbf{x}_{\tau+k+1}|\mathbf{y}_1,\ldots,\mathbf{y}_{\tau+k})\label{eq:pkeq2}\\
-                                                                                  &=N(\mathbf{x}_{\tau+k+1}|\mathbf{x}_{\tau+k+1|\tau+k},P_{\tau+k+1|\tau+k})\nonumber
-            \end{align}
-
-            Thus, $\mathbf{x}_{\tau+k+1|\tau+k+1}=\mathbf{x}_{\tau+k+1|\tau+k}$ and
-            $P_{\tau+k+1|\tau+k+1}=P_{\tau+k+1|\tau+k}$.
-
-            Note:
-
-            \begin{enumerate}
-
-                \item Eq.~\ref{eq:pkeq2} holds because
-                    $\mathbf{y}_{\tau+k+1}$ is missing.
-
-            \end{enumerate}
-
-            \begin{align*}
-                P(\mathbf{x}_{\tau+k+1}|\mathbf{y}_1,\ldots,\mathbf{y}_{\tau+k})&=N(\mathbf{x}_{\tau+k+1}|\mathbf{x}_{\tau+k+1|\tau+k},P_{\tau+k+1|\tau+k})\\
-                                                                              &=\int_{-\infty}^\infty
-                                                                              P(\mathbf{x}_{\tau+k+1},\mathbf{x}_{\tau+k}|\mathbf{y}_1,\ldots,\mathbf{y}_{\tau+k})d\mathbf{x}_{\tau+k}\\
-                                                                              &=\int_{-\infty}^\infty
-                                                                              P(\mathbf{x}_{\tau+k+1}|\mathbf{x}_{\tau+k},\mathbf{y}_1,\ldots,\mathbf{y}_{\tau+k})P(\mathbf{x}_{\tau+k}|\mathbf{y}_1,\ldots,\mathbf{y}_{\tau+k})d\mathbf{x}_{\tau+k}\\
-                                                                              &=\int_{-\infty}^\infty P(\mathbf{x}_{\tau+k+1}|\mathbf{x}_{\tau+k})P(\mathbf{x}_{\tau+k}|\mathbf{y}_1,\ldots,\mathbf{y}_{\tau+k})d\mathbf{x}_{\tau+k}\\
-                                                                              &=\int_{-\infty}^\infty
-                                                                              N(\mathbf{x}_{\tau+k+1}|A\mathbf{x}_{\tau+k},Q)N(\mathbf{x}_{\tau+k}|\mathbf{x}_{\tau+k|\tau+k},P_{\tau+k|\tau+k})d\mathbf{x}_{\tau+k}\\
-                                                                              &=N(\mathbf{x}_{\tau+k+1}|A\mathbf{x}_{\tau+k|\tau+k},A P_{\tau+k|\tau+k}A^\intercal+Q)
-            \end{align*}
-
-            Thus $\mathbf{x}_{\tau+k+1|\tau+k}=A\mathbf{x}_{\tau+k|\tau+k}$ and
-            $P_{\tau+k+1|\tau+k}=A P_{\tau+k|\tau+k}A^\intercal+Q$.
+            Notes:
 
             \begin{enumerate}
 
@@ -260,13 +212,53 @@ the Kalman filter.
                 \item The third line follows from Bayes rule.
 
                 \item The fourth lines uses the fact
-                    that $\mathbf{x}_{\tau+k+1}$ is independent from
-                    $\mathbf{y}_1,\ldots,\mathbf{y}_{\tau+k}$ given
-                    $\mathbf{x}_{\tau+k}$.
+                    that $\mathbf{x}_{n+2}$ is independent from
+                    $\mathbf{y}_1,\ldots,\mathbf{y}_{n}$ given
+                    $\mathbf{x}_{n+1}$.
 
                 \item The fifth line follows from the definition of the LDS
-                    model in Section~\ref{sec:ldsModel} and the prediction
-                    distribution in Eq.~\ref{eq:prediction}.
+                    model in Section~\ref{sec:ldsModel} and from the predictive
+                    distribution (Eq.~\ref{eq:prediction}).
+
+                \item The last line uses
+                    Lemma~\ref{lemma:linearModelGaussianLatents}.
+
+            \end{enumerate}
+
+        \item[$m\rightarrow m+1$]:
+
+            \begin{align*}
+                P(\mathbf{x}_{n+m+1}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})&=N(\mathbf{x}_{n+m+1}|\mathbf{x}_{n+m+1|n},P_{n+m+1|n})\\
+                                                                      &=\int_{-\infty}^\infty
+                                                                      P(\mathbf{x}_{n+m+1},\mathbf{x}_{n+m}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})d\mathbf{x}_{n+m}\\
+                                                                      &=\int_{-\infty}^\infty
+                                                                      P(\mathbf{x}_{n+m+1}|\mathbf{x}_{n+m},\mathbf{y}_1,\ldots,\mathbf{y}_{n})P(\mathbf{x}_{n+m}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})d\mathbf{x}_{n+1}\\
+                                                                      &=\int_{-\infty}^\infty
+                                                                      P(\mathbf{x}_{n+m+1}|\mathbf{x}_{n+m})P(\mathbf{x}_{n+m}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})d\mathbf{x}_{n+m}\\
+                                                                      &=\int_{-\infty}^\infty
+                                                                      N(\mathbf{x}_{n+m+1}|A\mathbf{x}_{n+m},Q)N(\mathbf{x}_{n+m}|\mathbf{x}_{n+m|n},P_{n+m|n})d\mathbf{x}_{n+m}\\
+                                                                      &=N(\mathbf{x}_{n+m+1}|A\mathbf{x}_{n+m|n},AP_{n+m|n}A^\intercal+Q)
+            \end{align*}
+
+            Then $\mathbf{x}_{n+m+1|n}=A\mathbf{x}_{n+m|n}$ and
+            $P_{n+m=1|n}=AP_{n+m|n}A^\intercal+Q$.
+
+            Notes:
+
+            \begin{enumerate}
+
+                \item The second line holds by marginalisation.
+
+                \item The third line follows from Bayes rule.
+
+                \item The fourth lines uses the fact
+                    that $\mathbf{x}_{n+m+1}$ is independent from
+                    $\mathbf{y}_1,\ldots,\mathbf{y}_{n}$ given
+                    $\mathbf{x}_{n+m}$.
+
+                \item The fifth line follows from the definition of the LDS
+                    model in Section~\ref{sec:ldsModel} and from the inductive
+                    hypothesis.
 
                 \item The last line uses
                     Lemma~\ref{lemma:linearModelGaussianLatents}.
