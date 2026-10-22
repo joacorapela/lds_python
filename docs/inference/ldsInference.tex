@@ -175,21 +175,21 @@ the Kalman filter.
 
 \begin{proposition}
 
-    For $m\ge 2$:
+    For $h\ge 2$:
 
     \begin{align*}
-        P(\mathbf{x}_{n+m}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})&=N(\mathbf{x}_{n+m}|\mathbf{x}_{n+m|n},P_{n+m|n})\\
-        \mathbf{x}_{n+m|n}&=A\ \mathbf{x}_{n+m-1|n}\\
-        P_{n+m|n}&=A\ P_{n+m-1|n}A^\intercal+Q\\
+        P(\mathbf{x}_{n}|\mathbf{y}_1,\ldots,\mathbf{y}_{n-h})&=N(\mathbf{x}_{n}|\mathbf{x}_{n|n-h},P_{n+h|n-h})\\
+        \mathbf{x}_{n|n-h}&=A\ \mathbf{x}_{n|n-(h-1)}\\
+        P_{n|n-h}&=A\ P_{n|n-(h-1)}A^\intercal+Q\\
     \end{align*}
 
 \end{proposition}
 
 \begin{proof}
-    We prove this by induction on $m$.
+    We prove this by induction on $h$.
 
     \begin{description}
-        \item[$m=2$]:
+        \item[$h=2$]:
 
             \begin{align*}
                 P(\mathbf{x}_{n+2}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})&=N(\mathbf{x}_{n+2}|\mathbf{x}_{n+2|n},P_{n+2|n})\\
@@ -225,23 +225,23 @@ the Kalman filter.
 
             \end{enumerate}
 
-        \item[$m\rightarrow m+1$]:
+        \item[$h\rightarrow h+1$]:
 
             \begin{align*}
-                P(\mathbf{x}_{n+m+1}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})&=N(\mathbf{x}_{n+m+1}|\mathbf{x}_{n+m+1|n},P_{n+m+1|n})\\
+                P(\mathbf{x}_{n+h+1}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})&=N(\mathbf{x}_{n+h+1}|\mathbf{x}_{n+h+1|n},P_{n+h+1|n})\\
                                                                       &=\int_{-\infty}^\infty
-                                                                      P(\mathbf{x}_{n+m+1},\mathbf{x}_{n+m}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})d\mathbf{x}_{n+m}\\
+                                                                      P(\mathbf{x}_{n+h+1},\mathbf{x}_{n+h}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})d\mathbf{x}_{n+h}\\
                                                                       &=\int_{-\infty}^\infty
-                                                                      P(\mathbf{x}_{n+m+1}|\mathbf{x}_{n+m},\mathbf{y}_1,\ldots,\mathbf{y}_{n})P(\mathbf{x}_{n+m}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})d\mathbf{x}_{n+1}\\
+                                                                      P(\mathbf{x}_{n+h+1}|\mathbf{x}_{n+h},\mathbf{y}_1,\ldots,\mathbf{y}_{n})P(\mathbf{x}_{n+h}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})d\mathbf{x}_{n+1}\\
                                                                       &=\int_{-\infty}^\infty
-                                                                      P(\mathbf{x}_{n+m+1}|\mathbf{x}_{n+m})P(\mathbf{x}_{n+m}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})d\mathbf{x}_{n+m}\\
+                                                                      P(\mathbf{x}_{n+h+1}|\mathbf{x}_{n+h})P(\mathbf{x}_{n+h}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})d\mathbf{x}_{n+h}\\
                                                                       &=\int_{-\infty}^\infty
-                                                                      N(\mathbf{x}_{n+m+1}|A\mathbf{x}_{n+m},Q)N(\mathbf{x}_{n+m}|\mathbf{x}_{n+m|n},P_{n+m|n})d\mathbf{x}_{n+m}\\
-                                                                      &=N(\mathbf{x}_{n+m+1}|A\mathbf{x}_{n+m|n},AP_{n+m|n}A^\intercal+Q)
+                                                                      N(\mathbf{x}_{n+h+1}|A\mathbf{x}_{n+h},Q)N(\mathbf{x}_{n+h}|\mathbf{x}_{n+h|n},P_{n+h|n})d\mathbf{x}_{n+h}\\
+                                                                      &=N(\mathbf{x}_{n+h+1}|A\mathbf{x}_{n+h|n},AP_{n+h|n}A^\intercal+Q)
             \end{align*}
 
-            Then $\mathbf{x}_{n+m+1|n}=A\mathbf{x}_{n+m|n}$ and
-            $P_{n+m=1|n}=AP_{n+m|n}A^\intercal+Q$.
+            Then $\mathbf{x}_{n+h+1|n}=A\mathbf{x}_{n+h|n}$ and
+            $P_{n+h=1|n}=AP_{n+h|n}A^\intercal+Q$.
 
             Notes:
 
@@ -252,9 +252,9 @@ the Kalman filter.
                 \item The third line follows from Bayes rule.
 
                 \item The fourth lines uses the fact
-                    that $\mathbf{x}_{n+m+1}$ is independent from
+                    that $\mathbf{x}_{n+h+1}$ is independent from
                     $\mathbf{y}_1,\ldots,\mathbf{y}_{n}$ given
-                    $\mathbf{x}_{n+m}$.
+                    $\mathbf{x}_{n+h}$.
 
                 \item The fifth line follows from the definition of the LDS
                     model in Section~\ref{sec:ldsModel} and from the inductive
