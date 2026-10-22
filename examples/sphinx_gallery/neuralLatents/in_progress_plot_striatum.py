@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
+import gcnu_common.utils.neural_data_analysis
 import ssm.inference
 import ssm.learning
 import ssm.neural_latents.utils
@@ -23,7 +24,7 @@ import ssm.neural_latents.plotting
 
 # data
 bin_size = 0.2  # 200~ms
-skip_sqrt_transform = False
+sqrt_transform = True
 units_info_filename = "/ceph/sjones/projects/sequence_squad/organised_data/animals/EJT178_implant1/recording6_29-03-2022/ephys/non_curated_spikes/good_units_df.csv"
 spikes_times_col_name = "Spike_times"
 
@@ -32,11 +33,12 @@ clusters_indices = np.arange(208)
 
 # EM
 n_latents = 5
-n_clusters = np.length(clusters_indices)
+n_clusters = clusters_indices.size
 EM_start_time_sec = 4045.0
 EM_duration_sec = 300.0
 EM_max_iter = 5000
 EM_tol = 1e-1
+EM_constraint_diag_R = True
 
 vars_to_estimate = {
     "u": False,
@@ -104,26 +106,27 @@ binned_spikes = np.empty(shape=(n_clusters, len(bins_centers)))
 for n in range(n_clusters):
     binned_spikes[n, :] = gcnu_common.utils.neural_data_analysis.binSpikesTimes(
         spikes_times=spikes_timestamps[n], bins_edges=bins_edges,
-        time_cluster="sec")
-if not skip_sqrt_transform:
+        time_unit="sec")
+if sqrt_transform:
     binned_spikes = np.sqrt(binned_spikes)
 
 #%%
 # Perform EM
 # ^^^^^^^^^^
 
-EM_time_sec = EM_start_time_sec + EM_duration_sec
+EM_data = binned_spikes.T
+EM_end_time_sec = EM_start_time_sec + EM_duration_sec
 valid_bins_mask = np.logical_and(EM_start_time_sec <= bins_centers,
                                  bins_centers < EM_end_time_sec)
-binned_spikes = binned_spikes[valid_bins_mask, :]
+EM_data = EM_data[valid_bins_mask, :]
 
-# make sure that the first binned_spikes point is not NaN
-first_not_nan_index = np.where(~np.isnan(binned_spikes).any(axis=1))[0][0]
-binned_spikes = binned_spikes[first_not_nan_index:,clustersIndices]
+# make sure that the first EM_data point is not NaN
+first_not_nan_index = np.where(~np.isnan(EM_data).any(axis=1))[0][0]
+EM_data = EM_data[first_not_nan_index:,clusters_indices]
 
 optim_res = ssm.learning.em_SS_LDS(
-    y=binned_spikes.T, u0=u0, B0=B0, Q0=Q0, a0=a0, Z0=Z0, R0=R0,
-    m0_0=m0_0, V0_0=V0_0, max_iter=max_iter, tol=tol,
+    y=EM_data.T, u0=u0, B0=B0, Q0=Q0, a0=a0, Z0=Z0, R0=R0,
+    m0_0=m0_0, V0_0=V0_0, max_iter=EM_max_iter, tol=EM_tol,
     vars_to_estimate=vars_to_estimate,
-    constraint_diag_R=not skip_constraint_diag_R,
+    constraint_diag_R=EM_constraint_diag_R,
 )

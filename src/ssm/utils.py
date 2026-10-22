@@ -15,8 +15,7 @@ def matrix_to_string(M, sep=","):
 def string_to_matrix(s, dtype=float, sep=","):
     """
     Convert a multi-line string to a numpy.matrix.
-    Expected format (space-separated, newline-separated):
-        '1 2 3\\n4 5 6'
+    Expected format (space-separated, newline-separated): '1 2 3\\n4 5 6'
 
     Parameters
     ----------
@@ -30,6 +29,7 @@ def string_to_matrix(s, dtype=float, sep=","):
     np.array
         Parsed matrix.
     """
+
     # Split into non-empty lines
     lines = [line.strip(sep) for line in s.strip().splitlines() if line.strip()]
     # Split each line into entries and convert to dtype

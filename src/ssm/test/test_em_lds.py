@@ -41,7 +41,7 @@ def kalman_loglik(y, u, B, Q, m0, V0, a, Z, R):
         y=y, u=u, B=B, Q=Q, m0=m0, V0=V0, a=a, Z=Z, R=R
     )
     # your filter already returns total log-likelihood
-    return float(kf["logLike"])
+    return float(kf["log_like"])
 
 
 @pytest.mark.parametrize("T_train,T_test,M,P", [(400, 400, 3, 2)])

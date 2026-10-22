@@ -51,8 +51,8 @@ V0 = np.diag(np.ones(len(m0))*sqrt_diag_V0_value**2)
 
 M = B.shape[0]
 N = Z.shape[0]
-u = np.zeros(shape=(M, 1))
-a = np.zeros(shape=(N, 1))
+u = np.zeros(shape=(M, 1), dtype=np.double)
+a = np.zeros(shape=(N, 1), dtype=np.double)
 x0, x, y = ssm.simulation.simulateLDS(T=num_pos, u=u, B=B, Q=Q, m0=m0, V0=V0,
                                       a=a, Z=Z, R=R)
 t = np.arange(num_pos) * dt
@@ -84,4 +84,4 @@ fig
 # fig.write_image(fig_filename_pattern.format("png"))
 # fig.write_html(fig_filename_pattern.format("html"))
 
-breakpoint()
+# breakpoint()

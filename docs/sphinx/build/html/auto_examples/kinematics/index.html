@@ -22,7 +22,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Sampling from a Discrete Wiener Process Acceleration Model" href="plotSimulatedTrajectoryDWPA.html" />
-    <link rel="prev" title="Demo scripts" href="../index.html" /> 
+    <link rel="prev" title="Estimation of the instantaneous frequency" href="../instantaneousFrequency/plotEstimationOfIF.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -46,18 +46,22 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Overview</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Demo scripts</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../index.html#instantaneous-frequency-inference">Instantaneous Frequency Inference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#kinematics-inference">Kinematics Inference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#learning-and-inference-for-neural-latents">Learning and Inference for Neural Latents</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../index.html#online-bayesian-linear-regression">Online Bayesian linear regression</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../instantaneousFrequency/index.html">Instantaneous Frequency Inference</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Kinematics Inference</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="plotSimulatedTrajectoryDWPA.html">Sampling from a Discrete Wiener Process Acceleration Model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plotSimulated1DTrajectoryDWPA.html">Sampling from a 1D Discrete Wiener Process Acceleration Model</a></li>
 <li class="toctree-l4"><a class="reference internal" href="plotOnlineFilterFWGMouseTrajectory.html">Online filtering of a foraging mouse trajectory</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plotBatchFilterSimulated1DTrajectoryDWPA.html">Offline filtering of a simulated mouse 1D trajectory</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plotBatchMissingValuesSimulated1DTrajectoryDWPA.html">Offline filtering of a simulated mouse 1D trajectory</a></li>
 <li class="toctree-l4"><a class="reference internal" href="plotBatchFilterSimulatedTrajectoryDWPA.html">Offline filtering of a simulated mouse trajectory</a></li>
 <li class="toctree-l4"><a class="reference internal" href="plotBatchSmoothSimulatedTrajectoryDWPA.html">Offline smoothing of a simulated mouse trajectory</a></li>
-<li class="toctree-l4"><a class="reference internal" href="plotEMvsGAcomparisonSimulated.html">Comparison between EM and gradient ascent for tracking a simulated mouse</a></li>
-<li class="toctree-l4"><a class="reference internal" href="plotEMvsGAcomparisonForagingMouse.html">Comparison between EM and gradient ascent for tracking a foraging mouse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plotEMvsGAcomparisonSimulated.html">Comparison between EM and gradient ascent for inferring kinematics of a simulated mouse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plotEMvsGAcomparisonForagingMouse.html">Comparison between EM and gradient ascent for inferring kinematics of a foraging mouse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="plotFilterFWGMouseTrajectoryManualVsLearnedParams.html">Filtering of a foraging mouse trajectory with manual vs learned parameters</a></li>
 </ul>
 </li>
@@ -67,6 +71,10 @@
 </li>
 </ul>
 </li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">ssm</a></li>
 </ul>
 
         </div>
@@ -99,21 +107,30 @@
 <div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="The code below samples from a Discrete Wiener Process Acceleration (DWPA) model."><img alt="" src="../../_images/sphx_glr_plotSimulatedTrajectoryDWPA_thumb.png" />
 <p><a class="reference internal" href="plotSimulatedTrajectoryDWPA.html#sphx-glr-auto-examples-kinematics-plotsimulatedtrajectorydwpa-py"><span class="std std-ref">Sampling from a Discrete Wiener Process Acceleration Model</span></a></p>
   <div class="sphx-glr-thumbnail-title">Sampling from a Discrete Wiener Process Acceleration Model</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="The code below samples from a 1D Discrete Wiener Process Acceleration (DWPA) model."><img alt="" src="../../_images/sphx_glr_plotSimulated1DTrajectoryDWPA_thumb.png" />
+<p><a class="reference internal" href="plotSimulated1DTrajectoryDWPA.html#sphx-glr-auto-examples-kinematics-plotsimulated1dtrajectorydwpa-py"><span class="std std-ref">Sampling from a 1D Discrete Wiener Process Acceleration Model</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Sampling from a 1D Discrete Wiener Process Acceleration Model</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="The code below performs online Kalman filtering of a trajectory of the mouse shown on the left ..."><img alt="" src="../../_images/sphx_glr_plotOnlineFilterFWGMouseTrajectory_thumb.png" />
 <p><a class="reference internal" href="plotOnlineFilterFWGMouseTrajectory.html#sphx-glr-auto-examples-kinematics-plotonlinefilterfwgmousetrajectory-py"><span class="std std-ref">Online filtering of a foraging mouse trajectory</span></a></p>
   <div class="sphx-glr-thumbnail-title">Online filtering of a foraging mouse trajectory</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="The code below performs online Kalman filtering of a simulated mouse trajectory."><img alt="" src="../../_images/sphx_glr_plotBatchFilterSimulated1DTrajectoryDWPA_thumb.png" />
+<p><a class="reference internal" href="plotBatchFilterSimulated1DTrajectoryDWPA.html#sphx-glr-auto-examples-kinematics-plotbatchfiltersimulated1dtrajectorydwpa-py"><span class="std std-ref">Offline filtering of a simulated mouse 1D trajectory</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Offline filtering of a simulated mouse 1D trajectory</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="The code below performs online Kalman filtering of a simulated mouse trajectory."><img alt="" src="../../_images/sphx_glr_plotBatchMissingValuesSimulated1DTrajectoryDWPA_thumb.png" />
+<p><a class="reference internal" href="plotBatchMissingValuesSimulated1DTrajectoryDWPA.html#sphx-glr-auto-examples-kinematics-plotbatchmissingvaluessimulated1dtrajectorydwpa-py"><span class="std std-ref">Offline filtering of a simulated mouse 1D trajectory</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Offline filtering of a simulated mouse 1D trajectory</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="The code below performs online Kalman filtering of a simulated mouse trajectory."><img alt="" src="../../_images/sphx_glr_plotBatchFilterSimulatedTrajectoryDWPA_thumb.png" />
 <p><a class="reference internal" href="plotBatchFilterSimulatedTrajectoryDWPA.html#sphx-glr-auto-examples-kinematics-plotbatchfiltersimulatedtrajectorydwpa-py"><span class="std std-ref">Offline filtering of a simulated mouse trajectory</span></a></p>
   <div class="sphx-glr-thumbnail-title">Offline filtering of a simulated mouse trajectory</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="The code below performs online Kalman smoothing of a simulated mouse trajectory."><img alt="" src="../../_images/sphx_glr_plotBatchSmoothSimulatedTrajectoryDWPA_thumb.png" />
 <p><a class="reference internal" href="plotBatchSmoothSimulatedTrajectoryDWPA.html#sphx-glr-auto-examples-kinematics-plotbatchsmoothsimulatedtrajectorydwpa-py"><span class="std std-ref">Offline smoothing of a simulated mouse trajectory</span></a></p>
   <div class="sphx-glr-thumbnail-title">Offline smoothing of a simulated mouse trajectory</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="The code below compares the expectation maximization (EM) and gradient ascent algorithm for tra..."><img alt="" src="../../_images/sphx_glr_plotEMvsGAcomparisonSimulated_thumb.png" />
-<p><a class="reference internal" href="plotEMvsGAcomparisonSimulated.html#sphx-glr-auto-examples-kinematics-plotemvsgacomparisonsimulated-py"><span class="std std-ref">Comparison between EM and gradient ascent for tracking a simulated mouse</span></a></p>
-  <div class="sphx-glr-thumbnail-title">Comparison between EM and gradient ascent for tracking a simulated mouse</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="The code below compares the expectation maximization (EM) and gradient ascent algorithm for tra..."><img alt="" src="../../_images/sphx_glr_plotEMvsGAcomparisonForagingMouse_thumb.png" />
-<p><a class="reference internal" href="plotEMvsGAcomparisonForagingMouse.html#sphx-glr-auto-examples-kinematics-plotemvsgacomparisonforagingmouse-py"><span class="std std-ref">Comparison between EM and gradient ascent for tracking a foraging mouse</span></a></p>
-  <div class="sphx-glr-thumbnail-title">Comparison between EM and gradient ascent for tracking a foraging mouse</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="The code below compares the expectation maximization (EM) and gradient ascent algorithm for inf..."><img alt="" src="../../_images/sphx_glr_plotEMvsGAcomparisonSimulated_thumb.png" />
+<p><a class="reference internal" href="plotEMvsGAcomparisonSimulated.html#sphx-glr-auto-examples-kinematics-plotemvsgacomparisonsimulated-py"><span class="std std-ref">Comparison between EM and gradient ascent for inferring kinematics of a simulated mouse</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Comparison between EM and gradient ascent for inferring kinematics of a simulated mouse</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="The code below compares the expectation maximization (EM) and gradient ascent algorithm for inf..."><img alt="" src="../../_images/sphx_glr_plotEMvsGAcomparisonForagingMouse_thumb.png" />
+<p><a class="reference internal" href="plotEMvsGAcomparisonForagingMouse.html#sphx-glr-auto-examples-kinematics-plotemvsgacomparisonforagingmouse-py"><span class="std std-ref">Comparison between EM and gradient ascent for inferring kinematics of a foraging mouse</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Comparison between EM and gradient ascent for inferring kinematics of a foraging mouse</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="The code below performs Kalman filtering and smoothing of a trajectory of the mouse shown on th..."><img alt="" src="../../_images/sphx_glr_plotFilterFWGMouseTrajectoryManualVsLearnedParams_thumb.png" />
 <p><a class="reference internal" href="plotFilterFWGMouseTrajectoryManualVsLearnedParams.html#sphx-glr-auto-examples-kinematics-plotfilterfwgmousetrajectorymanualvslearnedparams-py"><span class="std std-ref">Filtering of a foraging mouse trajectory with manual vs learned parameters</span></a></p>
   <div class="sphx-glr-thumbnail-title">Filtering of a foraging mouse trajectory with manual vs learned parameters</div>
@@ -125,7 +142,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../index.html" class="btn btn-neutral float-left" title="Demo scripts" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../instantaneousFrequency/plotEstimationOfIF.html" class="btn btn-neutral float-left" title="Estimation of the instantaneous frequency" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="plotSimulatedTrajectoryDWPA.html" class="btn btn-neutral float-right" title="Sampling from a Discrete Wiener Process Acceleration Model" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

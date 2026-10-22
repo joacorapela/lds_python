@@ -21,8 +21,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Kinematics Inference" href="kinematics/index.html" />
-    <link rel="prev" title="Overview" href="../introduction.html" /> 
+    <link rel="next" title="Instantaneous Frequency Inference" href="instantaneousFrequency/index.html" />
+    <link rel="prev" title="Linear Dynamical Systems’s documentation" href="../index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -46,11 +46,12 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Overview</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Demo scripts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#instantaneous-frequency-inference">Instantaneous Frequency Inference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#kinematics-inference">Kinematics Inference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#learning-and-inference-for-neural-latents">Learning and Inference for Neural Latents</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#online-bayesian-linear-regression">Online Bayesian linear regression</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="instantaneousFrequency/index.html">Instantaneous Frequency Inference</a></li>
 <li class="toctree-l3"><a class="reference internal" href="kinematics/index.html">Kinematics Inference</a></li>
 <li class="toctree-l3"><a class="reference internal" href="neuralLatents/index.html">Learning and Inference for Neural Latents</a></li>
 <li class="toctree-l3"><a class="reference internal" href="onlineBayesianLinearRegression/index.html">Online Bayesian linear regression</a></li>
@@ -90,33 +91,51 @@
              
   <section id="demo-scripts">
 <h1>Demo scripts<a class="headerlink" href="#demo-scripts" title="Permalink to this heading"></a></h1>
-<div class="sphx-glr-thumbnails"></div><section id="kinematics-inference">
+<div class="sphx-glr-thumbnails"></div><section id="instantaneous-frequency-inference">
+<h2>Instantaneous Frequency Inference<a class="headerlink" href="#instantaneous-frequency-inference" title="Permalink to this heading"></a></h2>
+<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="The code below estimate the instantanous frequency using the Discrete Wiener Process Accelerati..."><img alt="" src="../_images/sphx_glr_plotEstimationOfIF_thumb.png" />
+<p><a class="reference internal" href="instantaneousFrequency/plotEstimationOfIF.html#sphx-glr-auto-examples-instantaneousfrequency-plotestimationofif-py"><span class="std std-ref">Estimation of the instantaneous frequency</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Estimation of the instantaneous frequency</div>
+</div></div></section>
+<section id="kinematics-inference">
 <h2>Kinematics Inference<a class="headerlink" href="#kinematics-inference" title="Permalink to this heading"></a></h2>
 <div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="The code below samples from a Discrete Wiener Process Acceleration (DWPA) model."><img alt="" src="../_images/sphx_glr_plotSimulatedTrajectoryDWPA_thumb.png" />
 <p><a class="reference internal" href="kinematics/plotSimulatedTrajectoryDWPA.html#sphx-glr-auto-examples-kinematics-plotsimulatedtrajectorydwpa-py"><span class="std std-ref">Sampling from a Discrete Wiener Process Acceleration Model</span></a></p>
   <div class="sphx-glr-thumbnail-title">Sampling from a Discrete Wiener Process Acceleration Model</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="The code below samples from a 1D Discrete Wiener Process Acceleration (DWPA) model."><img alt="" src="../_images/sphx_glr_plotSimulated1DTrajectoryDWPA_thumb.png" />
+<p><a class="reference internal" href="kinematics/plotSimulated1DTrajectoryDWPA.html#sphx-glr-auto-examples-kinematics-plotsimulated1dtrajectorydwpa-py"><span class="std std-ref">Sampling from a 1D Discrete Wiener Process Acceleration Model</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Sampling from a 1D Discrete Wiener Process Acceleration Model</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="The code below performs online Kalman filtering of a trajectory of the mouse shown on the left ..."><img alt="" src="../_images/sphx_glr_plotOnlineFilterFWGMouseTrajectory_thumb.png" />
 <p><a class="reference internal" href="kinematics/plotOnlineFilterFWGMouseTrajectory.html#sphx-glr-auto-examples-kinematics-plotonlinefilterfwgmousetrajectory-py"><span class="std std-ref">Online filtering of a foraging mouse trajectory</span></a></p>
   <div class="sphx-glr-thumbnail-title">Online filtering of a foraging mouse trajectory</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="The code below performs online Kalman filtering of a simulated mouse trajectory."><img alt="" src="../_images/sphx_glr_plotBatchFilterSimulated1DTrajectoryDWPA_thumb.png" />
+<p><a class="reference internal" href="kinematics/plotBatchFilterSimulated1DTrajectoryDWPA.html#sphx-glr-auto-examples-kinematics-plotbatchfiltersimulated1dtrajectorydwpa-py"><span class="std std-ref">Offline filtering of a simulated mouse 1D trajectory</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Offline filtering of a simulated mouse 1D trajectory</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="The code below performs online Kalman filtering of a simulated mouse trajectory."><img alt="" src="../_images/sphx_glr_plotBatchMissingValuesSimulated1DTrajectoryDWPA_thumb.png" />
+<p><a class="reference internal" href="kinematics/plotBatchMissingValuesSimulated1DTrajectoryDWPA.html#sphx-glr-auto-examples-kinematics-plotbatchmissingvaluessimulated1dtrajectorydwpa-py"><span class="std std-ref">Offline filtering of a simulated mouse 1D trajectory</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Offline filtering of a simulated mouse 1D trajectory</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="The code below performs online Kalman filtering of a simulated mouse trajectory."><img alt="" src="../_images/sphx_glr_plotBatchFilterSimulatedTrajectoryDWPA_thumb.png" />
 <p><a class="reference internal" href="kinematics/plotBatchFilterSimulatedTrajectoryDWPA.html#sphx-glr-auto-examples-kinematics-plotbatchfiltersimulatedtrajectorydwpa-py"><span class="std std-ref">Offline filtering of a simulated mouse trajectory</span></a></p>
   <div class="sphx-glr-thumbnail-title">Offline filtering of a simulated mouse trajectory</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="The code below performs online Kalman smoothing of a simulated mouse trajectory."><img alt="" src="../_images/sphx_glr_plotBatchSmoothSimulatedTrajectoryDWPA_thumb.png" />
 <p><a class="reference internal" href="kinematics/plotBatchSmoothSimulatedTrajectoryDWPA.html#sphx-glr-auto-examples-kinematics-plotbatchsmoothsimulatedtrajectorydwpa-py"><span class="std std-ref">Offline smoothing of a simulated mouse trajectory</span></a></p>
   <div class="sphx-glr-thumbnail-title">Offline smoothing of a simulated mouse trajectory</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="The code below compares the expectation maximization (EM) and gradient ascent algorithm for tra..."><img alt="" src="../_images/sphx_glr_plotEMvsGAcomparisonSimulated_thumb.png" />
-<p><a class="reference internal" href="kinematics/plotEMvsGAcomparisonSimulated.html#sphx-glr-auto-examples-kinematics-plotemvsgacomparisonsimulated-py"><span class="std std-ref">Comparison between EM and gradient ascent for tracking a simulated mouse</span></a></p>
-  <div class="sphx-glr-thumbnail-title">Comparison between EM and gradient ascent for tracking a simulated mouse</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="The code below compares the expectation maximization (EM) and gradient ascent algorithm for tra..."><img alt="" src="../_images/sphx_glr_plotEMvsGAcomparisonForagingMouse_thumb.png" />
-<p><a class="reference internal" href="kinematics/plotEMvsGAcomparisonForagingMouse.html#sphx-glr-auto-examples-kinematics-plotemvsgacomparisonforagingmouse-py"><span class="std std-ref">Comparison between EM and gradient ascent for tracking a foraging mouse</span></a></p>
-  <div class="sphx-glr-thumbnail-title">Comparison between EM and gradient ascent for tracking a foraging mouse</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="The code below compares the expectation maximization (EM) and gradient ascent algorithm for inf..."><img alt="" src="../_images/sphx_glr_plotEMvsGAcomparisonSimulated_thumb.png" />
+<p><a class="reference internal" href="kinematics/plotEMvsGAcomparisonSimulated.html#sphx-glr-auto-examples-kinematics-plotemvsgacomparisonsimulated-py"><span class="std std-ref">Comparison between EM and gradient ascent for inferring kinematics of a simulated mouse</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Comparison between EM and gradient ascent for inferring kinematics of a simulated mouse</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="The code below compares the expectation maximization (EM) and gradient ascent algorithm for inf..."><img alt="" src="../_images/sphx_glr_plotEMvsGAcomparisonForagingMouse_thumb.png" />
+<p><a class="reference internal" href="kinematics/plotEMvsGAcomparisonForagingMouse.html#sphx-glr-auto-examples-kinematics-plotemvsgacomparisonforagingmouse-py"><span class="std std-ref">Comparison between EM and gradient ascent for inferring kinematics of a foraging mouse</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Comparison between EM and gradient ascent for inferring kinematics of a foraging mouse</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="The code below performs Kalman filtering and smoothing of a trajectory of the mouse shown on th..."><img alt="" src="../_images/sphx_glr_plotFilterFWGMouseTrajectoryManualVsLearnedParams_thumb.png" />
 <p><a class="reference internal" href="kinematics/plotFilterFWGMouseTrajectoryManualVsLearnedParams.html#sphx-glr-auto-examples-kinematics-plotfilterfwgmousetrajectorymanualvslearnedparams-py"><span class="std std-ref">Filtering of a foraging mouse trajectory with manual vs learned parameters</span></a></p>
   <div class="sphx-glr-thumbnail-title">Filtering of a foraging mouse trajectory with manual vs learned parameters</div>
 </div></div></section>
 <section id="learning-and-inference-for-neural-latents">
 <h2>Learning and Inference for Neural Latents<a class="headerlink" href="#learning-and-inference-for-neural-latents" title="Permalink to this heading"></a></h2>
-<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="The code below learns and infers latents with simple simulated data."><img alt="" src="../_images/sphx_glr_plot_simulations_thumb.png" />
+<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="The code below learns and infers latents and a hidden Markov models for the characterisation of..."><img alt="" src="../_images/sphx_glr_in_progress_plot_striatum_thumb.png" />
+<p><a class="reference internal" href="neuralLatents/in_progress_plot_striatum.html#sphx-glr-auto-examples-neurallatents-in-progress-plot-striatum-py"><span class="std std-ref">Learning and inference of latents and of a hidden Markov model for replay characterisation in the striatum</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Learning and inference of latents and of a hidden Markov model for replay characterisation in the striatum</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="The code below learns and infers latents with simple simulated data."><img alt="" src="../_images/sphx_glr_plot_simulations_thumb.png" />
 <p><a class="reference internal" href="neuralLatents/plot_simulations.html#sphx-glr-auto-examples-neurallatents-plot-simulations-py"><span class="std std-ref">Learning and inference of latents with simple simulated data</span></a></p>
   <div class="sphx-glr-thumbnail-title">Learning and inference of latents with simple simulated data</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="The code below learns and infers latents with MC_MAZE_SMALL data."><img alt="" src="../_images/sphx_glr_plot_MC_MAZE_SMALL_thumb.png" />
@@ -149,8 +168,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../introduction.html" class="btn btn-neutral float-left" title="Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="kinematics/index.html" class="btn btn-neutral float-right" title="Kinematics Inference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../index.html" class="btn btn-neutral float-left" title="Linear Dynamical Systems’s documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="instantaneousFrequency/index.html" class="btn btn-neutral float-right" title="Instantaneous Frequency Inference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
