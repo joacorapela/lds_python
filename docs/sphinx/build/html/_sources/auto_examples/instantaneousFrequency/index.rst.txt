@@ -6,28 +6,35 @@ Instantaneous Frequency Inference
 ---------------------------------
 
 
+.. raw:: html
+
+  <div id='sg-tag-list' class='sphx-glr-tag-list'></div>
+
 
 .. raw:: html
 
     <div class="sphx-glr-thumbnails">
 
+.. thumbnail-parent-div-open
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="The code below estimate the instantanous frequency using the Discrete Wiener Process Accelerati...">
+    <div class="sphx-glr-thumbcontainer" tooltip="The code below estimate the instantanous frequency using the Discrete Wiener Process Acceleration (DWPA) model.">
 
 .. only:: html
 
   .. image:: /auto_examples/instantaneousFrequency/images/thumb/sphx_glr_plotEstimationOfIF_thumb.png
     :alt:
 
-  :ref:`sphx_glr_auto_examples_instantaneousFrequency_plotEstimationOfIF.py`
+  :doc:`/auto_examples/instantaneousFrequency/plotEstimationOfIF`
 
 .. raw:: html
 
       <div class="sphx-glr-thumbnail-title">Estimation of the instantaneous frequency</div>
     </div>
 
+
+.. thumbnail-parent-div-close
 
 .. raw:: html
 

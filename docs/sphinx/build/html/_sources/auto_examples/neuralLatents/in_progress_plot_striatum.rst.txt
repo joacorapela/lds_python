@@ -11,7 +11,7 @@
         :class: sphx-glr-download-link-note
 
         :ref:`Go to the end <sphx_glr_download_auto_examples_neuralLatents_in_progress_plot_striatum.py>`
-        to download the full example code or to run this example in your browser via Binder
+        to download the full example code or to run this example in your browser via Binder.
 
 .. rst-class:: sphx-glr-example-title
 
@@ -26,7 +26,7 @@ characterisation of replay in the striatum
 
 .. GENERATED FROM PYTHON SOURCE LINES 9-21
 
-.. code-block:: default
+.. code-block:: Python
 
 
     import numpy as np
@@ -48,7 +48,7 @@ Define variables
 
 .. GENERATED FROM PYTHON SOURCE LINES 24-82
 
-.. code-block:: default
+.. code-block:: Python
 
 
     # data
@@ -116,7 +116,7 @@ Bin spikes times
 
 .. GENERATED FROM PYTHON SOURCE LINES 85-113
 
-.. code-block:: default
+.. code-block:: Python
 
 
     # read data
@@ -154,7 +154,7 @@ Perform EM
 
 .. GENERATED FROM PYTHON SOURCE LINES 116-133
 
-.. code-block:: default
+.. code-block:: Python
 
 
     EM_data = binned_spikes.T
@@ -175,17 +175,11 @@ Perform EM
     )
 
 
-.. rst-class:: sphx-glr-timing
-
-   **Total running time of the script:** ( 0 minutes  0.000 seconds)
-
-
 .. _sphx_glr_download_auto_examples_neuralLatents_in_progress_plot_striatum.py:
 
 .. only:: html
 
   .. container:: sphx-glr-footer sphx-glr-footer-example
-
 
     .. container:: binder-badge
 
@@ -194,15 +188,17 @@ Perform EM
         :alt: Launch binder
         :width: 150 px
 
+    .. container:: sphx-glr-download sphx-glr-download-jupyter
 
+      :download:`Download Jupyter notebook: in_progress_plot_striatum.ipynb <in_progress_plot_striatum.ipynb>`
 
     .. container:: sphx-glr-download sphx-glr-download-python
 
       :download:`Download Python source code: in_progress_plot_striatum.py <in_progress_plot_striatum.py>`
 
-    .. container:: sphx-glr-download sphx-glr-download-jupyter
+    .. container:: sphx-glr-download sphx-glr-download-zip
 
-      :download:`Download Jupyter notebook: in_progress_plot_striatum.ipynb <in_progress_plot_striatum.ipynb>`
+      :download:`Download zipped: in_progress_plot_striatum.zip <in_progress_plot_striatum.zip>`
 
 
 .. only:: html
