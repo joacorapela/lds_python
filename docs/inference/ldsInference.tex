@@ -196,20 +196,20 @@ the Kalman filter.
         \item[$h\rightarrow h+1$]:
 
             \begin{align*}
-                P(\mathbf{x}_{n+h+1}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})&=N(\mathbf{x}_{n+h+1}|\mathbf{x}_{n+h+1|n},P_{n+h+1|n})\\
+                P(\mathbf{x}_{n+h+1}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})&=\mathcal{N}(\mathbf{x}_{n+h+1}|\mathbf{x}_{n+h+1|n},P_{n+h+1|n})\\
                                                                       &=\int_{-\infty}^\infty
                                                                       P(\mathbf{x}_{n+h+1},\mathbf{x}_{n+h}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})d\mathbf{x}_{n+h}\\
                                                                       &=\int_{-\infty}^\infty
-                                                                      P(\mathbf{x}_{n+h+1}|\mathbf{x}_{n+h},\mathbf{y}_1,\ldots,\mathbf{y}_{n})P(\mathbf{x}_{n+h}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})d\mathbf{x}_{n+1}\\
+                                                                      P(\mathbf{x}_{n+h+1}|\mathbf{x}_{n+h},\mathbf{y}_1,\ldots,\mathbf{y}_{n})P(\mathbf{x}_{n+h}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})d\mathbf{x}_{n+h}\\
                                                                       &=\int_{-\infty}^\infty
                                                                       P(\mathbf{x}_{n+h+1}|\mathbf{x}_{n+h})P(\mathbf{x}_{n+h}|\mathbf{y}_1,\ldots,\mathbf{y}_{n})d\mathbf{x}_{n+h}\\
                                                                       &=\int_{-\infty}^\infty
-                                                                      N(\mathbf{x}_{n+h+1}|A\mathbf{x}_{n+h},Q)N(\mathbf{x}_{n+h}|\mathbf{x}_{n+h|n},P_{n+h|n})d\mathbf{x}_{n+h}\\
-                                                                      &=N(\mathbf{x}_{n+h+1}|A\mathbf{x}_{n+h|n},AP_{n+h|n}A^\intercal+Q)
+                                                                      \mathcal{N}(\mathbf{x}_{n+h+1}|A\mathbf{x}_{n+h},Q)\mathcal{N}(\mathbf{x}_{n+h}|\mathbf{x}_{n+h|n},P_{n+h|n})d\mathbf{x}_{n+h}\\
+                                                                      &=\mathcal{N}(\mathbf{x}_{n+h+1}|A\mathbf{x}_{n+h|n},AP_{n+h|n}A^\intercal+Q)
             \end{align*}
 
             Then $\mathbf{x}_{n+h+1|n}=A\mathbf{x}_{n+h|n}$ and
-            $P_{n+h=1|n}=AP_{n+h|n}A^\intercal+Q$.
+            $P_{n+h+1|n}=AP_{n+h|n}A^\intercal+Q$.
 
             Notes:
 
@@ -217,7 +217,8 @@ the Kalman filter.
 
                 \item The second line holds by marginalisation.
 
-                \item The third line follows from Bayes rule.
+                \item The third line follows from the definition of conditional
+                    probability.
 
                 \item The fourth lines uses the fact
                     that $\mathbf{x}_{n+h+1}$ is independent from
