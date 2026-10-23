@@ -64,7 +64,8 @@ sigma_V0 = 0.1
 # max_iter = 2000
 max_iter = 2000
 tol = 1e-1
-vars_to_estimate = {"B": True, "Q": True, "Z": True, "R": True,
+vars_to_estimate = {"u": False, "B": True, "Q": True,
+                    "a": False, "Z": True, "R": True,
                     "m0": True, "V0": True, }
 
 #%%
@@ -75,7 +76,7 @@ if get_data_from_Dandi:
         asset = client.get_dandiset(dandiset_ID,
                                     "draft").get_asset_by_path(dandi_filepath)
         s3_path = asset.get_content_url(follow_redirects=1, strip_query=True)
-        io = NWBHDF5IO(s3_path, mode="r", driver="ros3")
+        io = NWBHDF5IO(s3_path, mode="r", driver="ros3", aws_region="us-east-1")
         nwbfile = io.read()
         units_df = nwbfile.units.to_dataframe()
         trials_df = nwbfile.intervals["trials"].to_dataframe()
@@ -122,9 +123,9 @@ trace = go.Heatmap(x=bin_centers_to_plot,
                    z=transformed_binned_spikes[:, to_plot_slice],
                    colorbar=dict(title="<b>Sqrt(spike_count+0.5)</b>"))
 fig.add_trace(trace)
-ssm.neural_latents.plotting.add_events_vlines(
-    fig=fig, trials_df=trials_df, events_names=events_names,
-    events_linetypes=events_linetypes, events_colors=events_colors_spikes)
+# ssm.neural_latents.plotting.add_events_vlines(
+#     fig=fig, trials_df=trials_df, events_names=events_names,
+#     events_linetypes=events_linetypes, events_colors=events_colors_spikes)
 fig.update_xaxes(title="Time (sec)")
 fig.update_yaxes(title="Cluster Index")
 fig
@@ -140,9 +141,17 @@ R0 = np.diag(np.abs(np.random.normal(loc=0, scale=sigma_R, size=n_clusters)))
 m0_0 = np.random.normal(loc=0, scale=sigma_m0, size=n_latents)
 V0_0 = np.diag(np.abs(np.random.normal(loc=0, scale=sigma_V0, size=n_latents)))
 
+M = B0.shape[0]
+N = Z0.shape[0]
+u0 = np.zeros(shape=(M, 1), dtype=np.double)
+a0 = np.zeros(shape=(N, 1), dtype=np.double)
+
 optim_res = ssm.learning.em_SS_LDS(
-    y=transformed_binned_spikes, B0=B0, Q0=Q0, Z0=Z0, R0=R0,
-    m0_0=m0_0, V0_0=V0_0, max_iter=max_iter, tol=tol,
+    y=transformed_binned_spikes,
+    u0=u0, B0=B0, Q0=Q0,
+    m0_0=m0_0, V0_0=V0_0,
+    a0=a0, Z0=Z0, R0=R0,
+    max_iter=max_iter, tol=tol,
     vars_to_estimate=vars_to_estimate,
 )
 
@@ -166,8 +175,8 @@ fig
 # ^^^^^^^^^^^^^^^^
 
 filter_res = ssm.inference.filterLDS_SS_withMissingValues_np(
-    y=transformed_binned_spikes, B=optim_res["B"], Q=optim_res["Q"],
-    m0=optim_res["m0"], V0=optim_res["V0"], Z=optim_res["Z"], R=optim_res["R"])
+    y=transformed_binned_spikes, u=optim_res["u"], B=optim_res["B"], Q=optim_res["Q"],
+    m0=optim_res["m0"], V0=optim_res["V0"], a=optim_res["a"], Z=optim_res["Z"], R=optim_res["R"])
 
 #%%
 # Kalman smoothing
