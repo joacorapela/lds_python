@@ -51,6 +51,7 @@ def array1d_to_string(arr):
     str
         String like '1.0 2.5 3.0'.
     """
+
     arr = np.asarray(arr).ravel()  # ensure 1D
     return " ".join(str(x) for x in arr)
 

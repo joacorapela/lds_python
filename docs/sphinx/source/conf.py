@@ -12,6 +12,7 @@
 #
 import os
 import sys
+from plotly.io._sg_scraper import plotly_sg_scraper
 sys.path.insert(0, os.path.abspath('../../src'))
 print("sys.path")
 print(sys.path)
@@ -35,6 +36,7 @@ extensions = ['sphinx.ext.autodoc','sphinx_gallery.gen_gallery',
 # sphinx-gallery
 
 sphinx_gallery_conf = {
+    'image_scrapers': ('matplotlib', plotly_sg_scraper),  # Use both if you mix Matplotlib and Plotly
     'examples_dirs': '../../../examples/sphinx_gallery',   # path to your example scripts
     'gallery_dirs': 'auto_examples',  # path to where to save gallery generated output
     'binder': {
